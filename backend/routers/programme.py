@@ -3,7 +3,7 @@ from models.programme import ProgrammeRequest, ProgrammeResponse
 from service.programme_service import ProgrammeService
 from typing import List
 
-router = APIRouter(prefix="/programme", tags=["programme"])
+router = APIRouter(prefix="/programmes", tags=["programmes"])
 
 
 @router.post("/", response_model=ProgrammeResponse)
