@@ -1,0 +1,8 @@
+# environment variables
+.env
+
+# compiled python files
+*.pyc
+
+# vscode
+.vscode
