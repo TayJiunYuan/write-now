@@ -14,7 +14,7 @@ const App = () => {
   return (
     <Router>
       <StyledNavbar />
-      <div>
+      <div className="bg-gray-100">
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/email" element={<Email />} />
