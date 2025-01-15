@@ -17,6 +17,7 @@ class AuthService:
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
         "https://www.googleapis.com/auth/calendar",
+        "https://www.googleapis.com/auth/meetings.space.created",
     ]
 
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
