@@ -1,67 +1,68 @@
 import React, { useEffect, useState } from "react";
 import { events, categories } from "../constants/ProgrammesElements";
+import { Link } from "react-router-dom";
 
 const Programmes = () => {
-  const [selectedDate, setSelectedDate] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('')
-  const [filteredEvents, setFilteredEvents] = useState([])
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   const handleDateChange = (event) => {
-    setSelectedDate(event.target.value)
-  }
+    setSelectedDate(event.target.value);
+  };
 
   const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value)
-  }
+    setSelectedCategory(event.target.value);
+  };
 
   const filterEventsByDate = (selectedDate) => {
-    if(!selectedDate) return events
+    if (!selectedDate) return events;
 
     return events.filter((event) => {
-      const eventDateString = `${event.date.year}-${formatMonth(event.date.month)}-${event.date.day}`;
+      const eventDateString = `${event.date.year}-${formatMonth(
+        event.date.month
+      )}-${event.date.day}`;
       return eventDateString === selectedDate;
-    })
-  }
+    });
+  };
 
   const filterEventsByCategory = (selectedCategory) => {
-    if(selectedCategory === 'All Programmes')  return events
+    if (selectedCategory === "All Programmes") return events;
 
     return events.filter((event) => {
-      return event.audience === selectedCategory
-    })
-  }
+      return event.audience === selectedCategory;
+    });
+  };
 
   const formatMonth = (month) => {
     const monthMap = {
-      Jan: '01',
-      Feb: '02',
-      Mar: '03',
-      Apr: '04',
-      May: '05',
-      Jun: '06',
-      Jul: '07',
-      Aug: '08',
-      Sep: '09',
-      Oct: '10',
-      Nov: '11',
-      Dec: '12',
+      Jan: "01",
+      Feb: "02",
+      Mar: "03",
+      Apr: "04",
+      May: "05",
+      Jun: "06",
+      Jul: "07",
+      Aug: "08",
+      Sep: "09",
+      Oct: "10",
+      Nov: "11",
+      Dec: "12",
     };
-    return monthMap[month] || '01';  // Default to '01' if invalid month (though you shouldn't get this)
+    return monthMap[month] || "01"; // Default to '01' if invalid month (though you shouldn't get this)
   };
 
   useEffect(() => {
-    setFilteredEvents(filterEventsByDate(selectedDate))
-  }, [selectedDate])
+    setFilteredEvents(filterEventsByDate(selectedDate));
+  }, [selectedDate]);
 
   useEffect(() => {
-    console.log(selectedCategory)
-    setFilteredEvents(filterEventsByCategory(selectedCategory))
-  }, [selectedCategory])
+    setFilteredEvents(filterEventsByCategory(selectedCategory));
+  }, [selectedCategory]);
 
   useEffect(() => {
-    setFilteredEvents(events)
-  }, [])
-
+    setFilteredEvents(events);
+  }, []);
 
   return (
     <div className="min-h-screen container mx-auto">
@@ -102,7 +103,7 @@ const Programmes = () => {
             Category
           </label>
           <select
-            id="category-select" 
+            id="category-select"
             className="pl-2 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-rose-500 focus:ring-rose-500"
             value={selectedCategory}
             onChange={handleCategoryChange}
@@ -143,12 +144,16 @@ const Programmes = () => {
                 <p className="mt-1 text-sm text-gray-600">{event.time}</p>
                 <p className="mt-1 text-sm text-gray-600">{event.location}</p>
                 <p className="mt-1 text-sm text-gray-600">{event.audience}</p>
-                <p className="mt-2 text-gray-700 max-w-6xl">{event.description}</p>
+                <p className="mt-2 text-gray-700 max-w-6xl">
+                  {event.description}
+                </p>
               </div>
             </div>
-            <button className="px-4 py-2 border border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56">
-              VIEW DETAILS
-            </button>
+            <Link key={index} to={`/programmes/${event.id}`} state={{ event }}>
+              <button className="px-4 py-2 border border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56">
+                VIEW DETAILS
+              </button>
+            </Link>
           </div>
         ))}
       </div>
