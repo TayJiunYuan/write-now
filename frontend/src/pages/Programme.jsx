@@ -14,7 +14,7 @@ const Programme = () => {
   const { event } = location.state || {};
 
   return (
-    <div className="p-4 bg-gray-100 min-h-screen">
+    <div className="pt-4 container mx-auto min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="bg-white shadow-md rounded p-4">
           <CardHeader className="text-lg font-bold mb-2">
