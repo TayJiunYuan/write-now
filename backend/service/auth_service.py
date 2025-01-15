@@ -3,45 +3,59 @@ from google.auth.transport import requests
 import httpx
 from models.user import User
 from service.user_service import UserService
-from dotenv import load_dotenv
+from google_auth_oauthlib.flow import Flow
 import os
+from dotenv import load_dotenv
+
 load_dotenv()
 
+
 class AuthService:
+    SCOPES = [
+        "openid",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
+        "https://www.googleapis.com/auth/calendar",
+    ]
+
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-    GOOGLE_TOKEN_ENDPOINT = os.getenv("GOOGLE_TOKEN_ENDPOINT")
     REDIRECT_URI = os.getenv("REDIRECT_URI")
 
     @staticmethod
-    async def exchange_code_for_token(auth_code: str, redirect_uri: str) -> dict:
-        """Exchange authorization code for tokens"""
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                AuthService.GOOGLE_TOKEN_ENDPOINT,
-                data={
+    def create_auth_flow() -> Flow:
+        """Create Google OAuth2 flow"""
+        flow = Flow.from_client_config(
+            {
+                "web": {
                     "client_id": AuthService.GOOGLE_CLIENT_ID,
                     "client_secret": AuthService.GOOGLE_CLIENT_SECRET,
-                    "code": auth_code,
-                    "grant_type": "authorization_code",
-                    "redirect_uri": redirect_uri,
-                },
-            )
-            return response.json()
+                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "redirect_uris": [AuthService.REDIRECT_URI],
+                }
+            },
+            scopes=AuthService.SCOPES,
+        )
+        flow.redirect_uri = AuthService.REDIRECT_URI
+        return flow
 
     @staticmethod
-    async def verify_and_get_user(id_token_str: str) -> dict:
-        """Verify ID token and get user info"""
+    async def get_user_info(credentials) -> dict:
+        """Get user info from Google"""
         try:
-            idinfo = id_token.verify_oauth2_token(
-                id_token_str, requests.Request(), AuthService.GOOGLE_CLIENT_ID
-            )
-            return idinfo
-        except ValueError:
-            raise ValueError("Invalid ID token")
+            userinfo_endpoint = "https://www.googleapis.com/oauth2/v3/userinfo"
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    userinfo_endpoint,
+                    headers={"Authorization": f"Bearer {credentials.token}"},
+                )
+                return response.json()
+        except Exception as e:
+            raise ValueError(f"Failed to get user info: {str(e)}")
 
     @staticmethod
-    async def get_or_create_user(user_info: dict) -> User:
+    async def get_or_create_user(user_info: dict, credentials_json: str) -> User:
         """Get existing user or create new one"""
         user = await UserService.get_user_by_id(user_info["sub"])
         if not user:
@@ -50,6 +64,7 @@ class AuthService:
                     id=user_info["sub"],
                     email=user_info["email"],
                     name=user_info["name"],
+                    credentials=credentials_json,  # Store encrypted credentials
                 )
             )
         return user
