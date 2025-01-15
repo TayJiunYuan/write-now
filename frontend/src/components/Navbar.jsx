@@ -25,7 +25,7 @@ export const StyledNavbar = () => {
           </Link>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link aria-current="page" href="/">
+          <Link aria-current="page" href="/dashboard">
             Dashboard
           </Link>
         </NavbarItem>
