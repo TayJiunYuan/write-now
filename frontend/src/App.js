@@ -8,7 +8,7 @@ import { StyledNavbar } from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Email from "./pages/Email";
 import Programmes from "./pages/Programmes";
-import ProgrammeInfo from "./pages/ProgrammeInfo";
+import Programme from "./pages/Programme";
 import MeetingInfo from "./pages/MeetingInfo";
 import TaskInfo from "./pages/TaskInfo";
 
@@ -25,7 +25,7 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/email" element={<Email />} />
             <Route path="/programmes" element={<Programmes />} />
-            <Route path="/programmes/:programme_id" element={<ProgrammeInfo />} />
+            <Route path="/programmes/:programme_id" element={<Programme />} />
             <Route path="/meetings/:meeting_id" element={<MeetingInfo />} />
             <Route path="/tasks/:task_id" element={<TaskInfo />} />
           </Route>
