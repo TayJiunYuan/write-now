@@ -29,3 +29,10 @@ class UserService:
         document = user.dict()
         await db.get_collection(UserService.collection_name).insert_one(document)
         return user
+    
+    @staticmethod
+    async def update_user_credentials(user_id: str, credentials: str):
+        await db.get_collection(UserService.collection_name).update_one(
+            {"id": user_id},
+            {"$set": {"credentials": credentials}}
+        )
