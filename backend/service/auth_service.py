@@ -1,11 +1,12 @@
-from google.oauth2 import id_token
-from google.auth.transport import requests
 import httpx
 from models.user import User
 from service.user_service import UserService
 from google_auth_oauthlib.flow import Flow
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
 import os
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -68,3 +69,24 @@ class AuthService:
                 )
             )
         return user
+
+    @staticmethod
+    async def handle_credentials_refresh(user_id: str):
+        try:
+            user = await UserService.get_user_by_id(user_id)
+            if not user or not user.credentials:
+                raise ValueError(f"No credentials found for user {user_id}")
+            credentials_dict = json.loads(user.credentials)
+            credentials = Credentials.from_authorized_user_info(
+                credentials_dict, scopes=AuthService.SCOPES
+            )
+            # Check if credentials need refresh
+            if credentials.expired and credentials.refresh_token:
+                request = Request()
+                credentials.refresh(request)
+                await UserService.update_user_credentials(
+                    user_id, credentials.to_json()
+                )
+            return credentials.to_json()
+        except Exception as e:
+            raise ValueError(f"Failed to handle credentials refresh: {str(e)}")
