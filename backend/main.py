@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from db.db import db
-from routers import user, auth, task, programme
+from routers import user, auth, task, programme, calendar, meeting
 from fastapi.middleware.cors import CORSMiddleware
-
 app = FastAPI()
 
 app.add_middleware(
@@ -17,6 +16,8 @@ app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(task.router)
 app.include_router(programme.router)
+app.include_router(calendar.router)
+app.include_router(meeting.router)
 
 
 @app.on_event("startup")
