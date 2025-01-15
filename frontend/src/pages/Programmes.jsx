@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { events, categories } from "../constants/ProgrammesElements";
 import { Link } from "react-router-dom";
+import { getAllProgrammes, getUsers } from "../services/api";
 
 const Programmes = () => {
   const [selectedDate, setSelectedDate] = useState("");
@@ -62,6 +63,7 @@ const Programmes = () => {
 
   useEffect(() => {
     setFilteredEvents(events);
+    getUsers();
   }, []);
 
   return (
