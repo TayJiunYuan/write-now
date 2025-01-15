@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardHeader, Divider, CardBody, Checkbox, Avatar } from "@nextui-org/react";
 
-const ProgrammeInfo = () => {
+const Programme = () => {
   return (
     <div className="p-4 bg-gray-100 min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -74,4 +74,4 @@ const ProgrammeInfo = () => {
   );
 };
 
-export default ProgrammeInfo;
+export default Programme;
