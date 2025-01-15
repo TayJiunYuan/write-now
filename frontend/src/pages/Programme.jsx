@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -22,7 +22,7 @@ const Programme = () => {
           </CardHeader>
           <CardBody>
             <Divider />
-            <h2 className="font-semibold pt-2 pb-2">{event.title}</h2>
+            <h2 className="font-semibold pt-2 pb-2">{event.name}</h2>
             <Divider />
             <p className="pt-4">{event.description}</p>
           </CardBody>
@@ -45,31 +45,19 @@ const Programme = () => {
         <Card className="bg-white shadow-md rounded p-4">
           <CardHeader className="text-lg font-bold mb-2">People</CardHeader>
           <Divider />
-          <div className="grid grid-cols-2">
-            <CardBody className="font-semibold ">
-              {" "}
-              Authors
-              <div className="flex gap-3 items-center pt-2">
-                <Avatar name="Wei" />
-                <Avatar name="Lee" />
+          <div>
+            {Object.entries(event.groups).map(([group, names]) => (
+              <div className="grid grid-cols-2" key={group}>
+                <CardBody className="font-semibold">
+                  {group}
+                  <div className="flex gap-3 items-center pt-2">
+                    {names.map((name) => (
+                      <Avatar key={name} name={name} />
+                    ))}
+                  </div>
+                </CardBody>
               </div>
-            </CardBody>
-            <CardBody className="font-semibold">
-              {" "}
-              Event Organizers
-              <div className="flex gap-3 items-center pt-2">
-                <Avatar name="Marc" />
-                <Avatar name="Lee" />
-              </div>
-            </CardBody>
-            <CardBody className="font-semibold">
-              {" "}
-              Suppliers
-              <div className="flex gap-3 items-center pt-2">
-                <Avatar name="John" />
-                <Avatar name="Penny" />
-              </div>
-            </CardBody>
+            ))}
           </div>
         </Card>
 
