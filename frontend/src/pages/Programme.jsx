@@ -7,7 +7,6 @@ const Programme = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="bg-white shadow-md rounded p-4">
           <CardHeader className="text-lg font-bold mb-2">Event Details</CardHeader>
-          
           <CardBody>
             <Divider />
             <h2 className="font-semibold pt-2 pb-2">Process, Publication, & Perspective: A conversation between Jemimah Wei and Wen-yi Lee</h2>
