@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@nextui-org/react": "^2.6.11",
+    "axios": "^1.7.9",
     "cra-template": "1.2.0",
     "framer-motion": "^11.18.0",
     "lucide-react": "^0.471.1",
