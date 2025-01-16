@@ -9,7 +9,7 @@ import {
   Dropdown,
   DropdownMenu,
   Avatar,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LayoutDashboardIcon, MailIcon, BookIcon } from "lucide-react";

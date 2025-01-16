@@ -7,7 +7,7 @@ import {
   Checkbox,
   Avatar,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useLocation } from "react-router-dom";
 import { CreateMeetingModal } from "../components/CreateMeetingModal";
 import { getMeetings } from "../services/api";

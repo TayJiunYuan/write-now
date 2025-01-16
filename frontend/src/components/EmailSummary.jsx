@@ -1,50 +1,71 @@
 import React, { useState, useEffect } from "react";
-import { Textarea, useDisclosure, Button } from "@nextui-org/react";
-
-import CreateTaskDrawer from "./CreateTaskDrawer";
+import { Spinner, Badge } from "@heroui/react";
+import { getEmailsShortSum } from "../services/api";
 
 export const EmailSummary = () => {
-  const [isSummaryPresent, setIsSummaryPresent] = useState(true);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [emails, setEmails] = useState([]);
+  const [isInboxLoading, setIsInboxLoading] = useState(true);
+  const userId = localStorage.getItem("userId");
+
+  const fetchEmails = async () => {
+    try {
+      const response = await getEmailsShortSum(userId);
+      return response;
+    } catch (error) {
+      console.error("Error fetching short summaries:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchSummarisedEmails = () => {
-      console.log("fetching summarised emails");
-    };
-
-    fetchSummarisedEmails();
+    setIsInboxLoading(true);
+    fetchEmails(userId)
+      .then((data) => {
+        setEmails(data);
+      })
+      .catch((err) => {
+        console.error("Error fetching emails:", err);
+      })
+      .finally(() => {
+        setIsInboxLoading(false);
+      });
   }, []);
 
   return (
     <div className="flex flex-col items-center gap-6">
-      {isSummaryPresent ? (
-        <div className="flex w-full gap-3 items-center">
-          <Textarea
-            isReadOnly
-            className="w-full"
-            defaultValue="Jane and Mary requested the year end budget review from you; deadline 25 Jan 2025."
-            label="Email thread with Jane and Mary"
-            labelPlacement="outside"
-            placeholder="Enter your description"
-            variant="bordered"
-          />
-          <Button color="primary" variant="flat" onPress={onOpen}>
-            Create Task
-          </Button>
-          {/* <Textarea
-            isReadOnly
-            className="w-full"
-            defaultValue="CEO Vincent complimented your work ethic and responsibility. Mentioned to keep up the good work."
-            label="Email thread with Vincent"
-            labelPlacement="outside"
-            placeholder="Enter your description"
-            variant="bordered"
-          /> */}
+      {isInboxLoading ? (
+        <div className="flex justify-center items-center h-32">
+          <Spinner />
         </div>
+      ) : emails.length === 0 ? (
+        <p className="text-gray-500">Inbox is empty.</p>
       ) : (
-        <p className="text-sm/6 text-gray-600">No other summarised threads.</p>
+        <div className="flex flex-col w-full">
+          {Object.values(emails).map((email) => (
+            <Badge
+              color="primary"
+              shape="circle"
+              size="lg"
+              content="Unread"
+              placement="top-right"
+              isInvisible={!email.is_unread}
+            >
+              <div
+                key={email.id}
+                className="relative w-full cursor-pointer p-4 bg-gray-100 rounded-lg mb-3 hover:bg-gray-200 transition duration-300"
+              >
+                <p className="font-semibold text-lg text-gray-800">
+                  {email.subject}
+                </p>
+                <p className="text-sm text-gray-600">{email.sender}</p>
+                <p className="text-xs text-gray-400">{email.date}</p>
+                <p className="text-sm text-gray-700 mt-1">
+                  {email.short_summary}
+                </p>
+              </div>
+            </Badge>
+          ))}
+        </div>
       )}
-      <CreateTaskDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
     </div>
   );
 };

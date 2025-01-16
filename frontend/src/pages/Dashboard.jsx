@@ -5,7 +5,7 @@ import {
   PopoverContent,
   Button,
   Calendar,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { CalendarSearch } from "lucide-react";
 import { TaskTable } from "../components/TaskTable";
 import { EmailSummary } from "../components/EmailSummary";
@@ -49,10 +49,10 @@ const Dashboard = () => {
           <div className="flex h-full flex-col gap-4">
             <div className="flex flex-col px-6 pt-6 gap-2">
               <p className="text-lg font-medium tracking-tight text-gray-950">
-                Email Summary
+                Email Summaries
               </p>
               <p className="text-sm/6 text-gray-600">
-                6 unread emails from 2 email threads.
+                Displaying last 10 emails
               </p>
             </div>
             <div className="overflow-auto w-full [container-type:inline-size] px-6 pb-6">
