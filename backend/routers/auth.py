@@ -34,6 +34,8 @@ async def auth_callback(code: str, state: str):
         # Get or create user
         user = await AuthService.get_or_create_user(user_info, credentials_json)
 
-        return user
+        redirect_url = f"http://localhost:3000?user_id={user.id}"
+        
+        return RedirectResponse(url=redirect_url)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
