@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from db.db import db
 from routers import user, auth, task, programme, calendar, meeting
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+
+load_dotenv()
+
 app = FastAPI()
 
 app.add_middleware(
