@@ -55,9 +55,7 @@ class CalendarService:
         user_ids: List[str], duration_hours: int, day: datetime
     ) -> List[Dict]:
         """Find common free time slots for multiple users"""
-        day_start = day.replace(
-            hour=0, minute=0, second=0, microsecond=0
-        )
+        day_start = day.replace(hour=0, minute=0, second=0, microsecond=0)
         day_end = day_start + timedelta(days=1)
 
         # Collect all busy periods
@@ -113,3 +111,41 @@ class CalendarService:
                 current_time += timedelta(hours=1)
 
         return available_slots
+
+    @staticmethod
+    async def get_calendar_events(
+        user_id: str, start_time: datetime, end_time: datetime
+    ):
+        """Get calendar events for a user in a given time range"""
+        try:
+            service = await CalendarService.build_calendar_service(user_id)
+            events_results = (
+                service.events()
+                .list(
+                    calendarId="primary",
+                    timeMin=start_time.isoformat(),
+                    timeMax=end_time.isoformat(),
+                    singleEvents=True,
+                    orderBy="startTime",
+                )
+                .execute()
+            )
+            events = events_results.get("items", [])
+            processed_events = []
+            for event in events:
+                if event["kind"] != "calendar#event":
+                    continue
+                processed_events.append(
+                    {
+                        "id": event["id"],
+                        "html_link": event["htmlLink"],
+                        "summary": event["summary"],
+                        "start_time": event["start"]["dateTime"],
+                        "end_time": event["end"]["dateTime"],
+                    }
+                )
+            return processed_events
+        except Exception as e:
+            raise ValueError(
+                f"Failed to get calendar events for user {user_id}: {str(e)}"
+            )
