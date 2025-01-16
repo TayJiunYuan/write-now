@@ -11,6 +11,7 @@ import {
 import { useLocation } from "react-router-dom";
 import { CreateMeetingModal } from "../components/CreateMeetingModal";
 import { getMeetings } from "../services/api";
+import { MeetingList } from "../components/MeetingList";
 
 const Programme = () => {
   const location = useLocation();
@@ -20,6 +21,7 @@ const Programme = () => {
   const [meetings, setMeetings] = useState([]);
 
   const programmeID = event.id;
+  const title = event.name;
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
@@ -36,20 +38,19 @@ const Programme = () => {
   };
 
   useEffect(() => {
-    console.log(programmeID);
     fetchData();
   }, []);
 
   useEffect(() => {
-    console.log("meetings", meetings);
-  }, [meetings]);
+    console.log("title is:", title);
+  }, [title]);
 
   return (
     <div className="pt-4 container mx-auto min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="bg-white shadow-md rounded p-4">
           <CardHeader className="text-lg font-bold mb-2">
-            Event Details
+            Programme Details
           </CardHeader>
           <CardBody>
             <Divider />
@@ -73,13 +74,7 @@ const Programme = () => {
           </CardHeader>
           <Divider />
           <CardBody>
-            <p>
-              {" "}
-              Fri 1 Jan -{" "}
-              <button className="text-blue-500 underline">
-                View Details
-              </button>{" "}
-            </p>
+            <MeetingList meetings={meetings} title={title} />
           </CardBody>
         </Card>
 

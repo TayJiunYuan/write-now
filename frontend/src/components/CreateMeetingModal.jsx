@@ -34,7 +34,7 @@ export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
     const meetingData = {
       programme_id: "67887f462f43d9720fbe448a",
       organizer_id: "108892597123264895192",
-      attendee_ids: ["108892597123264895192"],
+      attendee_ids: ["108892597123264895192", "118276801488272131566"],
       start_time: isoDate,
       duration_hours: durationHours,
       summary: summary,

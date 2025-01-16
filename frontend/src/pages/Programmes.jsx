@@ -111,9 +111,7 @@ const Programmes = () => {
 
       <div className="bg-rose-300 rounded-md p-6 flex flex-wrap gap-4 items-center">
         <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700">
-            Date
-          </label>
+          <label className="block text-sm font-medium text-black">Date</label>
           <input
             type="date"
             value={selectedDate}
@@ -122,7 +120,7 @@ const Programmes = () => {
           />
         </div>
         <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-black">
             Category
           </label>
           <select
@@ -139,7 +137,7 @@ const Programmes = () => {
           </select>
         </div>
         <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-black">
             Filter by Event
           </label>
           <input
@@ -160,17 +158,17 @@ const Programmes = () => {
           return (
             <div
               key={index}
-              className="bg-white rounded-md shadow-md p-6 flex items-center justify-between"
+              className="bg-white rounded-xl shadow-xl p-6 flex items-center justify-between"
             >
               <div className="flex items-center">
-                <div className="bg-gray-200 rounded-md p-4 text-center w-16">
+                <div className="bg-gray-200 rounded-md p-4 text-center w-16 border-2 border-black">
                   <p className="text-xl font-bold">{day}</p>
-                  <p className="text-sm text-gray-600">{month}</p>
-                  <p className="text-sm text-gray-600">{year}</p>
+                  <p className="text-sm font-bold">{month}</p>
+                  <p className="text-sm font-bold">{year}</p>
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-bold">{event.name}</h3>
-                  <p className="mt-1 text-sm text-gray-600">{event.time}</p>
+                  <p className="mt-1 text-sm text-gray-600">{event.datetime}</p>
                   <p className="mt-1 text-sm text-gray-600">{event.location}</p>
                   <p className="mt-1 text-sm text-gray-600">{event.type}</p>
                   <p className="mt-2 text-gray-700 max-w-6xl">

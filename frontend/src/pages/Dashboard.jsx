@@ -14,16 +14,25 @@ import { CalendarContent } from "../components/CalendarContent";
 
 import { userCalendarEvents } from "../constants/CalendarElements";
 
+import { getUserById } from "../services/api";
+
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(null);
+  const userId = "118276801488272131566";
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
-  
+
   useEffect(() => {
     console.log(selectedDate);
   }, [selectedDate]);
+
+  useEffect(() => {
+    getUserById(userId);
+  }, []);
+
+  console.log(userId);
 
   return (
     <div className="container mx-auto p-4">
