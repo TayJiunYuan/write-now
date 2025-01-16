@@ -88,3 +88,67 @@ class TaskCreationAIService:
         parsed_response = self.output_parser.parse(response)
         return parsed_response
 
+
+class ShortEmailSummaryAIService:
+    def __init__(self, OPEN_API_KEY):
+        load_dotenv()
+        self.OPEN_API_KEY = OPEN_API_KEY
+        self.llm = ChatOpenAI(api_key=self.OPEN_API_KEY)
+        self.system_message = (
+            "You are a short email summary creator. Return a super short summary of the email that is given to you later"
+            "The return format is a string. Ensure that the summary is concise and to the point and at most 2 sentences"
+        )
+
+    def get_response(self, user_input):
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                SystemMessage(
+                    content=self.system_message
+                ),  # The persistent system prompt
+                HumanMessagePromptTemplate.from_template(
+                    "{human_input}"
+                ),  # Where the human input will injected
+            ]
+        )
+
+        chat_llm_chain = LLMChain(
+            llm=self.llm,
+            prompt=prompt,
+            verbose=True,
+        )
+        response = chat_llm_chain.predict(human_input=user_input)
+        print(response)
+        return response
+    
+
+class LongEmailSummaryAIService:
+    def __init__(self, OPEN_API_KEY):
+        load_dotenv()
+        self.OPEN_API_KEY = OPEN_API_KEY
+        self.llm = ChatOpenAI(api_key=self.OPEN_API_KEY)
+        self.system_message = (
+            "You are a email summary creator. Return a summary of the email that is given to you later"
+            "The return format is a string. Ensure that the summary is concise and to the point"
+            "You might be given a thread of emails, so ensure that you return a summary of the entire thread"
+        )
+
+    def get_response(self, user_input):
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                SystemMessage(
+                    content=self.system_message
+                ),  # The persistent system prompt
+                HumanMessagePromptTemplate.from_template(
+                    "{human_input}"
+                ),  # Where the human input will injected
+            ]
+        )
+
+        chat_llm_chain = LLMChain(
+            llm=self.llm,
+            prompt=prompt,
+            verbose=True,
+        )
+        response = chat_llm_chain.predict(human_input=user_input)
+        print(response)
+        return response

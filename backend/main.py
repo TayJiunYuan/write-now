@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from db.db import db
-from routers import user, auth, task, programme, calendar, meeting
+from routers import user, auth, task, programme, calendar, meeting, email
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
@@ -22,6 +22,7 @@ app.include_router(task.router)
 app.include_router(programme.router)
 app.include_router(calendar.router)
 app.include_router(meeting.router)
+app.include_router(email.router)
 
 
 @app.on_event("startup")
