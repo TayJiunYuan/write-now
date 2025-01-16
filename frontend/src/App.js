@@ -13,11 +13,9 @@ import MeetingInfo from "./pages/MeetingInfo";
 import TaskInfo from "./pages/TaskInfo";
 
 const App = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-
   return (
     <Router>
-      {user && <StyledNavbar />}
+      <StyledNavbar />
       <div className="bg-gray-100 min-h-screen">
         <Routes>
           <Route path="/" element={<AuthLogin />} />

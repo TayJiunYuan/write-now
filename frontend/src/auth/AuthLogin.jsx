@@ -25,7 +25,7 @@ const AuthLogin = () => {
     const userId = urlParams.get("user_id");
 
     if (userId) {
-      localStorage.setItem("user", userId);
+      localStorage.setItem("userId", userId);
       navigate("/dashboard");
     }
   }, []);
