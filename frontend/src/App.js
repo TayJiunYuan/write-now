@@ -18,7 +18,7 @@ const App = () => {
   return (
     <Router>
       {userId && <StyledNavbar />}
-      <div className="bg-gray-100 min-h-screen">
+      <div className="bg-gray-100 min-h-screen pt-[65px]">
         <Routes>
           <Route path="/" element={<AuthLogin />} />
           <Route element={<ProtectedRoute />}>

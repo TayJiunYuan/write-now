@@ -12,9 +12,9 @@ import {
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboardIcon } from "lucide-react";
+import { LayoutDashboardIcon, MailIcon, BookIcon } from "lucide-react";
 import { getUserById } from "../services/api";
-import { MailIcon, ActivitySquareIcon } from "lucide-react";
+
 export const StyledNavbar = () => {
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -54,7 +54,7 @@ export const StyledNavbar = () => {
   };
 
   return (
-    <Navbar isBordered>
+    <Navbar isBordered className="fixed">
       <NavbarBrand>
         <p className="font-bold text-inherit">SBC</p>
       </NavbarBrand>
@@ -86,7 +86,7 @@ export const StyledNavbar = () => {
             href="/programmes"
             className="flex flex-col items-center"
           >
-            <ActivitySquareIcon />
+            <BookIcon />
             Programmes
           </Link>
         </NavbarItem>
