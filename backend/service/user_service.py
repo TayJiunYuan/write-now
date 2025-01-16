@@ -1,5 +1,5 @@
 from db.db import db
-from models.user import User
+from models.user import User, User_without_credentials
 
 
 class UserService:
@@ -12,7 +12,17 @@ class UserService:
         async for document in cursor:
             users.append(User(**document))
         return users
-
+    
+    @staticmethod
+    async def get_all_users_without_credentials() -> list[User_without_credentials]:
+        users = []
+        print("Getting all users without credentials")
+        cursor = db.get_collection(UserService.collection_name).find({}, {"credentials": 0})
+        async for document in cursor:
+            users.append(User_without_credentials(**document))
+        print(users)
+        return users
+    
     @staticmethod
     async def get_user_by_id(google_id: str) -> User | None:
         try:
@@ -21,6 +31,15 @@ class UserService:
             )
             if document:
                 return User(**document)
+        except Exception:
+            return None
+        
+    @staticmethod
+    async def get_user_without_credentials_by_id(google_id: str) -> User_without_credentials | None:
+        try:
+            document = await db.get_collection(UserService.collection_name).find_one({"id": google_id}, {"credentials": 0})
+            if document:
+                return User_without_credentials(**document)
         except Exception:
             return None
 
