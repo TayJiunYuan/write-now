@@ -10,7 +10,7 @@ export const Email = () => {
   const [isInboxLoading, setIsInboxLoading] = useState(false);
   const [isEmailThreadLoading, setIsEmailThreadLoading] = useState(false);
 
-  const userId = String(JSON.parse(localStorage.getItem("userId")));
+  const userId = String(localStorage.getItem("userId"));
 
   const fetchEmails = async () => {
     try {
@@ -21,7 +21,7 @@ export const Email = () => {
     }
   };
 
-  const fetchEmailThread = async (emailId) => {
+  const fetchEmailThread = async (userId, emailId) => {
     try {
       const response = await getEmailsLongSum(userId, emailId);
       return response;

@@ -72,7 +72,7 @@ const CreateTaskDrawer = ({
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    const assignerId = String(JSON.parse(localStorage.getItem("userId")));
+    const assignerId = String(localStorage.getItem("userId"));
     const taskData = {
       assignee_id: isForOthers ? assigneeId : assignerId,
       assigner_id: assignerId,

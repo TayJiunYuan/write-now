@@ -21,7 +21,7 @@ export const StyledNavbar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userId = JSON.parse(localStorage.getItem("userId"));
+    const userId = localStorage.getItem("userId");
 
     if (userId) {
       setUserId(userId);
@@ -47,7 +47,7 @@ export const StyledNavbar = () => {
 
   const handleLogOut = () => {
     setUser(null);
-    localStorage.removeItem("userId");
+    localStorage.clear();
     setIsNavbarShown(false);
     navigate("/");
   };

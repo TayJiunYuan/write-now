@@ -98,13 +98,8 @@ export const getEmailsShortSum = (userId) => {
 };
 
 export const getEmailsLongSum = (userId, emailId) => {
-  const queryParams = {
-    user_id: userId,
-    email_id: emailId,
-  };
-
   return api
-    .get(`/emails/${userId}/${emailId}/long_summary`, { params: queryParams })
+    .get(`/emails/${userId}/${emailId}/long_summary`)
     .then((response) => {
       return response.data;
     })

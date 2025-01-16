@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoute = () => {
-  const userId = JSON.parse(localStorage.getItem("userId"));
+  const userId = localStorage.getItem("userId");
 
   return userId ? <Outlet /> : <Navigate to="/" />;
 };
