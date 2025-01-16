@@ -33,7 +33,7 @@ class CalendarService:
             "timeMin": start_time.isoformat(),
             "timeMax": end_time.isoformat(),
             "items": [{"id": user_email}],
-            "timeZone": datetime.now().astimezone().tzinfo.tzname(None),
+            "timeZone": "UTC",
         }
 
         events_result = service.freebusy().query(body=query).execute()
@@ -55,10 +55,8 @@ class CalendarService:
         user_ids: List[str], duration_hours: int, day: datetime
     ) -> List[Dict]:
         """Find common free time slots for multiple users"""
-        # Set time bounds using local timezone
-        local_tz = datetime.now().astimezone().tzinfo
         day_start = day.replace(
-            hour=0, minute=0, second=0, microsecond=0, tzinfo=local_tz
+            hour=0, minute=0, second=0, microsecond=0
         )
         day_end = day_start + timedelta(days=1)
 
