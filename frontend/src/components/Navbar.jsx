@@ -12,8 +12,9 @@ import {
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { LayoutDashboardIcon } from "lucide-react";
 import { getUserById } from "../services/api";
-
+import { MailIcon, ActivitySquareIcon } from "lucide-react";
 export const StyledNavbar = () => {
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -58,19 +59,34 @@ export const StyledNavbar = () => {
         <p className="font-bold text-inherit">SBC</p>
       </NavbarBrand>
 
-      <NavbarContent className="gap-4" justify="center">
+      <NavbarContent className="gap-16" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="/email">
+          <Link
+            color="foreground"
+            href="/email"
+            className="flex flex-col items-center"
+          >
+            <MailIcon />
             Email
           </Link>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link aria-current="page" href="/dashboard">
+          <Link
+            aria-current="page"
+            href="/dashboard"
+            className="flex flex-col items-center"
+          >
+            <LayoutDashboardIcon />
             Dashboard
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="/programmes">
+          <Link
+            color="foreground"
+            href="/programmes"
+            className="flex flex-col items-center"
+          >
+            <ActivitySquareIcon />
             Programmes
           </Link>
         </NavbarItem>
@@ -92,10 +108,16 @@ export const StyledNavbar = () => {
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
               <p className="font-semibold">
-                {isLoading ? "Loading..." : user?.email ? user?.email : "--"}
+                {isLoading ? (
+                  <p className="font-light">Loading...</p>
+                ) : user?.email ? (
+                  user?.email
+                ) : (
+                  "--"
+                )}
               </p>
             </DropdownItem>
-            <DropdownItem key="logout" color="danger" onPress={handleLogOut}>
+            <DropdownItem key="logout" color="danger" onPress={handleLogOut} className="text-danger">
               Log Out
             </DropdownItem>
           </DropdownMenu>
