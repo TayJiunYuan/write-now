@@ -18,6 +18,8 @@ class MeetingResponse(BaseModel):
     attendees: list[str]
     transcript: Optional[str] = ""
     action_items: Optional[list[str]] = []
+    meeting_minutes: Optional[list[str]] = []
+
 
 class MeetingRequest(BaseModel):
     programme_id: str
@@ -27,4 +29,3 @@ class MeetingRequest(BaseModel):
     duration_hours: int
     summary: str
     description: Optional[str] = ""
-

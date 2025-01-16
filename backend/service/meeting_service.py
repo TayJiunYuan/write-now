@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from service.auth_service import AuthService
 from service.user_service import UserService
+from service.openapi_service import OpenAIService
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 import json
@@ -8,6 +9,13 @@ from typing import Dict, List
 from db.db import db
 from typing import Optional
 from models.meeting import MeetingRequest, MeetingResponse
+from fastapi import Request
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+READ_AI_BOT_EMAIL = os.getenv("READ_AI_BOT_EMAIL")
 
 
 class MeetingService:
@@ -111,7 +119,7 @@ class MeetingService:
     @staticmethod
     async def create_meeting(meeting_request: MeetingRequest) -> MeetingResponse:
         # Get attendee emails
-        attendee_emails = []
+        attendee_emails = [READ_AI_BOT_EMAIL]
         for attendee_id in meeting_request.attendee_ids:
             user = await UserService.get_user_by_id(attendee_id)
             if not user:
@@ -124,7 +132,9 @@ class MeetingService:
             attendee_emails,
             meeting_request.start_time,
             meeting_request.duration_hours,
-            meeting_request.summary,
+            meeting_request.summary
+            + " - "
+            + meeting_request.start_time.strftime("%Y-%m-%d %H:%M:%S"),
             meeting_request.description,
         )
 
@@ -150,6 +160,14 @@ class MeetingService:
         return None
 
     @staticmethod
+    async def get_meeting_id_by_title(title: str) -> Optional[str]:
+        collection = db.get_collection(MeetingService.collection_name)
+        meeting = await collection.find_one({"title": title})
+        if meeting:
+            return meeting["id"]
+        return None
+
+    @staticmethod
     async def get_meetings(
         programme_id: Optional[str] = None,
         organizer_id: Optional[str] = None,
@@ -166,20 +184,32 @@ class MeetingService:
             meetings.append(MeetingResponse(**meeting))
         return meetings
 
-    # @staticmethod
-    # async def save_meeting_transcript(meeting_id: str):
-    #     # Get transcript from meetings account's google drive
-    #     # Save transcript to via meeting_id in db
-    #     collection = db.get_collection(MeetingService.collection_name)
-    #     meeting = await collection.find_one({"id": meeting_id})
-    #     if not meeting:
-    #         raise ValueError("Meeting not found")
-    #     transcript = await MeetingService.get_transcript(meeting["id"])
-    #     await collection.update_one({"id": meeting_id}, {"$set": {"transcript": transcript}})
-    #     return
+    @staticmethod
+    async def save_meeting_transcript_and_analysis(request: Request) -> MeetingResponse:
+        try:
+            body = await request.body()
+            body_dict = json.loads(body)
 
-    # @staticmethod
-    # async def get_transcript(meeting_id: str):
-    #     # Get transcript from meetings account's google drive
-    #     # Save transcript to via meeting_id in db
-    #     pass
+            transcript = json.dumps(body_dict["transcript"])
+            openai = OpenAIService(os.getenv("OPEN_API_KEY"))
+            analysis = openai.get_response(transcript)
+            collection = db.get_collection(MeetingService.collection_name)
+            meeting = await collection.find_one_and_update(
+                {"summary": body_dict["title"]},
+                {
+                    "$set": {
+                        "transcript": transcript,
+                        "action_items": analysis["action_items"],
+                        "meeting_minutes": analysis["meeting_minutes"],
+                    }
+                },
+                return_document=True,
+            )
+            if meeting:
+                meeting["id"] = str(meeting.pop("_id"))
+                return MeetingResponse(**meeting)
+            return None
+        except Exception as e:
+            raise ValueError(
+                f"Failed to save meeting transcript and action items: {str(e)}"
+            )
