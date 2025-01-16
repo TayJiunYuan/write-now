@@ -11,7 +11,7 @@ import {
   Input,
 } from "@nextui-org/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
-import { createMeetings } from "../services/api";
+import { createNewMeeting } from "../services/api";
 
 export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
   const [startTime, setStartTime] = useState(new Date());
@@ -33,15 +33,16 @@ export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
 
     const meetingData = {
       programme_id: "67887f462f43d9720fbe448a",
-      organizer_id: "108892597123264895192",
+      organizer_id: "118276801488272131566",
       attendee_ids: ["108892597123264895192", "118276801488272131566"],
       start_time: isoDate,
       duration_hours: durationHours,
       summary: summary,
       description: description,
     };
+
     console.log(meetingData);
-    createMeetings(meetingData);
+    createNewMeeting(meetingData);
     onClose();
   };
 

@@ -61,9 +61,9 @@ export const getMeetings = (programmeID) => {
     });
 };
 
-export const createMeetings = (meetingData) => {
+export const createNewMeeting = (meetingData) => {
   return api
-    .post("/meetings")
+    .post("/meetings/create", meetingData)
     .then((response) => {
       return response.data;
     })

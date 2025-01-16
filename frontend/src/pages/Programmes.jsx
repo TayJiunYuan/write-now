@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { categories } from "../constants/ProgrammesElements";
 import { Link } from "react-router-dom";
-import { getAllProgrammes, getUsers } from "../services/api";
+import { getAllProgrammes } from "../services/api";
+import { Button } from "@nextui-org/react";
+import { CreateProgrammeModal } from "../components/CreateProgrammeModal";
 
 const Programmes = () => {
   const [loading, setLoading] = useState(false);
@@ -9,6 +11,11 @@ const Programmes = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [programmes, setProgrammes] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
 
   const fetchData = async () => {
     try {
@@ -34,7 +41,6 @@ const Programmes = () => {
     if (!selectedDate) return programmes;
 
     return programmes.filter((event) => {
-      console.log(event.datetime);
       const programmeDate = event.datetime;
       const eventDateString = programmeDate.split("T")[0];
       return eventDateString === selectedDate;
@@ -45,42 +51,20 @@ const Programmes = () => {
     if (selectedCategory === "All Programmes") return programmes;
 
     return programmes.filter((programme) => {
-      console.log(programme);
       return programme.type === selectedCategory;
     });
   };
 
-  const formatMonth = (month) => {
-    const monthMap = {
-      Jan: "01",
-      Feb: "02",
-      Mar: "03",
-      Apr: "04",
-      May: "05",
-      Jun: "06",
-      Jul: "07",
-      Aug: "08",
-      Sep: "09",
-      Oct: "10",
-      Nov: "11",
-      Dec: "12",
-    };
-    return monthMap[month] || "01"; // Default to '01' if invalid month (though you shouldn't get this)
-  };
-
   useEffect(() => {
-    console.log(selectedDate);
     setFilteredEvents(filterEventsByDate(selectedDate));
   }, [selectedDate]);
 
   useEffect(() => {
-    console.log(selectedCategory);
     setFilteredEvents(filterEventsByCategory(selectedCategory));
   }, [selectedCategory]);
 
   useEffect(() => {
     setFilteredEvents(programmes);
-    console.log(programmes);
   }, [programmes]);
 
   useEffect(() => {
@@ -148,6 +132,15 @@ const Programmes = () => {
         </div>
       </div>
 
+      <div className="mt-8 items-center justify-end flex flex-row">
+        <Button
+          className="text-right text-base px-4 py-1 border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56"
+          onPress={handleOpen}
+        >
+          Create Programme
+        </Button>
+      </div>
+
       <div className="mt-8 space-y-6 pb-8">
         {filteredEvents.map((event, index) => {
           const date = new Date(event.datetime);
@@ -155,6 +148,14 @@ const Programmes = () => {
           const month = date.toLocaleDateString("default", { month: "short" });
           const year = date.getFullYear();
 
+          const time = date.toLocaleDateString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          const formattedTime = time.split(",")[1];
+
+          console.log(date);
           return (
             <div
               key={index}
@@ -168,7 +169,7 @@ const Programmes = () => {
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-bold">{event.name}</h3>
-                  <p className="mt-1 text-sm text-gray-600">{event.datetime}</p>
+                  <p className="mt-1 text-sm text-gray-600">{formattedTime}</p>
                   <p className="mt-1 text-sm text-gray-600">{event.location}</p>
                   <p className="mt-1 text-sm text-gray-600">{event.type}</p>
                   <p className="mt-2 text-gray-700 max-w-6xl">
@@ -189,6 +190,7 @@ const Programmes = () => {
           );
         })}
       </div>
+      <CreateProgrammeModal isOpen={isOpen} onClose={handleClose} />
     </div>
   );
 };
