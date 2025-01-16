@@ -64,11 +64,11 @@ class MeetingService:
                 "description": description,
                 "start": {
                     "dateTime": start_time.isoformat(),
-                    "timeZone": datetime.now().astimezone().tzinfo.tzname(None),
+                    "timeZone": "UTC",
                 },
                 "end": {
                     "dateTime": end_time.isoformat(),
-                    "timeZone": datetime.now().astimezone().tzinfo.tzname(None),
+                    "timeZone": "UTC",
                 },
                 "attendees": [{"email": email} for email in attendee_emails],
                 "conferenceData": {
