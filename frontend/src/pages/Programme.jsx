@@ -29,7 +29,14 @@ const Programme = () => {
         </Card>
 
         <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">Meetings</CardHeader>
+          <CardHeader className="text-lg font-bold mb-2">
+            <div className="flex justify-between items-center w-full">
+              <p>Meetings</p>
+              <button className="text-right px-4 py-1 border border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56">
+                Create Meetings
+              </button>
+            </div>
+          </CardHeader>
           <Divider />
           <CardBody>
             <p>
