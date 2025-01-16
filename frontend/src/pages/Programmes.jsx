@@ -79,6 +79,7 @@ const Programmes = () => {
 
   useEffect(() => {
     setFilteredEvents(programmes);
+    console.log(programmes);
   }, [programmes]);
 
   useEffect(() => {
@@ -149,34 +150,45 @@ const Programmes = () => {
       </div>
 
       <div className="mt-8 space-y-6 pb-8">
-        {filteredEvents.map((event, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-md shadow-md p-6 flex items-center justify-between"
-          >
-            <div className="flex items-center">
-              <div className="bg-gray-200 rounded-md p-4 text-center w-16">
-                {/* <p className="text-xl font-bold">{event.date.day}</p>
-                <p className="text-sm text-gray-600">{event.date.month}</p>
-                <p className="text-sm text-gray-600">{event.date.year}</p> */}
+        {filteredEvents.map((event, index) => {
+          const date = new Date(event.datetime);
+          const day = date.getDate();
+          const month = date.toLocaleDateString("default", { month: "short" });
+          const year = date.getFullYear();
+
+          return (
+            <div
+              key={index}
+              className="bg-white rounded-md shadow-md p-6 flex items-center justify-between"
+            >
+              <div className="flex items-center">
+                <div className="bg-gray-200 rounded-md p-4 text-center w-16">
+                  <p className="text-xl font-bold">{day}</p>
+                  <p className="text-sm text-gray-600">{month}</p>
+                  <p className="text-sm text-gray-600">{year}</p>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-bold">{event.name}</h3>
+                  <p className="mt-1 text-sm text-gray-600">{event.time}</p>
+                  <p className="mt-1 text-sm text-gray-600">{event.location}</p>
+                  <p className="mt-1 text-sm text-gray-600">{event.type}</p>
+                  <p className="mt-2 text-gray-700 max-w-6xl">
+                    {event.description}
+                  </p>
+                </div>
               </div>
-              <div className="ml-4">
-                <h3 className="text-lg font-bold">{event.name}</h3>
-                <p className="mt-1 text-sm text-gray-600">{event.time}</p>
-                <p className="mt-1 text-sm text-gray-600">{event.location}</p>
-                <p className="mt-1 text-sm text-gray-600">{event.type}</p>
-                <p className="mt-2 text-gray-700 max-w-6xl">
-                  {event.description}
-                </p>
-              </div>
+              <Link
+                key={index}
+                to={`/programmes/${event.id}`}
+                state={{ event }}
+              >
+                <button className="px-4 py-2 border border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56">
+                  VIEW DETAILS
+                </button>
+              </Link>
             </div>
-            <Link key={index} to={`/programmes/${event.id}`} state={{ event }}>
-              <button className="px-4 py-2 border border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56">
-                VIEW DETAILS
-              </button>
-            </Link>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
