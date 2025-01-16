@@ -16,13 +16,23 @@ export const CreateGroupModal = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [users, setUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
   const handleSubmit = () => {
-    const groupData = {
+    const groupName = {
       name: name,
     };
 
+    const attendees = {
+      string: s,
+    };
+
     onClose();
+  };
+
+  const handleSelectionChange = (selectedKeys) => {
+    setSelectedUsers(selectedKeys);
+    console.log("selected ids:", selectedKeys);
   };
 
   const fetchData = async () => {
@@ -40,10 +50,6 @@ export const CreateGroupModal = ({ isOpen, onClose }) => {
   useEffect(() => {
     fetchData();
   }, [isOpen]);
-
-  useEffect(() => {
-    console.log(users);
-  }, [users]);
 
   return (
     <Modal isOpen={isOpen} size={"md"} onClose={onClose}>
@@ -66,7 +72,20 @@ export const CreateGroupModal = ({ isOpen, onClose }) => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="attendees">Attendees</label>
+                  <label htmlFor="attendees">Select attendees</label>
+                  <Select
+                    className="max-w-xs"
+                    placeholder="Select attendee/s"
+                    selectionMode="multiple"
+                    selectedKeys={selectedUsers}
+                    onSelectionChange={handleSelectionChange}
+                  >
+                    {users.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.name}
+                      </SelectItem>
+                    ))}
+                  </Select>
                 </div>
               </div>
             </ModalBody>
