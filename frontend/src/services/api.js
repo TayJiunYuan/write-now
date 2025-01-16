@@ -72,3 +72,20 @@ export const createMeetings = (meetingData) => {
       throw error;
     });
 };
+
+export const createNewTask = (taskData) => {
+  const queryParams = {
+    taskData
+  };
+  console.log(taskData)
+
+  return api
+    .post("/tasks", { params: queryParams })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
