@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from service.auth_service import AuthService
 from service.user_service import UserService
-from service.openapi_service import OpenAIService
+from service.openapi_service import MeetingAnalysisAIService
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 import json
@@ -190,9 +190,12 @@ class MeetingService:
             body = await request.body()
             body_dict = json.loads(body)
 
+            # Get meeting analysis
             transcript = json.dumps(body_dict["transcript"])
-            openai = OpenAIService(os.getenv("OPEN_API_KEY"))
-            analysis = openai.get_response(transcript)
+            meeting_ai = MeetingAnalysisAIService(os.getenv("OPEN_API_KEY"))
+            analysis = meeting_ai.get_response(transcript)
+
+            # Update meeting with transcript and analysis
             collection = db.get_collection(MeetingService.collection_name)
             meeting = await collection.find_one_and_update(
                 {"summary": body_dict["title"]},
@@ -205,11 +208,12 @@ class MeetingService:
                 },
                 return_document=True,
             )
+
             if meeting:
                 meeting["id"] = str(meeting.pop("_id"))
                 return MeetingResponse(**meeting)
             return None
         except Exception as e:
             raise ValueError(
-                f"Failed to save meeting transcript and action items: {str(e)}"
+                f"Failed to save meeting transcript and analysis: {str(e)}"
             )
