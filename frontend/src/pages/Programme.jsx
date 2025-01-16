@@ -10,8 +10,13 @@ import {
 } from "@nextui-org/react";
 import { useLocation } from "react-router-dom";
 import { CreateMeetingModal } from "../components/CreateMeetingModal";
-import { getMeetings } from "../services/api";
+import {
+  getMeetings,
+  getUsersWithoutCredentials,
+  getTasksByProgrammeId,
+} from "../services/api";
 import { MeetingList } from "../components/MeetingList";
+import { TaskList } from "../components/TaskList";
 
 const Programme = () => {
   const location = useLocation();
@@ -19,6 +24,8 @@ const Programme = () => {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [meetings, setMeetings] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [users, setUsers] = useState([]);
 
   const programmeID = event.id;
   const title = event.name;
@@ -28,8 +35,14 @@ const Programme = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getMeetings(programmeID);
+      const [response, response1, response2] = await Promise.all([
+        getMeetings(programmeID),
+        getUsersWithoutCredentials(),
+        getTasksByProgrammeId(programmeID),
+      ]);
       setMeetings(response);
+      setUsers(response1);
+      setTasks(response2);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -37,13 +50,30 @@ const Programme = () => {
     }
   };
 
+  const fetchTask = async () => {
+    try {
+      setLoading(true);
+      const response = getTasksByProgrammeId(programmeID);
+      setTasks(response);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const userLookup = users.reduce((acc, user) => {
+    acc[user.id] = user.name;
+    return acc;
+  }, {});
+
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
-    console.log("title is:", title);
-  }, [title]);
+    console.log("tasks:", tasks);
+  }, [tasks]);
 
   return (
     <div className="pt-4 container mx-auto min-h-screen">
@@ -82,14 +112,19 @@ const Programme = () => {
           <CardHeader className="text-lg font-bold mb-2">People</CardHeader>
           <Divider />
           <div>
-            {Object.entries(event.groups).map(([group, names]) => (
+            {Object.entries(event.groups).map(([group, ids]) => (
               <div className="grid grid-cols-2" key={group}>
                 <CardBody className="font-semibold">
                   {group}
                   <div className="flex gap-3 items-center pt-2">
-                    {names.map((name) => (
-                      <Avatar key={name} name={name} />
-                    ))}
+                    {ids.map((id) => {
+                      const name = userLookup[id];
+                      return name ? (
+                        <Avatar key={id} name={name} />
+                      ) : (
+                        <Avatar key={id} name={id} />
+                      );
+                    })}
                   </div>
                 </CardBody>
               </div>
@@ -117,18 +152,16 @@ const Programme = () => {
           </CardBody>
         </Card>
 
-        <Card className="bg-white shadow-md rounded p-4 md:col-span-2">
+        {/* <Card className="bg-white shadow-md rounded p-4 md:col-span-2">
           <CardHeader className="text-lg font-bold mb-2">Tasklist</CardHeader>
           <Divider />
           <CardBody>
-            <Checkbox defaultSelected lineThrough>
-              Buy 8 tables
-            </Checkbox>
-            <Checkbox defaultSelected lineThrough>
-              Buy 16 chairs
-            </Checkbox>
+            {tasks.map((task, index) => (
+              <Checkbox key={index}>{task.description}</Checkbox>
+            ))}
           </CardBody>
-        </Card>
+        </Card> */}
+        <TaskList tasks={tasks} fetchTask={fetchTask} />
       </div>
       <CreateMeetingModal
         isOpen={isOpen}

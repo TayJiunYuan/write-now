@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -12,7 +12,7 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
-import { createNewMeeting } from "../services/api";
+import { createNewProgramme } from "../services/api";
 import { categoriess } from "../constants/ProgrammesElements";
 import { CreateGroupModal } from "./CreateGroupModal";
 
@@ -23,6 +23,7 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
   const [location, setLocation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [groupData, setGroupData] = useState(null);
 
   const handleSubmit = () => {
     const { year, month, day, hour, minute, second, millisecond, offset } =
@@ -37,12 +38,14 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
       name: name,
       description: description,
       type: selectedCategory,
-      organizer_id: "6801488272131566",
-      attendee_ids: ["108892597123264895192", "118276801488272131566"],
-      start_time: isoDate,
+      groups: groupData,
+      datetime: isoDate,
+      location: location,
     };
 
-    createNewMeeting(programmeData);
+    console.log(programmeData);
+
+    createNewProgramme(programmeData);
     onClose();
   };
 
@@ -51,12 +54,24 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
     console.log("Selected Category:", e.target.value);
   };
 
-  const handleShow = () => {
-    setShowForm(true);
+  const handleGroupDataSubmit = (data) => {
+    setGroupData(data);
+    console.log("Received group data:", data);
+
+    const attendees = data.attendees;
+    const result = {
+      [data.name]: attendees,
+    };
+
+    setGroupData(result);
   };
 
+  const handleShow = () => setShowForm(true);
   const handleClose = () => setShowForm(false);
 
+  useEffect(() => {
+    console.log(groupData);
+  }, [groupData]);
   return (
     <>
       <Modal isOpen={isOpen} size={"md"} onClose={onClose}>
@@ -146,7 +161,11 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
           )}
         </ModalContent>
       </Modal>
-      <CreateGroupModal isOpen={showForm} onClose={handleClose} />
+      <CreateGroupModal
+        isOpen={showForm}
+        onClose={handleClose}
+        onSubmit={handleGroupDataSubmit}
+      />
     </>
   );
 };

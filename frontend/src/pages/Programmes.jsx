@@ -11,11 +11,15 @@ const Programmes = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [programmes, setProgrammes] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
+  const [fetch, setFetch] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpen = () => setIsOpen(true);
-  const handleClose = () => setIsOpen(false);
+  const handleClose = () => {
+    setIsOpen(false);
+    setFetch(true);
+  };
 
   const fetchData = async () => {
     try {
@@ -69,7 +73,8 @@ const Programmes = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+    setFetch(false);
+  }, [fetch]);
 
   return (
     <div className="min-h-screen container mx-auto">
@@ -147,7 +152,7 @@ const Programmes = () => {
           const day = date.getDate();
           const month = date.toLocaleDateString("default", { month: "short" });
           const year = date.getFullYear();
-
+          date.setHours(date.getHours() + 8);
           const time = date.toLocaleDateString("en-US", {
             hour: "2-digit",
             minute: "2-digit",

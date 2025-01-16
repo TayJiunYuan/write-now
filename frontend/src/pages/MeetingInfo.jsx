@@ -9,6 +9,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import { useLocation } from "react-router-dom";
+import { sendTaskAI } from "../services/api";
 
 const MeetingInfo = () => {
   const location = useLocation();
@@ -24,9 +25,15 @@ const MeetingInfo = () => {
     setOpenTaskDrawer(true);
   };
 
+  const handlePress = () => {
+    const response = sendTaskAI(meeting.action_items);
+    console.log(response);
+  };
+
   useEffect(() => {
     console.log(meeting);
   }, []);
+
   return (
     <div className="pt-4 container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -107,7 +114,10 @@ const MeetingInfo = () => {
                   >
                     <span>• {action}</span>
 
-                    <Button className="text-right text-base px-4 py-1 border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56">
+                    <Button
+                      className="text-right text-base px-4 py-1 border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56"
+                      onPress={handlePress()}
+                    >
                       Create Task
                     </Button>
                   </li>

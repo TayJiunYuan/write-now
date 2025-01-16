@@ -12,27 +12,33 @@ import {
 } from "@nextui-org/react";
 import { getUsers } from "../services/api";
 
-export const CreateGroupModal = ({ isOpen, onClose }) => {
+export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
 
   const handleSubmit = () => {
-    const groupName = {
+    const array = Array.from(selectedUsers);
+    console.log(array);
+
+    const groupData = {
       name: name,
+      attendees: array,
     };
 
-    const attendees = {
-      string: s,
-    };
+    onSubmit(groupData);
 
     onClose();
+
+    // return groupData;
   };
 
   const handleSelectionChange = (selectedKeys) => {
     setSelectedUsers(selectedKeys);
     console.log("selected ids:", selectedKeys);
+
+    console.log(selectedUsers);
   };
 
   const fetchData = async () => {
@@ -93,7 +99,7 @@ export const CreateGroupModal = ({ isOpen, onClose }) => {
               <Button auto flat color="error" onPress={onClose}>
                 Close
               </Button>
-              <Button auto onPress={handleSubmit}>
+              <Button auto type="submit" onPress={handleSubmit}>
                 Create Group
               </Button>
             </ModalFooter>

@@ -25,10 +25,7 @@ export const MeetingList = ({ meetings, title }) => {
             <p>
               {formattedDate} -{" "}
               <Link to={`/meetings/${meeting.id}`} state={{ meeting, title }}>
-                <button
-                  className="text-blue-500 underline"
-                  onClick={() => viewMeetingDetails(meeting)}
-                >
+                <button className="text-blue-500 underline">
                   View Details
                 </button>
               </Link>
@@ -38,8 +35,4 @@ export const MeetingList = ({ meetings, title }) => {
       })}
     </div>
   );
-};
-
-const viewMeetingDetails = (meeting) => {
-  console.log("Viewing details for meeting:", meeting);
 };
