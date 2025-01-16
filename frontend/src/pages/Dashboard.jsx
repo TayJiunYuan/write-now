@@ -24,7 +24,7 @@ const Dashboard = () => {
   }, [selectedDate]);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 pt-[65px]">
       <h2 className="p-4 text-3xl font-bold text-primary">
         Welcome back, John.
       </h2>
