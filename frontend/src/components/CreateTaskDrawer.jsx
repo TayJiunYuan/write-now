@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { createNewTask, getUsers, getAllProgrammes } from "../services/api";
+import { Toast } from "./Toast";
 
 const CreateTaskDrawer = ({
   isOpen,
@@ -35,6 +36,7 @@ const CreateTaskDrawer = ({
     programmes || []
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,9 +72,10 @@ const CreateTaskDrawer = ({
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
+    const assignerId = String(JSON.parse(localStorage.getItem("userId")));
     const taskData = {
-      assignee_id: isForOthers ? assigneeId : null,
-      assigner_id: String(JSON.parse(localStorage.getItem("userId"))),
+      assignee_id: isForOthers ? assigneeId : assignerId,
+      assigner_id: assignerId,
       name: taskName,
       description: taskDescription,
       deadline: taskDeadline,
@@ -82,6 +85,7 @@ const CreateTaskDrawer = ({
 
     createNewTask(taskData)
       .then(() => {
+        setToastMessage("Task created successfully! 🎉");
         onOpenChange(false);
       })
       .catch((err) => {
@@ -98,113 +102,118 @@ const CreateTaskDrawer = ({
   };
 
   return (
-    <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
-      <DrawerContent>
-        <DrawerHeader className="flex flex-col gap-1">
-          Create a new task
-        </DrawerHeader>
-        <DrawerBody>
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            <Form
-              id="create-task-form"
-              className="w-full max-w-sm gap-6"
-              validationBehavior="native"
-              onSubmit={handleFormSubmit}
-            >
-              <Select
-                isRequired
-                label="Create task for"
-                placeholder="Select an option"
-                variant="bordered"
-                onChange={(e) =>
-                  setIsForOthers(e.target.value === "others" ? true : false)
-                }
+    <>
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage("")} />
+      )}
+      <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+        <DrawerContent>
+          <DrawerHeader className="flex flex-col gap-1">
+            Create a new task
+          </DrawerHeader>
+          <DrawerBody>
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <Form
+                id="create-task-form"
+                className="w-full max-w-sm gap-6"
+                validationBehavior="native"
+                onSubmit={handleFormSubmit}
               >
-                <SelectItem key="self">Self</SelectItem>
-                <SelectItem key="others">Others</SelectItem>
-              </Select>
-              {isForOthers && (
                 <Select
                   isRequired
-                  label="Assignee"
-                  placeholder="Select an assignee"
+                  label="Create task for"
+                  placeholder="Select an option"
                   variant="bordered"
-                  value={assigneeId}
-                  onChange={(e) => setAssigneeId(e.target.value)}
+                  onChange={(e) =>
+                    setIsForOthers(e.target.value === "others" ? true : false)
+                  }
                 >
-                  {availableAssignees.length > 0 ? (
-                    availableAssignees.map((assignee) => (
-                      <SelectItem key={assignee.id} value={assignee.id}>
-                        {assignee.name}
+                  <SelectItem key="self">Self</SelectItem>
+                  <SelectItem key="others">Others</SelectItem>
+                </Select>
+                {isForOthers && (
+                  <Select
+                    isRequired
+                    label="Assignee"
+                    placeholder="Select an assignee"
+                    variant="bordered"
+                    value={assigneeId}
+                    onChange={(e) => setAssigneeId(e.target.value)}
+                  >
+                    {availableAssignees.length > 0 ? (
+                      availableAssignees.map((assignee) => (
+                        <SelectItem key={assignee.id} value={assignee.id}>
+                          {assignee.name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem key="no-options" disabled>
+                        No assignees available
+                      </SelectItem>
+                    )}
+                  </Select>
+                )}
+                <Input
+                  isRequired
+                  label="Task Name"
+                  placeholder="Enter task name"
+                  variant="bordered"
+                  value={taskName}
+                  onChange={(e) => setTaskName(e.target.value)}
+                />
+                <Textarea
+                  isRequired
+                  label="Task Description"
+                  placeholder="Enter task description"
+                  variant="bordered"
+                  value={taskDescription}
+                  onChange={(e) => setTaskDescription(e.target.value)}
+                />
+                <Select
+                  isRequired
+                  label="Programme"
+                  placeholder="Select programme"
+                  variant="underlined"
+                  value={programmeId}
+                  onChange={(e) => setProgrammeId(e.target.value)}
+                >
+                  {availableProgrammes.length > 0 ? (
+                    availableProgrammes.map((programme) => (
+                      <SelectItem key={programme.id} value={programme.id}>
+                        {programme.name}
                       </SelectItem>
                     ))
                   ) : (
                     <SelectItem key="no-options" disabled>
-                      No assignees available
+                      No programmes available
                     </SelectItem>
                   )}
                 </Select>
-              )}
-              <Input
-                isRequired
-                label="Task Name"
-                placeholder="Enter task name"
-                variant="bordered"
-                value={taskName}
-                onChange={(e) => setTaskName(e.target.value)}
-              />
-              <Textarea
-                isRequired
-                label="Task Description"
-                placeholder="Enter task description"
-                variant="bordered"
-                value={taskDescription}
-                onChange={(e) => setTaskDescription(e.target.value)}
-              />
-              <Select
-                isRequired
-                label="Programme"
-                placeholder="Select programme"
-                variant="underlined"
-                value={programmeId}
-                onChange={(e) => setProgrammeId(e.target.value)}
-              >
-                {availableProgrammes.length > 0 ? (
-                  availableProgrammes.map((programme) => (
-                    <SelectItem key={programme.id} value={programme.id}>
-                      {programme.name}
-                    </SelectItem>
-                  ))
-                ) : (
-                  <SelectItem key="no-options" disabled>
-                    No programmes available
-                  </SelectItem>
-                )}
-              </Select>
-              <Input
-                isRequired
-                label="Deadline"
-                placeholder="Enter task deadline"
-                type="date"
-                variant="bordered"
-                value={taskDeadline}
-                onChange={(e) => setTaskDeadline(e.target.value)}
-              />
-            </Form>
-          )}
-        </DrawerBody>
-        <DrawerFooter>
-          <Button color="danger" variant="flat" onPress={handleDrawerClose}>
-            Close
-          </Button>
-          <Button color="primary" type="submit" form="create-task-form">
-            Create Task
-          </Button>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+                <Input
+                  isRequired
+                  label="Deadline"
+                  placeholder="Enter task deadline"
+                  type="date"
+                  variant="bordered"
+                  value={taskDeadline}
+                  onChange={(e) => setTaskDeadline(e.target.value)}
+                />
+              </Form>
+            )}
+          </DrawerBody>
+          <DrawerFooter>
+            <Button color="danger" variant="flat" onPress={handleDrawerClose}>
+              Close
+            </Button>
+            <Button color="primary" type="submit" form="create-task-form">
+              Create Task
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 };
 
