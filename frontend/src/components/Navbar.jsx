@@ -17,7 +17,7 @@ import { getUserById } from "../services/api";
 export const StyledNavbar = () => {
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [isNavbarShown, setIsNavbarShown] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,9 +34,9 @@ export const StyledNavbar = () => {
         const response = await getUserById(userId);
         setUser(response);
       } catch (err) {
-        setIsNavbarShown(false);
+        setIsLoading(false);
       } finally {
-        setIsNavbarShown(true);
+        setIsLoading(true);
       }
     };
 
@@ -48,61 +48,59 @@ export const StyledNavbar = () => {
   const handleLogOut = () => {
     setUser(null);
     localStorage.clear();
-    setIsNavbarShown(false);
+    setIsLoading(false);
     navigate("/");
   };
 
   return (
-    isNavbarShown && (
-      <Navbar isBordered>
-        <NavbarBrand>
-          <p className="font-bold text-inherit">SBC</p>
-        </NavbarBrand>
+    <Navbar isBordered>
+      <NavbarBrand>
+        <p className="font-bold text-inherit">SBC</p>
+      </NavbarBrand>
 
-        <NavbarContent className="gap-4" justify="center">
-          <NavbarItem>
-            <Link color="foreground" href="/email">
-              Email
-            </Link>
-          </NavbarItem>
-          <NavbarItem isActive>
-            <Link aria-current="page" href="/dashboard">
-              Dashboard
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link color="foreground" href="/programmes">
-              Programmes
-            </Link>
-          </NavbarItem>
-        </NavbarContent>
+      <NavbarContent className="gap-4" justify="center">
+        <NavbarItem>
+          <Link color="foreground" href="/email">
+            Email
+          </Link>
+        </NavbarItem>
+        <NavbarItem isActive>
+          <Link aria-current="page" href="/dashboard">
+            Dashboard
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/programmes">
+            Programmes
+          </Link>
+        </NavbarItem>
+      </NavbarContent>
 
-        <NavbarContent as="div" justify="end">
-          <Dropdown placement="bottom-end">
-            <DropdownTrigger>
-              <Avatar
-                as="button"
-                className="transition-transform"
-                color="default"
-                name=""
-                size="sm"
-                src=""
-              />
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">Signed in as</p>
-                <p className="font-semibold">
-                  {user?.email ? user?.email : "User Email"}
-                </p>
-              </DropdownItem>
-              <DropdownItem key="logout" color="danger" onPress={handleLogOut}>
-                Log Out
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </NavbarContent>
-      </Navbar>
-    )
+      <NavbarContent as="div" justify="end">
+        <Dropdown placement="bottom-end">
+          <DropdownTrigger>
+            <Avatar
+              as="button"
+              className="transition-transform"
+              color="default"
+              name=""
+              size="sm"
+              src=""
+            />
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Profile Actions" variant="flat">
+            <DropdownItem key="profile" className="h-14 gap-2">
+              <p className="font-semibold">Signed in as</p>
+              <p className="font-semibold">
+                {isLoading ? "Loading..." : user?.email ? user?.email : "--"}
+              </p>
+            </DropdownItem>
+            <DropdownItem key="logout" color="danger" onPress={handleLogOut}>
+              Log Out
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </NavbarContent>
+    </Navbar>
   );
 };

@@ -13,9 +13,11 @@ import MeetingInfo from "./pages/MeetingInfo";
 import TaskInfo from "./pages/TaskInfo";
 
 const App = () => {
+  const userId = localStorage.getItem("userId");
+
   return (
     <Router>
-      <StyledNavbar />
+      {userId && <StyledNavbar />}
       <div className="bg-gray-100 min-h-screen">
         <Routes>
           <Route path="/" element={<AuthLogin />} />
