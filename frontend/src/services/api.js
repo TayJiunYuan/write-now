@@ -74,13 +74,8 @@ export const createMeetings = (meetingData) => {
 };
 
 export const createNewTask = (taskData) => {
-  const queryParams = {
-    taskData
-  };
-  console.log(taskData)
-
   return api
-    .post("/tasks", { params: queryParams })
+    .post("/tasks", taskData)
     .then((response) => {
       return response.data;
     })
