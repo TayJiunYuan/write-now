@@ -37,7 +37,7 @@ export const categories = [
   "General",
   "Sing Lit: Read Our World Featured",
   "Book Launch",
-  "Singapore Translation Symposium",
+  "Symposium",
   "Singapore Writers Festival",
   "The Writers Series",
   "SBC Academy",

@@ -7,11 +7,9 @@ import {
   Calendar,
 } from "@nextui-org/react";
 import { CalendarSearch } from "lucide-react";
-
 import { TaskTable } from "../components/TaskTable";
 import { EmailSummary } from "../components/EmailSummary";
 import { CalendarContent } from "../components/CalendarContent";
-
 import { userCalendarEvents } from "../constants/CalendarElements";
 
 const Dashboard = () => {
@@ -20,7 +18,7 @@ const Dashboard = () => {
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
-  
+
   useEffect(() => {
     console.log(selectedDate);
   }, [selectedDate]);
