@@ -29,6 +29,22 @@ export const getUsers = () => {
     });
 };
 
+export const getUserById = (userId) => {
+  const queryParams = {
+    user_id: userId,
+  };
+
+  return api
+    .get("/users", { params: queryParams })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
 export const getMeetings = (programmeID) => {
   return api
     .get("/meetings", {
