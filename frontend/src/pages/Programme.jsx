@@ -10,18 +10,39 @@ import {
 } from "@nextui-org/react";
 import { useLocation } from "react-router-dom";
 import { CreateMeetingModal } from "../components/CreateMeetingModal";
+import { getMeetings } from "../services/api";
+
 const Programme = () => {
   const location = useLocation();
   const { event } = location.state || {};
+  const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const programmeID = event.id;
+  const [meetings, setMeetings] = useState([]);
 
+  const programmeID = event.id;
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getMeetings(programmeID);
+      setMeetings(response);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     console.log(programmeID);
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    console.log("meetings", meetings);
+  }, [meetings]);
 
   return (
     <div className="pt-4 container mx-auto min-h-screen">

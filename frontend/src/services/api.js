@@ -29,9 +29,13 @@ export const getUsers = () => {
     });
 };
 
-export const getMeetings = () => {
+export const getMeetings = (programmeID) => {
   return api
-    .get("/meetings")
+    .get("/meetings", {
+      params: {
+        programme_id: programmeID,
+      },
+    })
     .then((response) => {
       return response.data;
     })

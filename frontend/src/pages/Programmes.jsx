@@ -35,7 +35,8 @@ const Programmes = () => {
 
     return programmes.filter((event) => {
       console.log(event.datetime);
-      const eventDateString = event.dateTime.split("T")[0];
+      const programmeDate = event.datetime;
+      const eventDateString = programmeDate.split("T")[0];
       return eventDateString === selectedDate;
     });
   };
