@@ -84,3 +84,32 @@ export const createNewTask = (taskData) => {
       throw error;
     });
 };
+
+export const getEmailsShortSum = (userId) => {
+  return api
+    .get(`/emails/with_short_summary/${userId}`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const getEmailsLongSum = (userId, emailId) => {
+  const queryParams = {
+    user_id: userId,
+    email_id: emailId,
+  };
+
+  return api
+    .get(`/emails/${userId}/${emailId}/long_summary`, { params: queryParams })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};

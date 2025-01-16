@@ -48,7 +48,7 @@ export const StyledNavbar = () => {
   const handleLogOut = () => {
     setUser(null);
     localStorage.removeItem("userId");
-    setIsNavbarShown(false)
+    setIsNavbarShown(false);
     navigate("/");
   };
 
