@@ -45,3 +45,7 @@ class TaskResponse(BaseModel):
     status: TaskStatus
     programme_id: str
     assigned_to_self: bool
+
+class TaskDetailsResponse(BaseModel):
+    name: Optional[str]
+    description: Optional[str]

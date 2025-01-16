@@ -1,8 +1,10 @@
-from models.task import TaskRequest, TaskResponse
+from models.task import TaskRequest, TaskResponse, TaskDetailsResponse
 from db.db import db
 from bson import ObjectId
 from typing import Optional, List
 from datetime import datetime
+from service.openapi_service import TaskCreationAIService
+import os
 
 
 class TaskService:
@@ -90,3 +92,9 @@ class TaskService:
             return result.deleted_count > 0
         except Exception:
             return False
+
+    @staticmethod
+    async def task_details_with_ai(action_item: str) -> TaskDetailsResponse:
+        task_creation_ai_service = TaskCreationAIService(os.getenv("OPEN_API_KEY"))
+        response = task_creation_ai_service.get_response(action_item)
+        return TaskDetailsResponse(**response)
