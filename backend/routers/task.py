@@ -16,7 +16,7 @@ async def create_task(task: TaskRequest):
 async def get_tasks(
     assigner_id: Optional[str] = Query(None),
     assignee_id: Optional[str] = Query(None),
-    event_id: Optional[str] = Query(None),
+    programme_id: Optional[str] = Query(None),
 ):
     """
     Retrieve tasks with optional filters.
@@ -25,7 +25,7 @@ async def get_tasks(
     - Filter by event ID
     - No filters returns all tasks
     """
-    return await TaskService.get_tasks(assigner_id, assignee_id, event_id)
+    return await TaskService.get_tasks(assigner_id, assignee_id, programme_id)
 
 
 @router.get("/{task_id}", response_model=TaskResponse)

@@ -7,3 +7,5 @@ requests==2.32.3
 google-api-python-client 
 google-auth-httplib2 
 google-auth-oauthlib
+langchain==0.3.14
+langchain_openai==0.3.0

@@ -4,6 +4,7 @@ from enum import Enum
 from datetime import datetime
 import bson
 
+
 class TaskStatus(str, Enum):
     NOT_STARTED = "NOT_STARTED"
     IN_PROGRESS = "IN_PROGRESS"
@@ -17,7 +18,8 @@ class TaskRequest(BaseModel):
     description: str
     deadline: str
     status: TaskStatus = TaskStatus.NOT_STARTED
-    event_id: str
+    programme_id: str
+
 
 class Task(BaseModel):
     _id: Optional[bson.ObjectId]
@@ -28,8 +30,9 @@ class Task(BaseModel):
     created_at: str
     deadline: str
     status: TaskStatus
-    event_id: str
-    assigned_to_self: bool 
+    programme_id: str
+    assigned_to_self: bool
+
 
 class TaskResponse(BaseModel):
     id: str
@@ -40,5 +43,5 @@ class TaskResponse(BaseModel):
     created_at: str
     deadline: str
     status: TaskStatus
-    event_id: str
+    programme_id: str
     assigned_to_self: bool

@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from service.meeting_service import MeetingService
 from typing import List, Optional
 from models.meeting import MeetingResponse, MeetingRequest
-from fastapi import Query
+from fastapi import Query, Request
 
 router = APIRouter(prefix="/meetings", tags=["meetings"])
 
@@ -25,5 +25,12 @@ async def get_meeting(meeting_id: str) -> MeetingResponse:
 
 
 @router.get("/", response_model=List[MeetingResponse])
-async def get_meetings(organizer_id: Optional[str] = Query(None), programme_id: Optional[str] = Query(None)):
+async def get_meetings(
+    organizer_id: Optional[str] = Query(None), programme_id: Optional[str] = Query(None)
+):
     return await MeetingService.get_meetings(programme_id, organizer_id)
+
+
+@router.post("/save_transcript_and_analysis")
+async def save_transcript(request: Request) -> MeetingResponse:
+    return await MeetingService.save_meeting_transcript_and_analysis(request)
