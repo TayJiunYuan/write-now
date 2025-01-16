@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -6,12 +6,22 @@ import {
   CardBody,
   Checkbox,
   Avatar,
+  Button,
 } from "@nextui-org/react";
 import { useLocation } from "react-router-dom";
-
+import { CreateMeetingModal } from "../components/CreateMeetingModal";
 const Programme = () => {
   const location = useLocation();
   const { event } = location.state || {};
+  const [isOpen, setIsOpen] = useState(false);
+  const programmeID = event.id;
+
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
+
+  useEffect(() => {
+    console.log(programmeID);
+  }, []);
 
   return (
     <div className="pt-4 container mx-auto min-h-screen">
@@ -32,9 +42,12 @@ const Programme = () => {
           <CardHeader className="text-lg font-bold mb-2">
             <div className="flex justify-between items-center w-full">
               <p>Meetings</p>
-              <button className="text-right px-4 py-1 border border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56">
+              <Button
+                className="text-right text-base px-4 py-1 border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56"
+                onPress={handleOpen}
+              >
                 Create Meetings
-              </button>
+              </Button>
             </div>
           </CardHeader>
           <Divider />
@@ -101,6 +114,11 @@ const Programme = () => {
           </CardBody>
         </Card>
       </div>
+      <CreateMeetingModal
+        isOpen={isOpen}
+        onClose={handleClose}
+        id={programmeID}
+      />
     </div>
   );
 };

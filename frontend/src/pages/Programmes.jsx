@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { events, categories } from "../constants/ProgrammesElements";
+import { categories } from "../constants/ProgrammesElements";
 import { Link } from "react-router-dom";
 import { getAllProgrammes, getUsers } from "../services/api";
 
@@ -31,12 +31,11 @@ const Programmes = () => {
   };
 
   const filterEventsByDate = (selectedDate) => {
-    if (!selectedDate) return events;
+    if (!selectedDate) return programmes;
 
-    return events.filter((event) => {
-      const eventDateString = `${event.date.year}-${formatMonth(
-        event.date.month
-      )}-${event.date.day}`;
+    return programmes.filter((event) => {
+      console.log(event.datetime);
+      const eventDateString = event.dateTime.split("T")[0];
       return eventDateString === selectedDate;
     });
   };
@@ -69,6 +68,7 @@ const Programmes = () => {
   };
 
   useEffect(() => {
+    console.log(selectedDate);
     setFilteredEvents(filterEventsByDate(selectedDate));
   }, [selectedDate]);
 
