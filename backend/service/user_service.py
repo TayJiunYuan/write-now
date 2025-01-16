@@ -1,5 +1,5 @@
 from db.db import db
-from models.user import User, User_without_credentials
+from models.user import User, UserWithoutCredentials
 
 
 class UserService:
@@ -12,17 +12,19 @@ class UserService:
         async for document in cursor:
             users.append(User(**document))
         return users
-    
+
     @staticmethod
-    async def get_all_users_without_credentials() -> list[User_without_credentials]:
+    async def get_all_users_without_credentials() -> list[UserWithoutCredentials]:
         users = []
         print("Getting all users without credentials")
-        cursor = db.get_collection(UserService.collection_name).find({}, {"credentials": 0})
+        cursor = db.get_collection(UserService.collection_name).find(
+            {}, {"credentials": 0}
+        )
         async for document in cursor:
-            users.append(User_without_credentials(**document))
+            users.append(UserWithoutCredentials(**document))
         print(users)
         return users
-    
+
     @staticmethod
     async def get_user_by_id(google_id: str) -> User | None:
         try:
@@ -33,13 +35,17 @@ class UserService:
                 return User(**document)
         except Exception:
             return None
-        
+
     @staticmethod
-    async def get_user_without_credentials_by_id(google_id: str) -> User_without_credentials | None:
+    async def get_UserWithoutCredentials_by_id(
+        google_id: str,
+    ) -> UserWithoutCredentials | None:
         try:
-            document = await db.get_collection(UserService.collection_name).find_one({"id": google_id}, {"credentials": 0})
+            document = await db.get_collection(UserService.collection_name).find_one(
+                {"id": google_id}, {"credentials": 0}
+            )
             if document:
-                return User_without_credentials(**document)
+                return UserWithoutCredentials(**document)
         except Exception:
             return None
 
@@ -48,10 +54,9 @@ class UserService:
         document = user.dict()
         await db.get_collection(UserService.collection_name).insert_one(document)
         return user
-    
+
     @staticmethod
     async def update_user_credentials(user_id: str, credentials: str):
         await db.get_collection(UserService.collection_name).update_one(
-            {"id": user_id},
-            {"$set": {"credentials": credentials}}
+            {"id": user_id}, {"$set": {"credentials": credentials}}
         )
