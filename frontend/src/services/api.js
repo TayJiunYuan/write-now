@@ -72,3 +72,15 @@ export const createNewMeeting = (meetingData) => {
       throw error;
     });
 };
+
+export const createNewTask = (taskData) => {
+  return api
+    .post("/tasks", taskData)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};

@@ -12,12 +12,6 @@ async def create_programme(programme: ProgrammeRequest):
     return await ProgrammeService.create_programme(programme)
 
 
-@router.get("/", response_model=List[ProgrammeResponse])
-async def get_all_programmes():
-    """Get all programmes."""
-    return await ProgrammeService.get_all_programmes()
-
-
 @router.get("/{programme_id}", response_model=ProgrammeResponse)
 async def get_programme(programme_id: str):
     """Get a programme by ID."""
@@ -25,6 +19,12 @@ async def get_programme(programme_id: str):
     if not programme:
         raise HTTPException(status_code=404, detail="Programme not found")
     return programme
+
+
+@router.get("/", response_model=List[ProgrammeResponse])
+async def get_all_programmes():
+    """Get all programmes."""
+    return await ProgrammeService.get_all_programmes()
 
 
 @router.put("/{programme_id}", response_model=ProgrammeResponse)
