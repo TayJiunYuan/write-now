@@ -14,9 +14,14 @@ const MeetingInfo = () => {
   const location = useLocation();
   const { meeting, title } = location.state || {};
   const summaryTitle = meeting.summary.split("-")[0];
+  const [openTaskDrawer, setOpenTaskDrawer] = useState(false);
 
   const handleJoinMeeting = () => {
     window.location.href = meeting.meet_link;
+  };
+
+  const handleCreateTask = () => {
+    setOpenTaskDrawer(true);
   };
 
   useEffect(() => {
@@ -114,6 +119,7 @@ const MeetingInfo = () => {
           </CardBody>
         </Card>
       </div>
+      {/* <CreateTaskDrawer /> */}
     </div>
   );
 };
