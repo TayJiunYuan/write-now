@@ -1,14 +1,23 @@
 import { useState, useEffect } from "react";
-import { Button, Spinner } from "@nextui-org/react";
-import { getEmailsShortSum, getEmailsLongSum } from "../services/api";
+import { Button, Spinner, Badge, Link, useDisclosure } from "@nextui-org/react";
+import {
+  getEmailsShortSum,
+  getEmailsLongSum,
+  getTaskDetailsWithAI,
+} from "../services/api";
+import CreateTaskDrawer from "../components/CreateTaskDrawer";
 
 export const Email = () => {
   const [emails, setEmails] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [emailThread, setEmailThread] = useState(null);
-
+  const [relatedEmails, setRelatedEmails] = useState([]);
   const [isInboxLoading, setIsInboxLoading] = useState(false);
   const [isEmailThreadLoading, setIsEmailThreadLoading] = useState(false);
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [withAIData, setWithAIData] = useState(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
 
   const userId = String(localStorage.getItem("userId"));
 
@@ -40,8 +49,8 @@ export const Email = () => {
         console.error("Error fetching emails:", err);
       })
       .finally(() => {
-        setIsInboxLoading(false)
-      })
+        setIsInboxLoading(false);
+      });
   }, []);
 
   const handleEmailClick = async (emailId) => {
@@ -58,13 +67,26 @@ export const Email = () => {
     }
   };
 
+  const onOpenChangeWithAI = async (summary) => {
+    try {
+      setIsLoadingAI(true);
+      const data = await getTaskDetailsWithAI(summary);
+      setWithAIData(data);
+    } catch (error) {
+      console.error("Error fetching AI data:", error);
+      setWithAIData(null);
+    } finally {
+      setIsLoadingAI(false);
+    }
+
+    onOpen(); // Open the drawer
+  };
+
   return (
-    <div className="flex flex-col sm:flex-row h-screen bg-gray-50">
+    <div className="flex flex-col sm:flex-row h-screen bg-gray-50 pt-[65px]">
       {/* Left Section: Inbox */}
       <div className="sm:w-1/3 bg-white shadow-lg rounded-lg p-6 overflow-y-auto">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-          Inbox (Last 7 Days)
-        </h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Inbox</h2>
         {isInboxLoading ? (
           <div className="flex justify-center items-center h-32">
             <Spinner />
@@ -72,29 +94,38 @@ export const Email = () => {
         ) : emails.length === 0 ? (
           <p className="text-gray-500">Inbox is empty.</p>
         ) : (
-          <div>
+          <div className="flex flex-col w-full">
             {Object.values(emails).map((email) => (
-              <div
-                key={email.id}
-                className="cursor-pointer p-4 bg-gray-100 rounded-lg mb-3 hover:bg-gray-200 transition duration-300"
-                onClick={() => handleEmailClick(email.id)}
+              <Badge
+                color="primary"
+                shape="circle"
+                size="lg"
+                content="Unread"
+                placement="top-right"
+                isInvisible={!email.is_unread}
               >
-                <p className="font-semibold text-lg text-gray-800">
-                  {email.subject}
-                </p>
-                <p className="text-sm text-gray-600">{email.sender}</p>
-                <p className="text-xs text-gray-400">{email.date}</p>
-                <p className="text-sm text-gray-700 mt-1">
-                  {email.short_summary}
-                </p>
-              </div>
+                <div
+                  key={email.id}
+                  className="relative w-full cursor-pointer p-4 bg-gray-100 rounded-lg mb-3 hover:bg-gray-200 transition duration-300"
+                  onClick={() => handleEmailClick(email.id)}
+                >
+                  <p className="font-semibold text-lg text-gray-800">
+                    {email.subject}
+                  </p>
+                  <p className="text-sm text-gray-600">{email.sender}</p>
+                  <p className="text-xs text-gray-400">{email.date}</p>
+                  <p className="text-sm text-gray-700 mt-1">
+                    {email.short_summary}
+                  </p>
+                </div>
+              </Badge>
             ))}
           </div>
         )}
       </div>
 
       {/* Right Section: Email Preview */}
-      <div className="sm:w-2/3 bg-white shadow-lg rounded-lg p-6 overflow-y-auto">
+      <div className="sm:w-2/3 bg-white shadow-lg rounded-lg p-6 overflow-y-auto relative">
         {selectedEmail && !isEmailThreadLoading ? (
           <div>
             <h3 className="text-2xl font-semibold text-gray-800 mb-4">
@@ -108,6 +139,41 @@ export const Email = () => {
                 {emailThread?.thread_size} emails in this thread
               </p>
             </div>
+            <div className="absolute bottom-4 right-4 flex gap-4">
+              <Link
+                href={emailThread.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                color="primary"
+                size="lg"
+                isExternal
+                showAnchorIcon
+              >
+                <Button
+                  color="primary"
+                  className="px-6 py-2 transition duration-200"
+                  radius="full"
+                >
+                  Go to Email Thread
+                </Button>
+              </Link>
+              <Button
+                color="primary"
+                className="px-6 py-2 transition duration-200"
+                onPress={onOpen}
+              >
+                Create Task
+              </Button>
+              <Button
+                isLoading={isLoadingAI}
+                color="secondary"
+                radius="full"
+                className="px-6 py-2 transition duration-200"
+                onPress={() => onOpenChangeWithAI(emailThread.long_summary)}
+              >
+                Create Task with AI
+              </Button>
+            </div>
           </div>
         ) : isEmailThreadLoading ? (
           <div className="flex justify-center items-center h-32">
@@ -119,20 +185,11 @@ export const Email = () => {
           </p>
         )}
       </div>
-
-      {/* Bottom Section: Create Task Options */}
-      {selectedEmail && (
-        <div className="w-full bg-gray-100 p-4 shadow-inner mt-6 sm:mt-0 sm:border-t">
-          <div className="flex justify-end gap-4">
-            <Button className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">
-              Create Task
-            </Button>
-            <Button className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
-              Create Task with AI
-            </Button>
-          </div>
-        </div>
-      )}
+      <CreateTaskDrawer
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        withAIData={withAIData}
+      />
     </div>
   );
 };

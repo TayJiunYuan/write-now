@@ -21,6 +21,7 @@ const CreateTaskDrawer = ({
   onOpenChange,
   assignees = [],
   programmes = [],
+  withAIData = null,
 }) => {
   const [isForOthers, setIsForOthers] = useState(false);
 
@@ -160,7 +161,7 @@ const CreateTaskDrawer = ({
                   label="Task Name"
                   placeholder="Enter task name"
                   variant="bordered"
-                  value={taskName}
+                  value={withAIData.name || taskName}
                   onChange={(e) => setTaskName(e.target.value)}
                 />
                 <Textarea
@@ -168,7 +169,7 @@ const CreateTaskDrawer = ({
                   label="Task Description"
                   placeholder="Enter task description"
                   variant="bordered"
-                  value={taskDescription}
+                  value={withAIData.description || taskDescription}
                   onChange={(e) => setTaskDescription(e.target.value)}
                 />
                 <Select

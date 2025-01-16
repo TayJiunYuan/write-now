@@ -108,3 +108,19 @@ export const getEmailsLongSum = (userId, emailId) => {
       throw error;
     });
 };
+
+export const getTaskDetailsWithAI = (actionItem) => {
+  const requestBody = {
+    action_item: actionItem,
+  };
+
+  return api
+    .post(`/tasks/task_details_with_ai`, requestBody)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
