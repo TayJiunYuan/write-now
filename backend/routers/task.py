@@ -22,15 +22,6 @@ async def create_task(task: TaskRequest):
     return await TaskService.create_task(task)
 
 
-@router.get("/{task_id}", response_model=TaskResponse)
-async def get_task(task_id: str):
-    """Retrieve a specific task by ID."""
-    task = await TaskService.get_task_by_id(task_id)
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
-    return task
-
-
 @router.get("/", response_model=List[TaskResponse])
 async def get_tasks(
     assigner_id: Optional[str] = Query(None),
@@ -45,6 +36,15 @@ async def get_tasks(
     - No filters returns all tasks
     """
     return await TaskService.get_tasks(assigner_id, assignee_id, programme_id)
+
+
+@router.get("/{task_id}", response_model=TaskResponse)
+async def get_task(task_id: str):
+    """Retrieve a specific task by ID."""
+    task = await TaskService.get_task_by_id(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task
 
 
 @router.put("/{task_id}", response_model=TaskResponse)
