@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Dict, List, Optional
 import bson
+from datetime import datetime
 
 
 class ProgrammeRequest(BaseModel):
@@ -8,7 +9,8 @@ class ProgrammeRequest(BaseModel):
     description: str
     type: str
     groups: Dict[str, List[str]]  # {group_name: [user_ids]}
-
+    datetime: datetime
+    location: str
 
 class Programme(BaseModel):
     _id: Optional[bson.ObjectId]
@@ -16,6 +18,8 @@ class Programme(BaseModel):
     description: str
     type: str
     groups: Dict[str, List[str]]
+    datetime: datetime
+    location: str
 
 
 class ProgrammeResponse(BaseModel):
@@ -24,3 +28,5 @@ class ProgrammeResponse(BaseModel):
     description: str
     type: str
     groups: Dict[str, List[str]]
+    datetime: datetime
+    location: str
