@@ -7,3 +7,9 @@ class User(BaseModel):
     email: EmailStr
     name: str
     credentials: Optional[str] = None  # Store encrypted credentials
+
+
+class UserWithoutCredentials(BaseModel):
+    id: str  # Google ID
+    email: EmailStr
+    name: str

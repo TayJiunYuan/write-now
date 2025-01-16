@@ -1,5 +1,5 @@
 from db.db import db
-from models.user import User
+from models.user import User, UserWithoutCredentials
 
 
 class UserService:
@@ -14,6 +14,18 @@ class UserService:
         return users
 
     @staticmethod
+    async def get_all_users_without_credentials() -> list[UserWithoutCredentials]:
+        users = []
+        print("Getting all users without credentials")
+        cursor = db.get_collection(UserService.collection_name).find(
+            {}, {"credentials": 0}
+        )
+        async for document in cursor:
+            users.append(UserWithoutCredentials(**document))
+        print(users)
+        return users
+
+    @staticmethod
     async def get_user_by_id(google_id: str) -> User | None:
         try:
             document = await db.get_collection(UserService.collection_name).find_one(
@@ -25,14 +37,26 @@ class UserService:
             return None
 
     @staticmethod
+    async def get_UserWithoutCredentials_by_id(
+        google_id: str,
+    ) -> UserWithoutCredentials | None:
+        try:
+            document = await db.get_collection(UserService.collection_name).find_one(
+                {"id": google_id}, {"credentials": 0}
+            )
+            if document:
+                return UserWithoutCredentials(**document)
+        except Exception:
+            return None
+
+    @staticmethod
     async def create_user(user: User) -> User:
         document = user.dict()
         await db.get_collection(UserService.collection_name).insert_one(document)
         return user
-    
+
     @staticmethod
     async def update_user_credentials(user_id: str, credentials: str):
         await db.get_collection(UserService.collection_name).update_one(
-            {"id": user_id},
-            {"$set": {"credentials": credentials}}
+            {"id": user_id}, {"$set": {"credentials": credentials}}
         )

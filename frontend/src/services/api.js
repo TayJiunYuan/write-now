@@ -44,3 +44,43 @@ export const getUserById = (userId) => {
       throw error;
     });
 };
+
+export const getMeetings = (programmeID) => {
+  return api
+    .get("/meetings", {
+      params: {
+        programme_id: programmeID,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const createMeetings = (meetingData) => {
+  return api
+    .post("/meetings")
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error creating meeting:", error);
+      throw error;
+    });
+};
+
+export const createNewTask = (taskData) => {
+  return api
+    .post("/tasks", taskData)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};

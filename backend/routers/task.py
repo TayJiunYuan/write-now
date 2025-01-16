@@ -6,6 +6,16 @@ from typing import Optional, List
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 
+@router.post("/task_details_with_ai", response_model=TaskDetailsResponse)
+async def task_details_with_ai(action_item: str = Body(..., embed=True)):
+    """Get AI-generated task details from an action item
+
+    Args:
+        action_item: The action item text from which to generate task details
+    """
+    return await TaskService.task_details_with_ai(action_item)
+
+
 @router.post("/", response_model=TaskResponse)
 async def create_task(task: TaskRequest):
     """Create a new task. Returns the created task."""
@@ -53,13 +63,3 @@ async def delete_task(task_id: str):
     if not success:
         raise HTTPException(status_code=404, detail="Task not found")
     return success
-
-
-@router.post("/task_details_with_ai", response_model=TaskDetailsResponse)
-async def task_details_with_ai(action_item: str = Body(..., embed=True)):
-    """Get AI-generated task details from an action item
-
-    Args:
-        action_item: The action item text from which to generate task details
-    """
-    return await TaskService.task_details_with_ai(action_item)
