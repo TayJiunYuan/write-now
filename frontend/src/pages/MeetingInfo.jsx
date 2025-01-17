@@ -26,8 +26,8 @@ const MeetingInfo = () => {
   };
 
   const handlePress = () => {
-    const response = getTaskDetailsWithAI(meeting.action_items);
-    console.log(response);
+    // const response = getTaskDetailsWithAI(meeting.action_items);
+    // console.log(response);
   };
 
   useEffect(() => {
@@ -108,7 +108,7 @@ const MeetingInfo = () => {
                 meeting.action_items.map((action, index) => (
                   <li
                     key={index}
-                    className="flex justify-between items-center mb-2"
+                    className="flex justify-between items-center mb-2 pr-2"
                   >
                     <span>• {action}</span>
 

@@ -69,9 +69,6 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
   const handleShow = () => setShowForm(true);
   const handleClose = () => setShowForm(false);
 
-  useEffect(() => {
-    console.log(groupData);
-  }, [groupData]);
   return (
     <>
       <Modal isOpen={isOpen} size={"md"} onClose={onClose}>
