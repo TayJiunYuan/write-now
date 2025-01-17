@@ -1,29 +1,60 @@
 import { useEffect, useState } from "react";
-import { getCalendarEvents } from "../services/api"; // Import the API call function
+import { getCalendarEvents } from "../services/api";
 
 export const CalendarContent = ({ selectedDates }) => {
   const [events, setEvents] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const userId = localStorage.getItem("userId"); // Assuming userId is stored in localStorage
+  const userId = localStorage.getItem("userId");
 
-  const [startDate, endDate] = selectedDates; // Destructure startDate and endDate
+  const formatToISODateTime = (day, month, year, time) => {
+    if (!day || !month || !year) return null;
+
+    const paddedDay = String(day).padStart(2, "0");
+    const paddedMonth = String(month).padStart(2, "0");
+
+    const dateString = `${year}-${paddedMonth}-${paddedDay}T${time}`;
+    const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+      console.error("Invalid date:", dateString);
+      return null;
+    }
+    return date.toISOString();
+  };
+
+  const startDateTime = formatToISODateTime(
+    selectedDates?.start?.day,
+    selectedDates?.start?.month,
+    selectedDates?.start?.year,
+    "00:00:00"
+  );
+
+  const endDateTime = formatToISODateTime(
+    selectedDates?.end?.day,
+    selectedDates?.end?.month,
+    selectedDates?.end?.year,
+    "23:59:59"
+  );
+
+  useEffect(() => {
+    console.log(startDateTime, endDateTime);
+  }, [startDateTime, endDateTime]);
 
   useEffect(() => {
     const fetchEvents = async () => {
-      console.log(selectedDates)
-      if (!startDate || !endDate) return; // Skip if range is not complete
+      if (!startDateTime || !endDateTime) return;
 
       setLoading(true);
       setError(null);
-
       try {
-        const startTime = `${startDate}T00:00:00`;
-        const endTime = `${endDate}T23:59:59`;
-
-        const data = await getCalendarEvents(userId, startTime, endTime);
-        setEvents(data); // Assuming the API returns events for the date range
+        const data = await getCalendarEvents(
+          userId,
+          startDateTime,
+          endDateTime
+        );
+        setEvents(data);
       } catch (err) {
         console.error("Error fetching calendar events:", err);
         setError("Failed to fetch events.");
@@ -33,7 +64,7 @@ export const CalendarContent = ({ selectedDates }) => {
     };
 
     fetchEvents();
-  }, [startDate, endDate, userId]); // Trigger re-fetch when startDate or endDate changes
+  }, [startDateTime, endDateTime, userId]);
 
   return (
     <div className="flex flex-col h-full justify-center items-center">
@@ -41,10 +72,14 @@ export const CalendarContent = ({ selectedDates }) => {
         <p>Loading events...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
-      ) : events ? (
+      ) : events.length === 0 ? (
+        <p className="text-sm/6 text-gray-600">
+          No events for the selected date range.
+        </p>
+      ) : (
         <div className="w-full max-w-lg p-4 border rounded-lg bg-white shadow-md">
           <h2 className="mb-4">
-            Events from {startDate} to {endDate}
+            Events from {startDateTime} to {endDateTime}
           </h2>
           <ul className="space-y-3">
             {events.map((event, index) => (
@@ -58,10 +93,6 @@ export const CalendarContent = ({ selectedDates }) => {
             ))}
           </ul>
         </div>
-      ) : (
-        <p className="text-sm/6 text-gray-600">
-          No events for the selected date range.
-        </p>
       )}
     </div>
   );

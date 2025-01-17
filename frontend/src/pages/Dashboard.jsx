@@ -16,7 +16,7 @@ import { getUserByIdWithoutCredentials } from "../services/api";
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedDates, setSelectedDates] = useState([null, null]);
+  const [selectedDates, setSelectedDates] = useState(null);
 
   const userId = localStorage.getItem("userId");
 
@@ -37,9 +37,20 @@ const Dashboard = () => {
     }
   }, [userId]);
 
-  const handleDateChange = (dates) => {
-    setSelectedDates(dates);
+  const handleDateChange = (range) => {
+    if (range?.start && range?.end) {
+      setSelectedDates({
+        start: range.start,
+        end: range.end,
+      });
+    } else {
+      setSelectedDates(null);
+    }
   };
+
+  useEffect(() => {
+    console.log(selectedDates);
+  }, [selectedDates]);
 
   return (
     <>
@@ -105,14 +116,14 @@ const Dashboard = () => {
                         <RangeCalendar
                           showMonthAndYearPickers
                           aria-label="Select a Date Range"
-                          onChange={handleDateChange} // When a range is selected, this updates the selectedDates state
+                          value={selectedDates}
+                          onChange={handleDateChange}
                         />
                       </div>
                     </PopoverContent>
                   </Popover>
                 </div>
                 <div className="overflow-auto w-full [container-type:inline-size] p-6">
-                  {/* Pass the selectedDates to the CalendarContent component */}
                   <CalendarContent selectedDates={selectedDates} />
                 </div>
               </div>

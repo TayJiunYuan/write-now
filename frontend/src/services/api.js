@@ -222,15 +222,16 @@ export const createNewProgramme = (taskData) => {
 };
 
 export const getCalendarEvents = (userId, startTime, endTime) => {
-  const requestBody = {
+  const queryParams = {
     user_id: userId,
     start_time: startTime,
     end_time: endTime,
   };
 
   return api
-    .get("/calendar/get_calendar_events", requestBody)
+    .get("/calendar/get_calendar_events", { params: queryParams })
     .then((response) => {
+      console.log(response.data);
       return response.data;
     })
     .catch((error) => {
