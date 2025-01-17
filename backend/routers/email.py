@@ -16,7 +16,7 @@ async def get_email_long_summary(user_id: str, email_id: str):
 
 
 @router.get("/with_short_summary/{user_id}", response_model=List[EmailWithShortSummary])
-async def get_emails_with_short_summary(user_id: str, max_results: int = 10):
+async def get_emails_with_short_summary(user_id: str, max_results: int = 4):
     try:
         return await EmailService.get_emails_with_short_summary(user_id, max_results)
     except ValueError as e:
