@@ -2,9 +2,16 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export const MeetingList = ({ meetings, title }) => {
+  const sortedEvents = meetings.sort((a, b) => {
+    const dateA = new Date(a.start);
+    const dateB = new Date(b.start);
+
+    return dateA - dateB;
+  });
+
   return (
     <div>
-      {meetings.map((meeting, index) => {
+      {sortedEvents.map((meeting, index) => {
         const startDate = new Date(meeting.start);
 
         const formattedDate = startDate.toLocaleDateString("en-GB", {
