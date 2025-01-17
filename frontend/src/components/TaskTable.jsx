@@ -170,7 +170,7 @@ export const TaskTable = () => {
       </TableHeader>
       <TableBody
         items={tasksByAssigner}
-        isLoading={loading || !users.length || !programmes.length}
+        isLoading={loading}
         loadingContent={<Spinner color="primary" />}
       >
         {(item) => (
