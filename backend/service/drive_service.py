@@ -29,9 +29,7 @@ class DriveService:
                 template_file_id = os.getenv("FORM_TEMPLATE_ID")
             drive_service = await DriveService.build_drive_service(user_id)
             copied_file = (
-                drive_service.files()
-                .copy(fileId=template_file_id, body={})
-                .execute()
+                drive_service.files().copy(fileId=template_file_id, body={}).execute()
             )
             id = copied_file["id"]
             if task_type == TaskType.BUDGET:
@@ -39,18 +37,20 @@ class DriveService:
             elif task_type == TaskType.REPORT:
                 new_copied_link = f"https://docs.google.com/document/d/{id}"
             elif task_type == TaskType.FORM:
-                new_copied_link = f"https://docs.google.com/forms/d/{id}" 
+                new_copied_link = f"https://docs.google.com/forms/d/{id}"
             return new_copied_link
         except Exception as e:
             raise ValueError(f"Failed to copy template file: {str(e)}")
-        
+
     @staticmethod
     async def get_file_name_from_link(user_id: str, link: str) -> str:
         """Get the file name from the link"""
         try:
             drive_service = await DriveService.build_drive_service(user_id)
             file_id = link.split("/")[-1]
-            file_metadata = drive_service.files().get(fileId=file_id, fields="name").execute()
+            file_metadata = (
+                drive_service.files().get(fileId=file_id, fields="name").execute()
+            )
             return file_metadata["name"]
         except Exception as e:
             raise ValueError(f"Failed to get file name from link: {str(e)}")

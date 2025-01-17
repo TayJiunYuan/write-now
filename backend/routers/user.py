@@ -15,7 +15,13 @@ async def get_UserWithoutCredentials_by_id(user_id: str):
 
 @router.get("/without-credentials", response_model=list[UserWithoutCredentials])
 async def get_all_users_without_credentials():
-    return await UserService.get_all_users_without_credentials()
+    try:
+        return await UserService.get_all_users_without_credentials()
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Get all users without credentials failed: {str(e)}",
+        )
 
 
 @router.get("/{user_id}", response_model=User)
@@ -28,4 +34,7 @@ async def get_user_by_id(user_id: str):
 
 @router.get("/", response_model=list[User])
 async def get_all_users():
-    return await UserService.get_all_users()
+    try:
+        return await UserService.get_all_users()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Get all users failed: {str(e)}")
