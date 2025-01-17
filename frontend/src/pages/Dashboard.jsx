@@ -55,7 +55,9 @@ const Dashboard = () => {
   return (
     <>
       {isLoading ? (
-        <Spinner />
+        <div className="flex justify-center items-center min-h-screen">
+          <Spinner />
+        </div>
       ) : (
         <div className="container mx-auto p-4 pt-[65px]">
           <h2 className="p-4 text-3xl font-bold text-primary">
