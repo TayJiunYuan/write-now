@@ -232,3 +232,22 @@ export const createNewProgramme = (taskData) => {
       throw error;
     });
 };
+
+export const getCalendarEvents = (userId, startTime, endTime) => {
+  const queryParams = {
+    user_id: userId,
+    start_time: startTime,
+    end_time: endTime,
+  };
+
+  return api
+    .get("/calendar/get_calendar_events", { params: queryParams })
+    .then((response) => {
+      console.log(response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
