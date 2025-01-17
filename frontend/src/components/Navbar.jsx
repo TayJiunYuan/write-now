@@ -17,21 +17,15 @@ import { getUserById } from "../services/api";
 
 export const StyledNavbar = () => {
   const [user, setUser] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const userId = localStorage.getItem("userId");
-
-    if (userId) {
-      setUserId(userId);
-    }
-  }, [userId]);
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        setIsLoading(true);
         const response = await getUserById(userId);
         setUser(response);
       } catch (err) {
@@ -47,7 +41,6 @@ export const StyledNavbar = () => {
   }, [userId]);
 
   const handleLogOut = () => {
-    setUser(null);
     localStorage.clear();
     setIsLoading(false);
     navigate("/");
@@ -107,17 +100,14 @@ export const StyledNavbar = () => {
           <DropdownMenu aria-label="Profile Actions" variant="flat">
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">
-                {isLoading ? (
-                  <p className="font-light">Loading...</p>
-                ) : user?.email ? (
-                  user?.email
-                ) : (
-                  "--"
-                )}
-              </p>
+              <p className="font-semibold">{userId ? userId : "--"}</p>
             </DropdownItem>
-            <DropdownItem key="logout" color="danger" onPress={handleLogOut} className="text-danger">
+            <DropdownItem
+              key="logout"
+              color="danger"
+              onPress={handleLogOut}
+              className="text-danger"
+            >
               Log Out
             </DropdownItem>
           </DropdownMenu>
