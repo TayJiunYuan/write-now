@@ -110,8 +110,10 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
                     />
                   </div>
                   <div>
-                    <label htmlFor="category">Category</label>
                     <Select
+                      isRequired
+                      label="Category"
+                      labelPlacement="outside"
                       placeholder="Select a category"
                       value={selectedCategory}
                       onChange={handleCategoryChange}
@@ -130,16 +132,16 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
                     </Button>
                   </div>
                   <div>
-                    <label htmlFor="startTime">Start Time</label>
                     <DatePicker
+                      isRequired
                       hideTimeZone
                       showMonthAndYearPickers
                       defaultValue={now(getLocalTimeZone())}
-                      aria-label="Event Date"
+                      label="Event Date"
+                      labelPlacement="outside"
                       selected={startTime}
                       onChange={(date) => setStartTime(date)}
                       showTimeSelect
-                      dateFormat="Pp"
                       className="heroui-input"
                     />
                   </div>

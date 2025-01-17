@@ -85,8 +85,31 @@ export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
             <ModalBody>
               <div className="flex flex-col gap-4">
                 <div>
-                  <label htmlFor="startTime">Start Time</label>
+                  <Textarea
+                    isRequired
+                    label="Title"
+                    labelPlacement="outside"
+                    value={summary}
+                    onChange={(e) => setSummary(e.target.value)}
+                    placeholder="Enter meeting summary"
+                  />
+                </div>
+                <div>
+                  <Textarea
+                    isRequired
+                    label="Description"
+                    labelPlacement="outside"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Enter meeting description"
+                    rows={4}
+                  />
+                </div>
+                <div>
                   <DatePicker
+                    isRequired
+                    label="Start Time"
+                    labelPlacement="outside"
                     hideTimeZone
                     showMonthAndYearPickers
                     defaultValue={now(getLocalTimeZone())}
@@ -99,9 +122,10 @@ export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="durationHours">Duration (hours)</label>
                   <Input
-                    id="durationHours"
+                    isRequired
+                    label="Duration (hours)"
+                    labelPlacement="outside"
                     type="number"
                     value={durationHours}
                     onChange={(e) => setDurationHours(e.target.value)}
@@ -109,29 +133,10 @@ export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="summary">Title</label>
-                  <Textarea
-                    id="summary"
-                    value={summary}
-                    onChange={(e) => setSummary(e.target.value)}
-                    placeholder="Enter meeting summary"
-                    rows={4}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="description">Description</label>
-                  <Textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Enter meeting description"
-                    rows={4}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="attendees">Select attendees</label>
                   <Select
-                    className=""
+                    isRequired
+                    label="Select attendees"
+                    labelPlacement="outside"
                     placeholder="Select attendee/s"
                     selectionMode="multiple"
                     selectedKeys={selectedUsers}
