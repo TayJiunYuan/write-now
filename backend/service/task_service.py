@@ -4,7 +4,9 @@ from bson import ObjectId
 from typing import Optional, List
 from datetime import datetime
 from service.openapi_service import TaskCreationAIService
+from service.drive_service import DriveService
 import os
+from models.task import TaskType
 
 
 class TaskService:
@@ -13,15 +15,25 @@ class TaskService:
     @staticmethod
     async def create_task(task: TaskRequest) -> TaskResponse:
         """Create a new task."""
-        task_dict = task.dict()
-        task_dict["created_at"] = datetime.now().isoformat()
-        task_dict["assigned_to_self"] = (
-            task_dict["assignee_id"] == task_dict["assigner_id"]
-        )
-        result = await db.get_collection(TaskService.collection_name).insert_one(
-            task_dict
-        )
-        return TaskResponse(id=str(result.inserted_id), **task_dict)
+        try:
+            task_dict = task.dict()
+            task_dict["created_at"] = datetime.now().isoformat()
+            task_dict["assigned_to_self"] = (
+                task_dict["assignee_id"] == task_dict["assigner_id"]
+            )
+            if (
+                task_dict["task_type"] != TaskType.BASIC
+                and task_dict["task_type"] != None
+            ):
+                task_dict["task_link"] = await DriveService.copy_template_file(
+                    task_dict["assignee_id"], task_dict["task_type"]
+                )
+            result = await db.get_collection(TaskService.collection_name).insert_one(
+                task_dict
+            )
+            return TaskResponse(id=str(result.inserted_id), **task_dict)
+        except Exception as e:
+            raise e
 
     @staticmethod
     async def get_tasks(
@@ -98,3 +110,16 @@ class TaskService:
         task_creation_ai_service = TaskCreationAIService(os.getenv("OPEN_API_KEY"))
         response = task_creation_ai_service.get_response(action_item)
         return TaskDetailsResponse(**response)
+
+    @staticmethod
+    async def get_task_file_name(task_id: str) -> str:
+        try:
+            task = await TaskService.get_task_by_id(task_id)
+            if task.task_type == TaskType.BASIC:
+                return None
+            file_name = await DriveService.get_file_name_from_link(
+                task.assignee_id, task.task_link
+            )
+            return file_name
+        except Exception as e:
+            raise ValueError(f"Failed to get file name from link: {str(e)}")

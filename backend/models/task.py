@@ -11,6 +11,13 @@ class TaskStatus(str, Enum):
     COMPLETED = "COMPLETED"
 
 
+class TaskType(str, Enum):
+    BASIC = "BASIC"
+    BUDGET = "BUDGET"
+    REPORT = "REPORT"
+    FORM = "FORM"
+
+
 class TaskRequest(BaseModel):
     assignee_id: str
     assigner_id: str
@@ -19,6 +26,7 @@ class TaskRequest(BaseModel):
     deadline: str
     status: TaskStatus = TaskStatus.NOT_STARTED
     programme_id: str
+    task_type: Optional[TaskType] = TaskType.BASIC
 
 
 class Task(BaseModel):
@@ -32,6 +40,8 @@ class Task(BaseModel):
     status: TaskStatus
     programme_id: str
     assigned_to_self: bool
+    task_type: Optional[TaskType] = TaskType.BASIC
+    task_link: Optional[str] = ""
 
 
 class TaskResponse(BaseModel):
@@ -45,6 +55,9 @@ class TaskResponse(BaseModel):
     status: TaskStatus
     programme_id: str
     assigned_to_self: bool
+    task_type: Optional[TaskType] = TaskType.BASIC
+    task_link: Optional[str] = ""
+
 
 class TaskDetailsResponse(BaseModel):
     name: Optional[str]
