@@ -48,9 +48,18 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(selectedDates);
-  }, [selectedDates]);
+  const formatSelectedDates = (selectedDates) => {
+    if (!selectedDates || !selectedDates.start || !selectedDates.end) {
+      return "Date range not selected";
+    }
+
+    const { start, end } = selectedDates;
+
+    const startDateString = `${start.month}/${start.day}/${start.year}`;
+    const endDateString = `${end.month}/${end.day}/${end.year}`;
+
+    return `${startDateString} - ${endDateString}`;
+  };
 
   return (
     <>
@@ -87,7 +96,7 @@ const Dashboard = () => {
                     Email Summaries
                   </p>
                   <p className="text-sm/6 text-gray-600">
-                    Displaying last 10 emails
+                    Displaying last 4 emails
                   </p>
                 </div>
                 <div className="overflow-auto w-full [container-type:inline-size] px-6 pb-6">
@@ -101,7 +110,10 @@ const Dashboard = () => {
               <div className="relative flex h-full flex-col">
                 <div className="flex justify-between px-6 pt-6">
                   <p className="text-lg font-medium tracking-tight text-gray-950">
-                    Schedule for Selected Range
+                    Schedule for{" "}
+                    {selectedDates
+                      ? formatSelectedDates(selectedDates)
+                      : "Today"}
                   </p>
                   <Popover placement="bottom" showArrow={true}>
                     <PopoverTrigger>
