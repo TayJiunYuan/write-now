@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { categories } from "../constants/ProgrammesElements";
 import { Link } from "react-router-dom";
 import { getAllProgrammes } from "../services/api";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { CreateProgrammeModal } from "../components/CreateProgrammeModal";
 
 const Programmes = () => {

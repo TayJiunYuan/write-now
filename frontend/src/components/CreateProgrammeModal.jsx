@@ -10,7 +10,7 @@ import {
   Textarea,
   Select,
   SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import { createNewProgramme } from "../services/api";
 import { categoriess } from "../constants/ProgrammesElements";
