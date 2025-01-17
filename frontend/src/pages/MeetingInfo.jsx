@@ -10,12 +10,14 @@ import {
 } from "@heroui/react";
 import { useLocation } from "react-router-dom";
 import { getTaskDetailsWithAI } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const MeetingInfo = () => {
   const location = useLocation();
   const { meeting, title } = location.state || {};
   const summaryTitle = meeting.summary.split("-")[0];
   const [openTaskDrawer, setOpenTaskDrawer] = useState(false);
+  const navigation = useNavigate();
 
   const handleJoinMeeting = () => {
     window.location.href = meeting.meet_link;
@@ -25,17 +27,21 @@ const MeetingInfo = () => {
     setOpenTaskDrawer(true);
   };
 
-  const handlePress = () => {
-    const response = getTaskDetailsWithAI(meeting.action_items);
+  const handlePress = (action) => {
+    console.log(action);
+    console.log("type of action:", typeof action);
+    const response = getTaskDetailsWithAI(action);
     console.log(response);
   };
 
-  useEffect(() => {
-    console.log(meeting);
-  }, []);
-
   return (
     <div className="container mx-auto pt-[65px]">
+      <Button
+        onClick={() => navigation(-1)} // Go back to the previous page
+        className="text-base border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition mt-4"
+      >
+        Back
+      </Button>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
         <Card className="bg-white shadow-md rounded p-4 col-span-2">
           <CardHeader className="text-lg font-bold mb-2">
@@ -100,9 +106,7 @@ const MeetingInfo = () => {
         </Card>
 
         <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">
-            Possible tasks to create
-          </CardHeader>
+          <CardHeader className="text-lg font-bold mb-2">Tasks</CardHeader>
           <Divider />
           <CardBody>
             <ul>
@@ -110,13 +114,13 @@ const MeetingInfo = () => {
                 meeting.action_items.map((action, index) => (
                   <li
                     key={index}
-                    className="flex justify-between items-center mb-2"
+                    className="flex justify-between items-center mb-2 pr-2"
                   >
                     <span>• {action}</span>
 
                     <Button
                       className="text-right text-base px-4 py-1 border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56"
-                      onPress={handlePress()}
+                      onClick={() => handlePress(action)}
                     >
                       Create Task
                     </Button>

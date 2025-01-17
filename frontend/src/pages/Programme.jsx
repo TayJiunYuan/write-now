@@ -14,9 +14,11 @@ import {
   getMeetings,
   getUsersWithoutCredentials,
   getTasksByProgrammeId,
+  getTaskFileName,
 } from "../services/api";
 import { MeetingList } from "../components/MeetingList";
 import { TaskList } from "../components/TaskList";
+import { useNavigate } from "react-router-dom";
 
 const Programme = () => {
   const location = useLocation();
@@ -25,12 +27,18 @@ const Programme = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [meetings, setMeetings] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [ids, setIds] = useState([]);
   const [users, setUsers] = useState([]);
+  const [fileNames, setFileNames] = useState([]);
+  const [combinedFile, setCombinedFile] = useState([]);
 
-  const programmeID = event.id;
   const title = event.name;
+  const programmeID = event.id;
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
+
+  const navigation = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -67,16 +75,52 @@ const Programme = () => {
     return acc;
   }, {});
 
+  const getAllFileNames = async (taskIds) => {
+    try {
+      const fileNames = await Promise.all(
+        taskIds.map((taskId) => getTaskFileName(taskId))
+      );
+      setFileNames(fileNames);
+      return fileNames;
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
-    console.log("tasks:", tasks);
+    setFilteredTasks(
+      tasks.filter((task) =>
+        ["BUDGET", "REPORT", "FORM"].includes(task.task_type)
+      )
+    );
   }, [tasks]);
+
+  useEffect(() => {
+    setIds(filteredTasks.map((task) => task.id));
+    getAllFileNames(ids);
+  }, [filteredTasks]);
+
+  useEffect(() => {
+    setCombinedFile(
+      filteredTasks.map((task, index) => ({
+        ...task,
+        fileName: fileNames[index],
+      }))
+    );
+  }, [fileNames]);
 
   return (
     <div className="container mx-auto min-h-screen pt-[65px]">
+      <Button
+        onClick={() => navigation(-1)} // Go back to the previous page
+        className="text-base border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition mt-4"
+      >
+        Back
+      </Button>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
         <Card className="bg-white shadow-md rounded p-4">
           <CardHeader className="text-lg font-bold mb-2">
@@ -139,34 +183,25 @@ const Programme = () => {
           <Divider />
           <CardBody>
             <div className="flex flex-col">
-              <button className="text-blue-500 underline text-left">
-                Budget.docx
-              </button>
-              <button className="text-blue-500 underline text-left">
-                Floor Plan
-              </button>
-              <button className="text-blue-500 underline text-left">
-                Deliverables.docx
-              </button>
+              {combinedFile.map((task) => (
+                <button
+                  key={task.id}
+                  className="text-blue-500 underline text-left"
+                  onClick={() => (window.location.href = task.task_link)} // Navigate to the link
+                >
+                  {task.name}
+                </button>
+              ))}
             </div>
           </CardBody>
         </Card>
-
-        {/* <Card className="bg-white shadow-md rounded p-4 md:col-span-2">
-          <CardHeader className="text-lg font-bold mb-2">Tasklist</CardHeader>
-          <Divider />
-          <CardBody>
-            {tasks.map((task, index) => (
-              <Checkbox key={index}>{task.description}</Checkbox>
-            ))}
-          </CardBody>
-        </Card> */}
         <TaskList tasks={tasks} fetchTask={fetchTask} />
       </div>
       <CreateMeetingModal
         isOpen={isOpen}
         onClose={handleClose}
         id={programmeID}
+        attendees={event.groups}
       />
     </div>
   );

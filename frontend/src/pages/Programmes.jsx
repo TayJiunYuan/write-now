@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { categories } from "../constants/ProgrammesElements";
 import { Link } from "react-router-dom";
 import { getAllProgrammes } from "../services/api";
-import { Button } from "@heroui/react";
+import { Button, Skeleton } from "@heroui/react";
 import { CreateProgrammeModal } from "../components/CreateProgrammeModal";
 
 const Programmes = () => {
@@ -125,16 +125,6 @@ const Programmes = () => {
             ))}
           </select>
         </div>
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-black">
-            Filter by Event
-          </label>
-          <input
-            type="text"
-            placeholder="Search"
-            className="pl-2 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-rose-500 focus:ring-rose-500"
-          />
-        </div>
       </div>
 
       <div className="mt-8 items-center justify-end flex flex-row">
@@ -146,55 +136,65 @@ const Programmes = () => {
         </Button>
       </div>
 
-      <div className="mt-8 space-y-6 pb-8">
-        {filteredEvents.map((event, index) => {
-          const date = new Date(event.datetime);
-          const day = date.getDate();
-          const month = date.toLocaleDateString("default", { month: "short" });
-          const year = date.getFullYear();
-          date.setHours(date.getHours() + 8);
-          const time = date.toLocaleDateString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
+      {loading ? (
+        <Skeleton className="rounded-lg mt-8">
+          <div className="h-24 rounded-lg bg-default-300" />
+        </Skeleton>
+      ) : (
+        <div className="mt-8 space-y-6 pb-8">
+          {filteredEvents.map((event, index) => {
+            const date = new Date(event.datetime);
+            const day = date.getDate();
+            const month = date.toLocaleDateString("default", {
+              month: "short",
+            });
+            const year = date.getFullYear();
+            date.setHours(date.getHours() + 8);
+            const time = date.toLocaleDateString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
 
-          const formattedTime = time.split(",")[1];
-
-          console.log(date);
-          return (
-            <div
-              key={index}
-              className="bg-white rounded-xl shadow-xl p-6 flex items-center justify-between"
-            >
-              <div className="flex items-center">
-                <div className="bg-gray-200 rounded-md p-4 text-center w-16 border-2 border-black">
-                  <p className="text-xl font-bold">{day}</p>
-                  <p className="text-sm font-bold">{month}</p>
-                  <p className="text-sm font-bold">{year}</p>
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-lg font-bold">{event.name}</h3>
-                  <p className="mt-1 text-sm text-gray-600">{formattedTime}</p>
-                  <p className="mt-1 text-sm text-gray-600">{event.location}</p>
-                  <p className="mt-1 text-sm text-gray-600">{event.type}</p>
-                  <p className="mt-2 text-gray-700 max-w-6xl">
-                    {event.description}
-                  </p>
-                </div>
-              </div>
-              <Link
+            const formattedTime = time.split(",")[1];
+            return (
+              <div
                 key={index}
-                to={`/programmes/${event.id}`}
-                state={{ event }}
+                className="bg-white rounded-xl shadow-xl p-6 flex items-center justify-between"
               >
-                <button className="px-4 py-2 border border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56">
-                  VIEW DETAILS
-                </button>
-              </Link>
-            </div>
-          );
-        })}
-      </div>
+                <div className="flex items-center">
+                  <div className="bg-gray-200 rounded-md p-4 text-center w-16 border-2 border-black">
+                    <p className="text-xl font-bold">{day}</p>
+                    <p className="text-sm font-bold">{month}</p>
+                    <p className="text-sm font-bold">{year}</p>
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-lg font-bold">{event.name}</h3>
+                    <p className="mt-1 text-sm text-gray-600">
+                      {formattedTime}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-600">
+                      {event.location}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-600">{event.type}</p>
+                    <p className="mt-2 text-gray-700 max-w-6xl">
+                      {event.description}
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  key={index}
+                  to={`/programmes/${event.id}`}
+                  state={{ event }}
+                >
+                  <button className="px-4 py-2 border border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56">
+                    VIEW DETAILS
+                  </button>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      )}
       <CreateProgrammeModal isOpen={isOpen} onClose={handleClose} />
     </div>
   );

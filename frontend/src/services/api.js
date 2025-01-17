@@ -209,6 +209,18 @@ export const updateTask = (taskData) => {
     });
 };
 
+export const getTaskFileName = (taskId) => {
+  return api
+    .get(`/tasks/${taskId}/file_name`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
 export const createNewProgramme = (taskData) => {
   return api
     .post("/programmes", taskData)

@@ -10,7 +10,7 @@ import {
   Select,
   SelectItem,
 } from "@heroui/react";
-import { getUsers } from "../services/api";
+import { getUsersWithoutCredentials } from "../services/api";
 
 export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {
   const [loading, setLoading] = useState(false);
@@ -20,8 +20,6 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {
 
   const handleSubmit = () => {
     const array = Array.from(selectedUsers);
-    console.log(array);
-
     const groupData = {
       name: name,
       attendees: array,
@@ -30,21 +28,16 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {
     onSubmit(groupData);
 
     onClose();
-
-    // return groupData;
   };
 
   const handleSelectionChange = (selectedKeys) => {
     setSelectedUsers(selectedKeys);
-    console.log("selected ids:", selectedKeys);
-
-    console.log(selectedUsers);
   };
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getUsers();
+      const response = await getUsersWithoutCredentials();
       setUsers(response);
     } catch (error) {
       console.error("Error fetching data:", error);

@@ -51,12 +51,10 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
-    console.log("Selected Category:", e.target.value);
   };
 
   const handleGroupDataSubmit = (data) => {
     setGroupData(data);
-    console.log("Received group data:", data);
 
     const attendees = data.attendees;
     const result = {
@@ -69,9 +67,6 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
   const handleShow = () => setShowForm(true);
   const handleClose = () => setShowForm(false);
 
-  useEffect(() => {
-    console.log(groupData);
-  }, [groupData]);
   return (
     <>
       <Modal isOpen={isOpen} size={"md"} onClose={onClose}>
@@ -84,38 +79,41 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
               <ModalBody>
                 <div className="flex flex-col gap-4">
                   <div>
-                    <label htmlFor="name">Name</label>
                     <Textarea
-                      id="name"
+                      isRequired
                       value={name}
+                      label="Name"
+                      labelPlacement="outside"
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Enter programme name"
-                      rows={4}
                     />
                   </div>
                   <div>
-                    <label htmlFor="description">Description</label>
                     <Textarea
-                      id="description"
+                      isRequired
+                      label="Description"
+                      labelPlacement="outside"
+                      placeholder="Enter your description"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Enter programme description"
-                      rows={4}
                     />
                   </div>
                   <div>
-                    <label htmlFor="location">Location</label>
                     <Textarea
-                      id="location"
+                      isRequired
                       value={location}
+                      label="Location"
+                      labelPlacement="outside"
                       onChange={(e) => setLocation(e.target.value)}
-                      placeholder="Enter programme description"
+                      placeholder="Enter the location"
                       rows={4}
                     />
                   </div>
                   <div>
-                    <label htmlFor="category">Category</label>
                     <Select
+                      isRequired
+                      label="Category"
+                      labelPlacement="outside"
                       placeholder="Select a category"
                       value={selectedCategory}
                       onChange={handleCategoryChange}
@@ -134,17 +132,17 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
                     </Button>
                   </div>
                   <div>
-                    <label htmlFor="startTime">Start Time</label>
                     <DatePicker
+                      isRequired
                       hideTimeZone
                       showMonthAndYearPickers
                       defaultValue={now(getLocalTimeZone())}
-                      aria-label="Event Date"
+                      label="Event Date"
+                      labelPlacement="outside"
                       selected={startTime}
                       onChange={(date) => setStartTime(date)}
                       showTimeSelect
-                      dateFormat="Pp"
-                      className="nextui-input"
+                      className="heroui-input"
                     />
                   </div>
                 </div>

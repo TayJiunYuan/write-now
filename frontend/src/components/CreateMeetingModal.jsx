@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -9,15 +9,26 @@ import {
   DatePicker,
   Textarea,
   Input,
+  Select,
+  SelectItem,
 } from "@heroui/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
-import { createNewMeeting } from "../services/api";
+import { createNewMeeting, getUsersWithoutCredentials } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
-export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
+export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
   const [startTime, setStartTime] = useState(new Date());
   const [durationHours, setDurationHours] = useState("");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const allIds = Object.values(attendees).flat();
+
+  const filteredUsers = users.filter((user) => allIds.includes(user.id));
 
   const handleSubmit = () => {
     const { year, month, day, hour, minute, second, millisecond, offset } =
@@ -27,24 +38,41 @@ export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
     );
     const adjustedDate = new Date(date.getTime() - offset);
     const isoDate = adjustedDate.toISOString();
-    console.log(isoDate);
-
-    const summaryString = summary + " - " + isoDate;
+    const userId = localStorage.getItem("userId");
+    const array = Array.from(selectedUsers);
 
     const meetingData = {
-      programme_id: "67887f462f43d9720fbe448a",
-      organizer_id: "118276801488272131566",
-      attendee_ids: ["108892597123264895192", "118276801488272131566"],
+      programme_id: id,
+      organizer_id: userId,
+      attendee_ids: array,
       start_time: isoDate,
       duration_hours: durationHours,
       summary: summary,
       description: description,
     };
-
     console.log(meetingData);
     createNewMeeting(meetingData);
+    navigate(0);
     onClose();
   };
+  const handleSelectionChange = (selectedKeys) => {
+    setSelectedUsers(selectedKeys);
+  };
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getUsersWithoutCredentials();
+      setUsers(response);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <Modal isOpen={isOpen} size={"md"} onClose={onClose}>
@@ -57,8 +85,31 @@ export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
             <ModalBody>
               <div className="flex flex-col gap-4">
                 <div>
-                  <label htmlFor="startTime">Start Time</label>
+                  <Textarea
+                    isRequired
+                    label="Title"
+                    labelPlacement="outside"
+                    value={summary}
+                    onChange={(e) => setSummary(e.target.value)}
+                    placeholder="Enter meeting summary"
+                  />
+                </div>
+                <div>
+                  <Textarea
+                    isRequired
+                    label="Description"
+                    labelPlacement="outside"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Enter meeting description"
+                    rows={4}
+                  />
+                </div>
+                <div>
                   <DatePicker
+                    isRequired
+                    label="Start Time"
+                    labelPlacement="outside"
                     hideTimeZone
                     showMonthAndYearPickers
                     defaultValue={now(getLocalTimeZone())}
@@ -67,13 +118,14 @@ export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
                     onChange={(date) => setStartTime(date)}
                     showTimeSelect
                     dateFormat="Pp"
-                    className="nextui-input"
+                    className="heroui-input"
                   />
                 </div>
                 <div>
-                  <label htmlFor="durationHours">Duration (hours)</label>
                   <Input
-                    id="durationHours"
+                    isRequired
+                    label="Duration (hours)"
+                    labelPlacement="outside"
                     type="number"
                     value={durationHours}
                     onChange={(e) => setDurationHours(e.target.value)}
@@ -81,24 +133,21 @@ export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="summary">Title</label>
-                  <Textarea
-                    id="summary"
-                    value={summary}
-                    onChange={(e) => setSummary(e.target.value)}
-                    placeholder="Enter meeting summary"
-                    rows={4}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="description">Description</label>
-                  <Textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Enter meeting description"
-                    rows={4}
-                  />
+                  <Select
+                    isRequired
+                    label="Select attendees"
+                    labelPlacement="outside"
+                    placeholder="Select attendee/s"
+                    selectionMode="multiple"
+                    selectedKeys={selectedUsers}
+                    onSelectionChange={handleSelectionChange}
+                  >
+                    {filteredUsers.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.name}
+                      </SelectItem>
+                    ))}
+                  </Select>
                 </div>
               </div>
             </ModalBody>
