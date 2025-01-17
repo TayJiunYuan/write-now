@@ -68,7 +68,13 @@ const Programmes = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    setFilteredEvents(programmes);
+    const sortedEvents = programmes.sort((a, b) => {
+      const dateA = new Date(a.datetime);
+      const dateB = new Date(b.datetime);
+
+      return dateA - dateB;
+    });
+    setFilteredEvents(sortedEvents);
   }, [programmes]);
 
   useEffect(() => {
