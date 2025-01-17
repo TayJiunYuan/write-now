@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Spinner } from "@heroui/react";
 import { getCalendarEvents } from "../services/api";
 
 export const CalendarContent = ({ selectedDates }) => {
@@ -69,7 +70,7 @@ export const CalendarContent = ({ selectedDates }) => {
   return (
     <div className="flex flex-col h-full justify-center items-center">
       {loading ? (
-        <p>Loading events...</p>
+        <Spinner />
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : events ? (
