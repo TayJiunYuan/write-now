@@ -9,7 +9,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useEffect, useState } from "react";
 import { updateTask } from "../services/api";
 import { useNavigate } from "react-router-dom";

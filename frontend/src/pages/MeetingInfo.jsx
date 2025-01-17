@@ -7,7 +7,7 @@ import {
   Checkbox,
   Avatar,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useLocation } from "react-router-dom";
 import { getTaskDetailsWithAI } from "../services/api";
 

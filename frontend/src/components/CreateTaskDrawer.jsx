@@ -11,7 +11,7 @@ import {
   SelectItem,
   Textarea,
   Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useState, useEffect } from "react";
 import { createNewTask, getUsers, getAllProgrammes } from "../services/api";
 import { Toast } from "./Toast";

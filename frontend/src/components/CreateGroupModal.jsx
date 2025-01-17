@@ -9,7 +9,7 @@ import {
   Textarea,
   Select,
   SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { getUsers } from "../services/api";
 
 export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {

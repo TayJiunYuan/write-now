@@ -11,7 +11,7 @@ import {
   Input,
   Select,
   SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import { createNewMeeting, getUsersWithoutCredentials } from "../services/api";
 

@@ -9,7 +9,7 @@
     "@internationalized/date": "^3.7.0",
     "@mui/icons-material": "^6.4.0",
     "@mui/material": "^6.4.0",
-    "@nextui-org/react": "^2.6.11",
+    "@heroui/react": "2.6.12",
     "axios": "^1.7.9",
     "cra-template": "1.2.0",
     "framer-motion": "^11.18.0",

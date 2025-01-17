@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Spinner, Badge, Link, useDisclosure } from "@nextui-org/react";
+import { Button, Spinner, Badge, Link, useDisclosure } from "@heroui/react";
 import {
   getEmailsShortSum,
   getEmailsLongSum,
