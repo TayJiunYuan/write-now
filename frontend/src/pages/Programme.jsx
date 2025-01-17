@@ -14,6 +14,7 @@ import {
   getMeetings,
   getUsersWithoutCredentials,
   getTasksByProgrammeId,
+  getTaskFileName,
 } from "../services/api";
 import { MeetingList } from "../components/MeetingList";
 import { TaskList } from "../components/TaskList";
@@ -25,7 +26,11 @@ const Programme = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [meetings, setMeetings] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [ids, setIds] = useState([]);
   const [users, setUsers] = useState([]);
+  const [fileNames, setFileNames] = useState([]);
+  const [combinedFile, setCombinedFile] = useState([]);
 
   const title = event.name;
   const programmeID = event.id;
@@ -67,9 +72,53 @@ const Programme = () => {
     return acc;
   }, {});
 
+  const getAllFileNames = async (taskIds) => {
+    try {
+      const fileNames = await Promise.all(
+        taskIds.map((taskId) => getTaskFileName(taskId))
+      );
+      setFileNames(fileNames);
+      console.log(fileNames);
+      return fileNames;
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    console.log(tasks);
+    setFilteredTasks(
+      tasks.filter((task) =>
+        ["BUDGET", "REPORT", "FORM"].includes(task.task_type)
+      )
+    );
+
+    console.log(filteredTasks);
+  }, [tasks]);
+
+  useEffect(() => {
+    setIds(filteredTasks.map((task) => task.id));
+    getAllFileNames(ids);
+
+    console.log(filteredTasks);
+  }, [filteredTasks]);
+
+  useEffect(() => {
+    setCombinedFile(
+      filteredTasks.map((task, index) => ({
+        ...task,
+        fileName: fileNames[index],
+      }))
+    );
+  }, [fileNames]);
+
+  useEffect(() => {
+    console.log("final:", combinedFile);
+  }, [combinedFile]);
 
   return (
     <div className="container mx-auto min-h-screen pt-[65px]">
@@ -135,28 +184,18 @@ const Programme = () => {
           <Divider />
           <CardBody>
             <div className="flex flex-col">
-              <button className="text-blue-500 underline text-left">
-                Budget.docx
-              </button>
-              <button className="text-blue-500 underline text-left">
-                Floor Plan
-              </button>
-              <button className="text-blue-500 underline text-left">
-                Deliverables.docx
-              </button>
+              {combinedFile.map((task) => (
+                <button
+                  key={task.id}
+                  className="text-blue-500 underline text-left"
+                  onClick={() => (window.location.href = task.task_link)} // Navigate to the link
+                >
+                  {task.name}
+                </button>
+              ))}
             </div>
           </CardBody>
         </Card>
-
-        {/* <Card className="bg-white shadow-md rounded p-4 md:col-span-2">
-          <CardHeader className="text-lg font-bold mb-2">Tasklist</CardHeader>
-          <Divider />
-          <CardBody>
-            {tasks.map((task, index) => (
-              <Checkbox key={index}>{task.description}</Checkbox>
-            ))}
-          </CardBody>
-        </Card> */}
         <TaskList tasks={tasks} fetchTask={fetchTask} />
       </div>
       <CreateMeetingModal

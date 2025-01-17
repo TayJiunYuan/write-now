@@ -81,32 +81,33 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
               <ModalBody>
                 <div className="flex flex-col gap-4">
                   <div>
-                    <label htmlFor="name">Name</label>
                     <Textarea
-                      id="name"
+                      isRequired
                       value={name}
+                      label="Name"
+                      labelPlacement="outside"
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Enter programme name"
-                      rows={4}
                     />
                   </div>
                   <div>
-                    <label htmlFor="description">Description</label>
                     <Textarea
-                      id="description"
+                      isRequired
+                      label="Description"
+                      labelPlacement="outside"
+                      placeholder="Enter your description"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Enter programme description"
-                      rows={4}
                     />
                   </div>
                   <div>
-                    <label htmlFor="location">Location</label>
                     <Textarea
-                      id="location"
+                      isRequired
                       value={location}
+                      label="Location"
+                      labelPlacement="outside"
                       onChange={(e) => setLocation(e.target.value)}
-                      placeholder="Enter programme description"
+                      placeholder="Enter the location"
                       rows={4}
                     />
                   </div>
