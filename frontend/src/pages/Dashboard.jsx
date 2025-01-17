@@ -26,7 +26,6 @@ const Dashboard = () => {
       try {
         setIsLoading(true);
         const response = await getUserByIdWithoutCredentials(userId);
-        console.log(response);
         setUser(response);
       } catch (err) {
         setIsLoading(false);

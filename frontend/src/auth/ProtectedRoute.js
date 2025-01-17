@@ -1,7 +1,9 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = ({ userId }) => {
+const ProtectedRoute = () => {
+  const userId = localStorage.getItem("userId");
+
   return userId ? <Outlet /> : <Navigate to="/" />;
 };
 
