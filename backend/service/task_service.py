@@ -43,21 +43,24 @@ class TaskService:
         programme_id: Optional[str] = None,
     ) -> List[TaskResponse]:
         """Retrieve tasks based on optional filters."""
-        filter_query = {}
-        if assigner_id:
-            filter_query["assigner_id"] = assigner_id
-        if assignee_id:
-            filter_query["assignee_id"] = assignee_id
-            filter_query["assigned_to_self"] = False
-        if programme_id:
-            filter_query["programme_id"] = programme_id
+        try:
+            filter_query = {}
+            if assigner_id:
+                filter_query["assigner_id"] = assigner_id
+            if assignee_id:
+                filter_query["assignee_id"] = assignee_id
+                filter_query["assigned_to_self"] = False
+            if programme_id:
+                filter_query["programme_id"] = programme_id
 
-        tasks = []
-        cursor = db.get_collection(TaskService.collection_name).find(filter_query)
-        async for document in cursor:
-            document["id"] = str(document.pop("_id"))
-            tasks.append(TaskResponse(**document))
-        return tasks
+            tasks = []
+            cursor = db.get_collection(TaskService.collection_name).find(filter_query)
+            async for document in cursor:
+                document["id"] = str(document.pop("_id"))
+                tasks.append(TaskResponse(**document))
+            return tasks
+        except Exception:
+            raise ValueError("Get tasks failed")
 
     @staticmethod
     async def get_task_by_id(task_id: str) -> Optional[TaskResponse]:
@@ -108,9 +111,12 @@ class TaskService:
 
     @staticmethod
     async def task_details_with_ai(action_item: str) -> TaskDetailsResponse:
-        task_creation_ai_service = TaskCreationAIService(os.getenv("OPEN_API_KEY"))
-        response = task_creation_ai_service.get_response(action_item)
-        return TaskDetailsResponse(**response)
+        try:
+            task_creation_ai_service = TaskCreationAIService(os.getenv("OPEN_API_KEY"))
+            response = task_creation_ai_service.get_response(action_item)
+            return TaskDetailsResponse(**response)
+        except Exception as e:
+            raise ValueError(f"Task details with AI failed: {str(e)}")
 
     @staticmethod
     async def get_task_file_name(task_id: str) -> str:

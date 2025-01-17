@@ -13,7 +13,12 @@ async def task_details_with_ai(action_item: str = Body(..., embed=True)):
     Args:
         action_item: The action item text from which to generate task details
     """
-    return await TaskService.task_details_with_ai(action_item)
+    try:
+        return await TaskService.task_details_with_ai(action_item)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Task details with AI failed: {str(e)}"
+        )
 
 
 @router.post("/", response_model=TaskResponse)
@@ -68,7 +73,10 @@ async def get_tasks(
     - Filter by event ID
     - No filters returns all tasks
     """
-    return await TaskService.get_tasks(assigner_id, assignee_id, programme_id)
+    try:
+        return await TaskService.get_tasks(assigner_id, assignee_id, programme_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Get tasks failed: {str(e)}")
 
 
 @router.put("/{task_id}", response_model=TaskResponse)
