@@ -27,7 +27,6 @@ export const StyledNavbar = () => {
       try {
         setIsLoading(true);
         const response = await getUserByIdWithoutCredentials(userId);
-        console.log(response);
         setUser(response);
       } catch (err) {
         setIsLoading(false);
@@ -113,6 +112,7 @@ export const StyledNavbar = () => {
               color="danger"
               onPress={handleLogOut}
               className="text-danger"
+              shortcut="⌘⇧L"
             >
               Log Out
             </DropdownItem>

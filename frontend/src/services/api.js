@@ -220,3 +220,21 @@ export const createNewProgramme = (taskData) => {
       throw error;
     });
 };
+
+export const getCalendarEvents = (userId, startTime, endTime) => {
+  const requestBody = {
+    user_id: userId,
+    start_time: startTime,
+    end_time: endTime,
+  };
+
+  return api
+    .get("/calendar/get_calendar_events", requestBody)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};

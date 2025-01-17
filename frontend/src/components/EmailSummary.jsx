@@ -5,6 +5,7 @@ import { getEmailsShortSum } from "../services/api";
 export const EmailSummary = () => {
   const [emails, setEmails] = useState([]);
   const [isInboxLoading, setIsInboxLoading] = useState(true);
+  
   const userId = localStorage.getItem("userId");
 
   const fetchEmails = async () => {

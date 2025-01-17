@@ -4,20 +4,19 @@ import {
   PopoverTrigger,
   PopoverContent,
   Button,
-  Calendar,
+  RangeCalendar,
   Spinner,
 } from "@heroui/react";
 import { CalendarSearch } from "lucide-react";
 import { TaskTable } from "../components/TaskTable";
 import { EmailSummary } from "../components/EmailSummary";
 import { CalendarContent } from "../components/CalendarContent";
-import { userCalendarEvents } from "../constants/CalendarElements";
 import { getUserByIdWithoutCredentials } from "../services/api";
 
 const Dashboard = () => {
-  const [selectedDate, setSelectedDate] = useState(null);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedDates, setSelectedDates] = useState([null, null]);
 
   const userId = localStorage.getItem("userId");
 
@@ -38,8 +37,8 @@ const Dashboard = () => {
     }
   }, [userId]);
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
+  const handleDateChange = (dates) => {
+    setSelectedDates(dates);
   };
 
   return (
@@ -89,7 +88,7 @@ const Dashboard = () => {
               <div className="relative flex h-full flex-col">
                 <div className="flex justify-between px-6 pt-6">
                   <p className="text-lg font-medium tracking-tight text-gray-950">
-                    Schedule for Today
+                    Schedule for Selected Range
                   </p>
                   <Popover placement="bottom" showArrow={true}>
                     <PopoverTrigger>
@@ -103,20 +102,18 @@ const Dashboard = () => {
                     </PopoverTrigger>
                     <PopoverContent>
                       <div className="px-1 py-2">
-                        <Calendar
+                        <RangeCalendar
                           showMonthAndYearPickers
-                          aria-label="Date (Show Month and Year Picker)"
-                          onChange={handleDateChange}
+                          aria-label="Select a Date Range"
+                          onChange={handleDateChange} // When a range is selected, this updates the selectedDates state
                         />
                       </div>
                     </PopoverContent>
                   </Popover>
                 </div>
                 <div className="overflow-auto w-full [container-type:inline-size] p-6">
-                  <CalendarContent
-                    selectedDate={selectedDate}
-                    userCalendarEvents={userCalendarEvents}
-                  />
+                  {/* Pass the selectedDates to the CalendarContent component */}
+                  <CalendarContent selectedDates={selectedDates} />
                 </div>
               </div>
             </div>
