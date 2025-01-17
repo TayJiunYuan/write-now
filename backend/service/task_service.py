@@ -3,10 +3,11 @@ from db.db import db
 from bson import ObjectId
 from typing import Optional, List
 from datetime import datetime
-from service.openapi_service import TaskCreationAIService
+from service.openapi_service import TaskCreationAIService, TaskWorkflowAIService
 from service.drive_service import DriveService
 import os
 from models.task import TaskType
+import json
 
 
 class TaskService:
@@ -123,3 +124,21 @@ class TaskService:
             return file_name
         except Exception as e:
             raise ValueError(f"Failed to get file name from link: {str(e)}")
+
+    @staticmethod
+    async def get_task_workflow_ai(task_id: str) -> str:
+        try:
+            task = await TaskService.get_task_by_id(task_id)
+            task_workflow_ai_service = TaskWorkflowAIService(os.getenv("OPEN_API_KEY"))
+            response = task_workflow_ai_service.get_response(
+                json.dumps(
+                    {
+                        "name": task.name,
+                        "description": task.description,
+                        "deadline": task.deadline,
+                    }
+                )
+            )
+            return response
+        except Exception as e:
+            raise ValueError(f"Failed to get task workflow from AI: {str(e)}")

@@ -119,7 +119,7 @@ class ShortEmailSummaryAIService:
         response = chat_llm_chain.predict(human_input=user_input)
         print(response)
         return response
-    
+
 
 class LongEmailSummaryAIService:
     def __init__(self, OPEN_API_KEY):
@@ -150,5 +150,44 @@ class LongEmailSummaryAIService:
             verbose=True,
         )
         response = chat_llm_chain.predict(human_input=user_input)
+        print(response)
+        return response
+
+
+class TaskWorkflowAIService:
+    def __init__(self, OPEN_API_KEY):
+        load_dotenv()
+        self.OPEN_API_KEY = OPEN_API_KEY
+        self.llm = ChatOpenAI(api_key=self.OPEN_API_KEY)
+        self.system_message = (
+            "You are a task workflow creator. Return a workflow and a simple to follow plan of the task that is given to you later"
+            'The return format is a string in html format. Like this """ INSERT HTML HERE """.'
+            "If there is not enough information to create a workflow, return a string prompting the user to add more information to the task title and description"
+        )
+
+    def get_response(self, user_input):
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                SystemMessage(
+                    content=self.system_message
+                ),  # The persistent system prompt
+                HumanMessagePromptTemplate.from_template(
+                    "{human_input}"
+                ),  # Where the human input will injected
+            ]
+        )
+
+        chat_llm_chain = LLMChain(
+            llm=self.llm,
+            prompt=prompt,
+            verbose=True,
+        )
+        response = chat_llm_chain.predict(
+            human_input="Submit budget report to me by 20th of January - Muhd Iqshan"
+        )
+        # Remove chatgpt code block and new lines
+        response = response.replace("```html", "").replace("```", "")
+        response = response.replace("```", "")
+        response = response.replace("\n", "")
         print(response)
         return response
