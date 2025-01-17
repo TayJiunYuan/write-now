@@ -125,16 +125,6 @@ const Programmes = () => {
             ))}
           </select>
         </div>
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-black">
-            Filter by Event
-          </label>
-          <input
-            type="text"
-            placeholder="Search"
-            className="pl-2 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-rose-500 focus:ring-rose-500"
-          />
-        </div>
       </div>
 
       <div className="mt-8 items-center justify-end flex flex-row">
@@ -166,8 +156,6 @@ const Programmes = () => {
             });
 
             const formattedTime = time.split(",")[1];
-
-            console.log(date);
             return (
               <div
                 key={index}

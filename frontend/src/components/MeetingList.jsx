@@ -2,9 +2,6 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export const MeetingList = ({ meetings, title }) => {
-  useEffect(() => {
-    console.log("this is the title", title);
-  }, [title]);
   return (
     <div>
       {meetings.map((meeting, index) => {
