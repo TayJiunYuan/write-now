@@ -27,9 +27,11 @@ const MeetingInfo = () => {
     setOpenTaskDrawer(true);
   };
 
-  const handlePress = () => {
-    // const response = getTaskDetailsWithAI(meeting.action_items);
-    // console.log(response);
+  const handlePress = (action) => {
+    console.log(action);
+    console.log("type of action:", typeof action);
+    const response = getTaskDetailsWithAI(action);
+    console.log(response);
   };
 
   return (
@@ -118,7 +120,7 @@ const MeetingInfo = () => {
 
                     <Button
                       className="text-right text-base px-4 py-1 border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56"
-                      onPress={handlePress()}
+                      onClick={() => handlePress(action)}
                     >
                       Create Task
                     </Button>
