@@ -36,6 +36,8 @@ export const EmailSummary = () => {
         <div className="flex justify-center items-center h-32">
           <Spinner />
         </div>
+      ) : !emails ? (
+        <p className="text-gray-500">Error fetching emails!</p>
       ) : emails.length === 0 ? (
         <p className="text-gray-500">Inbox is empty.</p>
       ) : (
