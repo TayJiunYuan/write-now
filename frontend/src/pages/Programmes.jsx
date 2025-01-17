@@ -77,7 +77,7 @@ const Programmes = () => {
   }, [fetch]);
 
   return (
-    <div className="min-h-screen container mx-auto">
+    <div className="min-h-screen container mx-auto pt-[65px]">
       <div className="text-left mb-8 pt-8">
         <h2 className="text-2xl font-bold">Upcoming Events</h2>
         <p className="mt-2 text-black">

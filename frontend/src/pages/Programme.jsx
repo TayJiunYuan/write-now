@@ -76,8 +76,8 @@ const Programme = () => {
   }, [tasks]);
 
   return (
-    <div className="pt-4 container mx-auto min-h-screen">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="container mx-auto min-h-screen pt-[65px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
         <Card className="bg-white shadow-md rounded p-4">
           <CardHeader className="text-lg font-bold mb-2">
             Programme Details

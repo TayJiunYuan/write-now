@@ -113,6 +113,46 @@ export const createNewTask = (taskData) => {
     });
 };
 
+export const getEmailsShortSum = (userId) => {
+  return api
+    .get(`/emails/with_short_summary/${userId}`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const getEmailsLongSum = (userId, emailId) => {
+  return api
+    .get(`/emails/${userId}/${emailId}/long_summary`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const getTaskDetailsWithAI = (actionItem) => {
+  const requestBody = {
+    action_item: actionItem,
+  };
+
+  return api
+    .post(`/tasks/task_details_with_ai`, requestBody)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
 export const updateTask = (taskData) => {
   return api
     .put(`/tasks/${taskData.id}`, taskData)
@@ -137,14 +177,4 @@ export const createNewProgramme = (taskData) => {
     });
 };
 
-export const sendTaskAI = (action) => {
-  return api
-    .post("/tasks/task_details_with_ai", action)
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-      throw error;
-    });
-};
+\

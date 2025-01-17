@@ -35,8 +35,8 @@ const MeetingInfo = () => {
   }, []);
 
   return (
-    <div className="pt-4 container mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="container mx-auto pt-[65px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
         <Card className="bg-white shadow-md rounded p-4 col-span-2">
           <CardHeader className="text-lg font-bold mb-2">
             Programme Meeting Info for {title}
