@@ -1,2 +1,229 @@
-# WriteNow
-Need to automate task right now? Use WriteNow!
+# ![WriteNow Banner](./assets/images/write_now_banner.png)
+
+<p align="center">
+  <a href="#-about">About</a> &nbsp;&bull;&nbsp;
+  <a href="#-features-overview">Features Overview</a> &nbsp;&bull;&nbsp;
+  <a href="#-usage">Usage</a> &nbsp;&bull;&nbsp;
+  <a href="#-security">Security</a> &nbsp;&bull;&nbsp;
+  <a href="#-tech-stack">Tech Stack</a> &nbsp;&bull;&nbsp;
+  <a href="#-solution-architecture">Solution Architecture</a> &nbsp;&bull;&nbsp;
+  <a href="#-how-to-run-developement-locally">How to run developement locally</a>
+</p>
+
+## 💡 About
+
+### Project Objective
+
+The primary goal of this project is to develop a cost-effective digital PA system tailored for the administrators of the Singapore Book Council (SBC).
+
+We understand that:
+
+- SBC is a non-profit organization that organizes numerous events and programmes annually.
+- As a small organization, SBC lacks the resources to hire a full-time personal assistants (PAs).
+
+### Potential Issues
+
+1. **Task Management Inefficiencies**  
+   Administrators may struggle to manage the multitude of tasks associated with their programmes, leading to inefficiencies.
+
+2. **Time Constraints and Burnout**  
+   A heavy workload and tight schedules may cause stress and burnout among administrators.
+
+3. **High Cost of Hiring a PA**  
+   Hiring a full-time PA is expensive, which is not feasible for SBC as a non-profit organization.
+
+## 📌 Our Solution
+
+### WriteNow!
+
+**Get Organized. Automate Tasks. Do It All, Write Now!**
+
+WriteNow! is a **web application platform** designed to streamline task and program management for administrators. With tools for effortless organization and advanced automation, WriteNow! ensures you can tackle everything—_Write Now_.
+
+### Why WriteNow?
+
+- Simplify task and programme management to stay organized.
+- Automate repetitive workflows to save time.
+
+### Smart Automation
+
+Powered by **Large Language Model (LLM) technology**, WriteNow! automates key workflows, including:
+
+- Scheduling meetings.
+- Generating meeting minutes.
+- Summarizing emails.
+
+## ✨ Features Overview
+
+- **Organization Platform**  
+  Effortlessly organize tasks and administrators within their respective programs.
+
+- **Task Management**  
+  Create, assign, track, and update tasks—whether for yourself or others.
+
+- **Meeting Management**  
+  Automate meeting scheduling and generate AI-powered meeting minutes.
+
+- **Document Management**  
+  Automatically create document templates and assign related tasks seamlessly.
+
+- **Email Management**  
+  Summarize emails instantly and convert them into actionable tasks.
+
+- **AI Assistant**  
+  Let the AI assistant craft detailed plans of action for your tasks.
+
+## 📖 Usage
+
+## 🔒 Security
+
+Our solution comprises of several security features to keep user data safe.
+
+### Authentication
+
+OAuth 2.0 for authentication, allowing users to login securly through their google accounts and manage what services the app can access
+
+### Data Security
+
+Secure processing of sensitive user credentials on the server side, not exposing them to the malicious client users
+
+### Data Storage
+
+MongoDB Atlas for secure storage of user data, with encryption at rest and in transit
+
+## 🧑‍💻 Tech Stack
+
+<img src="./assets/images/mongo.png" alt="MongoDB Image" width="100">
+<img src="./assets/images/python.png" alt="Python Image" width="100">
+<img src="./assets/images/react.png" alt="React Image" width="200">
+
+## 📐 Solution Architecture
+
+# ![Solution Architecture Image](./assets/images/solution_architecture_dev.png)
+
+**_Frontend_**
+
+Website served to the end users. Connects to the backend to fetch data via HTTP requests.
+
+**_Backend_**
+
+Server that handles all the HTTP requests from the frontend, database operations and to google cloud services.
+
+**_MongoDB_**
+
+Database that stores all the data for the application.
+
+**_Google Cloud Platform_**
+
+Google services that are used in the application.
+
+**_ReadAI_**
+
+ReadAI is a service that uses Large Language Models to transcribe google meet recordings. It sends the transcription to the backend via Webhook, where is it further processed.
+
+## 📖 How to run developement locally
+
+### Frontend
+
+1. Change the directory to the frontend directory
+2. Run the following command to install the dependencies:
+
+```bash
+npm install
+```
+
+3. Run the following command to start the frontend:
+
+```bash
+npm start
+```
+
+### Backend
+
+Google Cloud Project:
+
+1. Create a Google Cloud Project and enable the following APIs:
+
+- Calendar API
+- Gmail API
+- Google Workspace Meetings API
+- Google Workspace Drive API
+
+2. Add test users to OAuth consent screen
+
+3. Set the redirect URI to `http://your_backend_url/auth/callback`
+
+4. Retrive the following credentials from the Google Cloud Console:
+
+- Client ID (GOOGLE_CLIENT_ID)
+- Client Secret (GOOGLE_CLIENT_SECRET)
+- Token Endpoint (GOOGLE_TOKEN_ENDPOINT)
+- Redirect URI (REDIRECT_URI)
+
+ReadAI:
+
+1. Create a Gmail account (add to OAuth consent screen)
+2. Use the Gmail account to register for a ReadAI account.
+3. Enable the Calendar integration in the ReadAI account.
+4. Enable Webhook integration in the ReadAI account. The webhook URL is `http://your_backend_url/save_transcript_and_analysis`.
+5. Retrieve the following credentials:
+
+- Gmail of the ReadAI account
+
+Templates:
+
+1. Using the Gmail account created above, create a
+
+- Public google doc template for reports
+- Public google sheet template for budget
+- Public google form template for forms
+
+2. Retrieve the following credentials:
+
+- Google Doc template ID (REPORT_TEMPLATE_ID)
+- Google Sheet template ID (FORM_TEMPLATE_ID)
+- Google Form template ID (BUDGET_TEMPLATE_ID)
+
+OpenAI:
+
+1. Create an OpenAI account and retrieve the API key (OPEN_API_KEY)
+
+MongoDB:
+
+1. Download MongoDB Community Server from https://www.mongodb.com/try/download/community
+2. Install MongoDB Compass from https://www.mongodb.com/try/download/compass
+3. Create a local database and retrieve the connection string (MONGODB_URL) and database name (DATABASE_NAME).
+
+Backend:
+
+1. Change the directory to the backend directory
+2. Download python 3.11 from https://www.python.org/downloads/
+3. Install dependencies.
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Create a `.env` file in the root of thebackend directory with the following variables:
+
+```bash
+GOOGLE_CLIENT_ID
+GOOGLE_CLIENT_SECRET
+GOOGLE_TOKEN_ENDPOINT
+REDIRECT_URI
+MONGODB_URL
+DATABASE_NAME
+READ_AI_BOT_EMAIL
+OPEN_API_KEY
+BUDGET_TEMPLATE_ID
+REPORT_TEMPLATE_ID
+FORM_TEMPLATE_ID
+```
+
+5. Run the server
+
+```bash
+fastapi dev main.py
+```
+
+6. Open the browser and go to `http://127.0.0.1:8000/docs` to see the API documentation.
