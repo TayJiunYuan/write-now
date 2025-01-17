@@ -13,9 +13,9 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LayoutDashboardIcon, MailIcon, BookIcon } from "lucide-react";
-import { getUserById } from "../services/api";
+import { getUserByIdWithoutCredentials } from "../services/api";
 
-export const StyledNavbar = () => {
+export const StyledNavbar = ({ onLogOut }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,25 +26,19 @@ export const StyledNavbar = () => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        const response = await getUserById(userId);
+        const response = await getUserByIdWithoutCredentials(userId);
+        console.log(response);
         setUser(response);
       } catch (err) {
         setIsLoading(false);
       } finally {
-        setIsLoading(true);
+        setIsLoading(false);
       }
     };
-
     if (userId) {
       fetchUserData();
     }
   }, [userId]);
-
-  const handleLogOut = () => {
-    localStorage.clear();
-    setIsLoading(false);
-    navigate("/");
-  };
 
   return (
     <Navbar isBordered className="fixed">
@@ -100,12 +94,20 @@ export const StyledNavbar = () => {
           <DropdownMenu aria-label="Profile Actions" variant="flat">
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">{userId ? userId : "--"}</p>
+              <p className="font-light">
+                {isLoading ? "Loading..." : user ? user.name : "--"}
+              </p>
+              <p className="font-light">
+                {isLoading ? "Loading..." : user ? user.id : "--"}
+              </p>
             </DropdownItem>
             <DropdownItem
               key="logout"
               color="danger"
-              onPress={handleLogOut}
+              onPress={() => {
+                onLogOut();
+                navigate("/");
+              }}
               className="text-danger"
             >
               Log Out

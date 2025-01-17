@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./index.css";
 
@@ -13,15 +13,28 @@ import MeetingInfo from "./pages/MeetingInfo";
 import TaskInfo from "./pages/TaskInfo";
 
 const App = () => {
-  const userId = localStorage.getItem("userId");
+  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUserId(localStorage.getItem("userId"));
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  const handleLogOut = () => {
+    localStorage.clear();
+    setUserId(null);
+  };
 
   return (
     <Router>
-      {userId && <StyledNavbar />}
+      {userId && <StyledNavbar onLogOut={handleLogOut} />}
       <div className="bg-gray-100 min-h-screen">
         <Routes>
           <Route path="/" element={<AuthLogin />} />
-          <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute userId={userId} />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/email" element={<Email />} />
             <Route path="/programmes" element={<Programmes />} />

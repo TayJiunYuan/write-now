@@ -57,6 +57,18 @@ export const getUserById = (userId) => {
     });
 };
 
+export const getUserByIdWithoutCredentials = (userId) => {
+  return api
+    .get(`/users/${userId}/without-credentials`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
 export const getMeetings = (programmeID) => {
   return api
     .get("/meetings", {
