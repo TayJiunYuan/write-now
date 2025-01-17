@@ -51,12 +51,10 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
-    console.log("Selected Category:", e.target.value);
   };
 
   const handleGroupDataSubmit = (data) => {
     setGroupData(data);
-    console.log("Received group data:", data);
 
     const attendees = data.attendees;
     const result = {

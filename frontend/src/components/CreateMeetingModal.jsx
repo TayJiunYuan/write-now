@@ -38,11 +38,8 @@ export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
     );
     const adjustedDate = new Date(date.getTime() - offset);
     const isoDate = adjustedDate.toISOString();
-
     const userId = localStorage.getItem("userId");
-
     const array = Array.from(selectedUsers);
-    console.log(array);
 
     const meetingData = {
       programme_id: id,

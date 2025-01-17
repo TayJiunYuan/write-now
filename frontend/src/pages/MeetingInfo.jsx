@@ -10,12 +10,14 @@ import {
 } from "@heroui/react";
 import { useLocation } from "react-router-dom";
 import { getTaskDetailsWithAI } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const MeetingInfo = () => {
   const location = useLocation();
   const { meeting, title } = location.state || {};
   const summaryTitle = meeting.summary.split("-")[0];
   const [openTaskDrawer, setOpenTaskDrawer] = useState(false);
+  const navigation = useNavigate();
 
   const handleJoinMeeting = () => {
     window.location.href = meeting.meet_link;
@@ -30,12 +32,14 @@ const MeetingInfo = () => {
     // console.log(response);
   };
 
-  useEffect(() => {
-    console.log(meeting);
-  }, []);
-
   return (
     <div className="container mx-auto pt-[65px]">
+      <Button
+        onClick={() => navigation(-1)} // Go back to the previous page
+        className="text-base border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition mt-4"
+      >
+        Back
+      </Button>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
         <Card className="bg-white shadow-md rounded p-4 col-span-2">
           <CardHeader className="text-lg font-bold mb-2">

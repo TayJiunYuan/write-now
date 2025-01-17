@@ -18,6 +18,7 @@ import {
 } from "../services/api";
 import { MeetingList } from "../components/MeetingList";
 import { TaskList } from "../components/TaskList";
+import { useNavigate } from "react-router-dom";
 
 const Programme = () => {
   const location = useLocation();
@@ -36,6 +37,8 @@ const Programme = () => {
   const programmeID = event.id;
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
+
+  const navigation = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -78,7 +81,6 @@ const Programme = () => {
         taskIds.map((taskId) => getTaskFileName(taskId))
       );
       setFileNames(fileNames);
-      console.log(fileNames);
       return fileNames;
     } catch (error) {
       console.error("Error fetching file names:", error);
@@ -90,21 +92,16 @@ const Programme = () => {
   }, []);
 
   useEffect(() => {
-    console.log(tasks);
     setFilteredTasks(
       tasks.filter((task) =>
         ["BUDGET", "REPORT", "FORM"].includes(task.task_type)
       )
     );
-
-    console.log(filteredTasks);
   }, [tasks]);
 
   useEffect(() => {
     setIds(filteredTasks.map((task) => task.id));
     getAllFileNames(ids);
-
-    console.log(filteredTasks);
   }, [filteredTasks]);
 
   useEffect(() => {
@@ -116,12 +113,14 @@ const Programme = () => {
     );
   }, [fileNames]);
 
-  useEffect(() => {
-    console.log("final:", combinedFile);
-  }, [combinedFile]);
-
   return (
     <div className="container mx-auto min-h-screen pt-[65px]">
+      <Button
+        onClick={() => navigation(-1)} // Go back to the previous page
+        className="text-base border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition mt-4"
+      >
+        Back
+      </Button>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
         <Card className="bg-white shadow-md rounded p-4">
           <CardHeader className="text-lg font-bold mb-2">
