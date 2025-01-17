@@ -7,7 +7,7 @@
   <a href="#-security">Security</a> &nbsp;&bull;&nbsp;
   <a href="#-tech-stack">Tech Stack</a> &nbsp;&bull;&nbsp;
   <a href="#-solution-architecture">Solution Architecture</a> &nbsp;&bull;&nbsp;
-  <a href="#-how-to-run-developement-locally">How to run developement locally</a>
+  <a href="#-how-to-run-developement-locally">How to run development locally</a>
 </p>
 
 ## 💡 About
@@ -74,6 +74,22 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
   Let the AI assistant craft detailed plans of action for your tasks.
 
 ## 📖 Usage
+
+- **Dashboard**
+  Displays 3 main components - Tasks, Email Summaries, and Calendar.
+  ![image](https://github.com/user-attachments/assets/e25e90c6-3668-4453-a8c0-22b7bf49553f)
+  
+- **Email**
+  Contains and inbox and message preview section. THe inbox shows short summaries of your message.
+  ![image](https://github.com/user-attachments/assets/2bb44c47-8b0a-475c-a688-1981948fa9a9)
+  Upon clicking on the email, a longer summary of all emails within that selected email will then be shown (along with the number of emails in the thread).
+  All summaries written by AI.
+
+- **Programmes**
+
+
+- **Meetings**
+
 
 ## 🔒 Security
 
