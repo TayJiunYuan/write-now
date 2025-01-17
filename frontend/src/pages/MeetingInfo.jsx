@@ -100,9 +100,7 @@ const MeetingInfo = () => {
         </Card>
 
         <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">
-            Possible tasks to create
-          </CardHeader>
+          <CardHeader className="text-lg font-bold mb-2">Tasks</CardHeader>
           <Divider />
           <CardBody>
             <ul>

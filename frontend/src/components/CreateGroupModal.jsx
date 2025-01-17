@@ -30,8 +30,6 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {
     onSubmit(groupData);
 
     onClose();
-
-    // return groupData;
   };
 
   const handleSelectionChange = (selectedKeys) => {

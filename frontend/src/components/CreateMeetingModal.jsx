@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -9,15 +9,24 @@ import {
   DatePicker,
   Textarea,
   Input,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
-import { createNewMeeting } from "../services/api";
+import { createNewMeeting, getUsersWithoutCredentials } from "../services/api";
 
-export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
+export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
   const [startTime, setStartTime] = useState(new Date());
   const [durationHours, setDurationHours] = useState("");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const allIds = Object.values(attendees).flat();
+
+  const filteredUsers = users.filter((user) => allIds.includes(user.id));
 
   const handleSubmit = () => {
     const { year, month, day, hour, minute, second, millisecond, offset } =
@@ -27,13 +36,14 @@ export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
     );
     const adjustedDate = new Date(date.getTime() - offset);
     const isoDate = adjustedDate.toISOString();
-    console.log(isoDate);
 
-    const summaryString = summary + " - " + isoDate;
+    const userId = localStorage.getItem("userId");
+
+    console.log("attendees:", attendees);
 
     const meetingData = {
-      programme_id: "67887f462f43d9720fbe448a",
-      organizer_id: "118276801488272131566",
+      programme_id: id,
+      organizer_id: userId,
       attendee_ids: ["108892597123264895192", "118276801488272131566"],
       start_time: isoDate,
       duration_hours: durationHours,
@@ -42,9 +52,32 @@ export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
     };
 
     console.log(meetingData);
-    createNewMeeting(meetingData);
+    // createNewMeeting(meetingData);
     onClose();
   };
+
+  const handleSelectionChange = (selectedKeys) => {
+    setSelectedUsers(selectedKeys);
+    console.log("selected ids:", selectedKeys);
+
+    console.log(selectedUsers);
+  };
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getUsersWithoutCredentials();
+      setUsers(response);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <Modal isOpen={isOpen} size={"md"} onClose={onClose}>
@@ -99,6 +132,22 @@ export const CreateMeetingModal = ({ isOpen, onClose, programmeId }) => {
                     placeholder="Enter meeting description"
                     rows={4}
                   />
+                </div>
+                <div>
+                  <label htmlFor="attendees">Select attendees</label>
+                  <Select
+                    className=""
+                    placeholder="Select attendee/s"
+                    selectionMode="multiple"
+                    selectedKeys={selectedUsers}
+                    onSelectionChange={handleSelectionChange}
+                  >
+                    {filteredUsers.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.name}
+                      </SelectItem>
+                    ))}
+                  </Select>
                 </div>
               </div>
             </ModalBody>

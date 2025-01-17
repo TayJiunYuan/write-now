@@ -27,8 +27,8 @@ const Programme = () => {
   const [tasks, setTasks] = useState([]);
   const [users, setUsers] = useState([]);
 
-  const programmeID = event.id;
   const title = event.name;
+  const programmeID = event.id;
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
@@ -70,10 +70,6 @@ const Programme = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  useEffect(() => {
-    console.log("tasks:", tasks);
-  }, [tasks]);
 
   return (
     <div className="container mx-auto min-h-screen pt-[65px]">
@@ -167,6 +163,7 @@ const Programme = () => {
         isOpen={isOpen}
         onClose={handleClose}
         id={programmeID}
+        attendees={event.groups}
       />
     </div>
   );
