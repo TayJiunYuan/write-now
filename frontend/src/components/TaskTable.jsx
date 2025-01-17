@@ -120,7 +120,7 @@ export const TaskTable = () => {
             size="sm"
             variant="flat"
           >
-            {task.status}
+            {task.status.replace(/_/g, ' ')}
           </Chip>
         );
       case "deadline":
