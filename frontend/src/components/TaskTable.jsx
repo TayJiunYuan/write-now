@@ -13,7 +13,7 @@ import {
 import {
   getTasksByAssigner,
   getTasksByAssignee,
-  getUsers,
+  getUsersWithoutCredentials,
   getAllProgrammes,
 } from "../services/api";
 import { columns, statusColors } from "../constants/TableElements";
@@ -37,7 +37,7 @@ export const TaskTable = () => {
           await Promise.all([
             getTasksByAssigner(userId),
             getTasksByAssignee(userId),
-            getUsers(),
+            getUsersWithoutCredentials(),
             getAllProgrammes(),
           ]);
         setTasksByAssigner(tasksAssigner);
