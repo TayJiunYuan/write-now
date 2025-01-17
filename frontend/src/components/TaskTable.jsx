@@ -7,21 +7,22 @@ import {
   TableRow,
   TableCell,
   Chip,
-  Tooltip,
+  // Tooltip,
   Spinner,
 } from "@heroui/react";
 import {
   getTasksByAssigner,
-  getTasksByAssignee,
+  // getTasksByAssignee,
   getUsersWithoutCredentials,
   getAllProgrammes,
+  // deleteTask,
 } from "../services/api";
 import { columns, statusColors } from "../constants/TableElements";
-import { EyeIcon, DeleteIcon, EditIcon } from "../constants/Icons";
+// import { EyeIcon, DeleteIcon, EditIcon } from "../constants/Icons";
 
 export const TaskTable = () => {
   const [tasksByAssigner, setTasksByAssigner] = useState([]);
-  const [tasksByAssignee, setTasksByAssignee] = useState([]);
+  // const [tasksByAssignee, setTasksByAssignee] = useState([]);
   const [users, setUsers] = useState([]);
   const [programmes, setProgrammes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,15 +34,12 @@ export const TaskTable = () => {
       try {
         setLoading(true);
 
-        const [tasksAssigner, tasksAssignee, allUsers, allProgrammes] =
-          await Promise.all([
-            getTasksByAssigner(userId),
-            getTasksByAssignee(userId),
-            getUsersWithoutCredentials(),
-            getAllProgrammes(),
-          ]);
+        const [tasksAssigner, allUsers, allProgrammes] = await Promise.all([
+          getTasksByAssigner(userId),
+          getUsersWithoutCredentials(),
+          getAllProgrammes(),
+        ]);
         setTasksByAssigner(tasksAssigner);
-        setTasksByAssignee(tasksAssignee);
         setUsers(allUsers);
         setProgrammes(allProgrammes);
       } catch (error) {
@@ -72,92 +70,91 @@ export const TaskTable = () => {
     [programmes]
   );
 
-  const handleUpdateTask = (taskId) => {
-    // Logic for updating the task (e.g., opening a modal or calling an API)
-    console.log("Update task:", taskId);
-  };
+  // const handleUpdateTask = (taskId) => {
+  //   console.log("Update task:", taskId);
+  // };
 
-  const handleDeleteTask = (taskId) => {
-    // Logic for deleting the task (e.g., confirmation dialog and API call)
-    console.log("Delete task:", taskId);
-  };
+  const renderCell = useCallback(
+    (task, columnKey) => {
+      const cellValue = task[columnKey] ? task[columnKey] : "--";
 
-  const renderCell = useCallback((task, columnKey) => {
-    const cellValue = task[columnKey] ? task[columnKey] : "--";
-
-    switch (columnKey) {
-      case "name":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-          </div>
-        );
-      case "programme_id":
-        return (
-          <div className="flex flex-col">
+      switch (columnKey) {
+        case "name":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-sm capitalize">{cellValue}</p>
+            </div>
+          );
+        case "programme_id":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-sm capitalize">
+                {findProgramById(cellValue)}
+              </p>
+            </div>
+          );
+        case "assigner_id":
+        case "assignee_id":
+          return (
             <p className="text-bold text-sm capitalize">
-              {findProgramById(cellValue)}
+              {findUserById(cellValue)}
             </p>
-          </div>
-        );
-      case "assigner_id":
-        return (
-          <p className="text-bold text-sm capitalize">
-            {findUserById(cellValue)}
-          </p>
-        );
-      case "assignee_id":
-        return (
-          <p className="text-bold text-sm capitalize">
-            {findUserById(cellValue)}
-          </p>
-        );
-      case "status":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColors[task.status]}
-            size="sm"
-            variant="flat"
-          >
-            {task.status.replace(/_/g, ' ')}
-          </Chip>
-        );
-      case "deadline":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-          </div>
-        );
-      case "actions":
-        return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Update Task">
-              <span
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={() => handleUpdateTask(task.id)}
-              >
-                <EditIcon />
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete Task">
-              <span
-                className="text-lg text-danger cursor-pointer active:opacity-50"
-                onClick={() => handleDeleteTask(task.id)}
-              >
-                <DeleteIcon />
-              </span>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return cellValue ? (
-          <p className="text-sm">{cellValue}</p>
-        ) : (
-          <p className="text-sm text-gray-400">No data</p>
-        );
-    }
-  }, []);
+          );
+        case "task_type":
+          return <p className="text-bold text-sm capitalize">{cellValue}</p>;
+        case "status":
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColors[task.status]}
+              size="sm"
+              variant="flat"
+            >
+              {task.status.replace(/_/g, " ")}
+            </Chip>
+          );
+        case "deadline":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-sm capitalize">{cellValue}</p>
+            </div>
+          );
+        // case "actions":
+        //   return (
+        //     <div className="relative flex items-center justify-center gap-2">
+        //       <Tooltip content="Update Task">
+        //         <span
+        //           className="text-lg text-default-400 cursor-pointer active:opacity-50"
+        //           onClick={() => handleUpdateTask(task.id)}
+        //         >
+        //           <EditIcon />
+        //         </span>
+        //       </Tooltip>
+        //       <Tooltip color="danger" content="Delete Task">
+        //         <span
+        //           className="text-lg text-danger cursor-pointer active:opacity-50"
+        //           onClick={() => handleDeleteTask(task.id)}
+        //         >
+        //           <DeleteIcon />
+        //         </span>
+        //       </Tooltip>
+        //     </div>
+        //   );
+        default:
+          return cellValue ? (
+            <p className="text-sm">{cellValue}</p>
+          ) : (
+            <p className="text-sm text-gray-400">No data</p>
+          );
+      }
+    },
+    [users, programmes]
+  );
+
+  useEffect(() => {
+    console.log(users);
+    console.log(programmes);
+  }, [users, programmes]);
 
   return (
     <Table aria-label="Task Table" isHeaderSticky removeWrapper>
@@ -173,7 +170,7 @@ export const TaskTable = () => {
       </TableHeader>
       <TableBody
         items={tasksByAssigner}
-        isLoading={loading}
+        isLoading={loading || !users.length || !programmes.length}
         loadingContent={<Spinner color="primary" />}
       >
         {(item) => (

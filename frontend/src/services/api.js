@@ -209,6 +209,22 @@ export const updateTask = (taskData) => {
     });
 };
 
+export const deleteTask = (taskId) => {
+  const queryParams = {
+    task_id: taskId,
+  };
+
+  return api
+    .get(`/tasks/`, { params: queryParams })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
 export const getTaskFileName = (taskId) => {
   return api
     .get(`/tasks/${taskId}/file_name`)
