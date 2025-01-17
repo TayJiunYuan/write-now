@@ -77,13 +77,23 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
 
 - **Dashboard**
   Displays 3 main components - Tasks, Email Summaries, and Calendar.
+  
   ![image](https://github.com/user-attachments/assets/e25e90c6-3668-4453-a8c0-22b7bf49553f)
   
 - **Email**
   Contains and inbox and message preview section. THe inbox shows short summaries of your message.
+  
   ![image](https://github.com/user-attachments/assets/2bb44c47-8b0a-475c-a688-1981948fa9a9)
+  
   Upon clicking on the email, a longer summary of all emails within that selected email will then be shown (along with the number of emails in the thread).
-  All summaries written by AI.
+  _All summaries written by AI._
+
+  User will also have the option to choose to view the email on Gmail where they can send replies on, or create a task related to that email (with/without AI).
+
+  ![image](https://github.com/user-attachments/assets/9f8da557-a1bd-4427-b9a8-36c5eedd79bd)
+
+  Selecting on 'Create Task with AI' will bring you to a 'Create Task' drawer, where you are given a few options to fill out before generating the new task.
+  _You may choose to assign the task to either yourself or someone else._
 
 - **Programmes**
 
