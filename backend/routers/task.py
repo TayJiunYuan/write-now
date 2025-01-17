@@ -19,7 +19,31 @@ async def task_details_with_ai(action_item: str = Body(..., embed=True)):
 @router.post("/", response_model=TaskResponse)
 async def create_task(task: TaskRequest):
     """Create a new task. Returns the created task."""
-    return await TaskService.create_task(task)
+    try:
+        return await TaskService.create_task(task)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/{task_id}/file_name", response_model=str | None)
+async def get_task_file_name(task_id: str):
+    """Get the file name of a task"""
+    try:
+        file_name = await TaskService.get_task_file_name(task_id)
+        if file_name is None:
+            return None
+        return file_name
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/{task_id}", response_model=TaskResponse)
+async def get_task(task_id: str):
+    """Retrieve a specific task by ID."""
+    task = await TaskService.get_task_by_id(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task
 
 
 @router.get("/", response_model=List[TaskResponse])
@@ -36,15 +60,6 @@ async def get_tasks(
     - No filters returns all tasks
     """
     return await TaskService.get_tasks(assigner_id, assignee_id, programme_id)
-
-
-@router.get("/{task_id}", response_model=TaskResponse)
-async def get_task(task_id: str):
-    """Retrieve a specific task by ID."""
-    task = await TaskService.get_task_by_id(task_id)
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
-    return task
 
 
 @router.put("/{task_id}", response_model=TaskResponse)
