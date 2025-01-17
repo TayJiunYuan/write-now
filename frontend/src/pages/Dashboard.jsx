@@ -87,7 +87,7 @@ const Dashboard = () => {
                     Email Summaries
                   </p>
                   <p className="text-sm/6 text-gray-600">
-                    Displaying last 10 emails
+                    Displaying last 4 emails
                   </p>
                 </div>
                 <div className="overflow-auto w-full [container-type:inline-size] px-6 pb-6">
