@@ -14,6 +14,7 @@ import {
 } from "@heroui/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import { createNewMeeting, getUsersWithoutCredentials } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
   const [startTime, setStartTime] = useState(new Date());
@@ -23,6 +24,7 @@ export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const allIds = Object.values(attendees).flat();
 
@@ -39,30 +41,26 @@ export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
 
     const userId = localStorage.getItem("userId");
 
-    console.log("attendees:", attendees);
+    const array = Array.from(selectedUsers);
+    console.log(array);
 
     const meetingData = {
       programme_id: id,
       organizer_id: userId,
-      attendee_ids: ["108892597123264895192", "118276801488272131566"],
+      attendee_ids: array,
       start_time: isoDate,
       duration_hours: durationHours,
       summary: summary,
       description: description,
     };
-
     console.log(meetingData);
-    // createNewMeeting(meetingData);
+    createNewMeeting(meetingData);
+    navigate(0);
     onClose();
   };
-
   const handleSelectionChange = (selectedKeys) => {
     setSelectedUsers(selectedKeys);
-    console.log("selected ids:", selectedKeys);
-
-    console.log(selectedUsers);
   };
-
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -100,7 +98,7 @@ export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
                     onChange={(date) => setStartTime(date)}
                     showTimeSelect
                     dateFormat="Pp"
-                    className="nextui-input"
+                    className="heroui-input"
                   />
                 </div>
                 <div>

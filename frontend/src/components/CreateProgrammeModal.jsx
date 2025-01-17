@@ -144,7 +144,7 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
                       onChange={(date) => setStartTime(date)}
                       showTimeSelect
                       dateFormat="Pp"
-                      className="nextui-input"
+                      className="heroui-input"
                     />
                   </div>
                 </div>

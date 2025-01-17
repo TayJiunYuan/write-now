@@ -34,9 +34,6 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {
 
   const handleSelectionChange = (selectedKeys) => {
     setSelectedUsers(selectedKeys);
-    console.log("selected ids:", selectedKeys);
-
-    console.log(selectedUsers);
   };
 
   const fetchData = async () => {
