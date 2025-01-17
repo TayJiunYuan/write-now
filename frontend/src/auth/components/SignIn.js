@@ -7,7 +7,7 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import AppTheme from "../shared-theme/AppTheme";
 import { GoogleIcon } from "../../constants/Logos";
-import { Tooltip, Link } from "@nextui-org/react";
+import { Tooltip, Link } from "@heroui/react";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",

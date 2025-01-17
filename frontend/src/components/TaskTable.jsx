@@ -9,7 +9,7 @@ import {
   User,
   Chip,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 
 import { columns, users, statusColorMap } from "../constants/TableElements";
 import { EyeIcon, DeleteIcon, EditIcon } from "../constants/Icons";
