@@ -29,6 +29,18 @@ export const getUsers = () => {
     });
 };
 
+export const getUsersWithoutCredentials = () => {
+  return api
+    .get("/users/without-credentials")
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
 export const getUserById = (userId) => {
   const queryParams = {
     user_id: userId,
@@ -61,9 +73,25 @@ export const getMeetings = (programmeID) => {
     });
 };
 
-export const createMeetings = (meetingData) => {
+export const getTasksByProgrammeId = (programmeID) => {
   return api
-    .post("/meetings")
+    .get("/tasks", {
+      params: {
+        programme_id: programmeID,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const createNewMeeting = (meetingData) => {
+  return api
+    .post("/meetings/create", meetingData)
     .then((response) => {
       return response.data;
     })
@@ -116,6 +144,30 @@ export const getTaskDetailsWithAI = (actionItem) => {
 
   return api
     .post(`/tasks/task_details_with_ai`, requestBody)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const updateTask = (taskData) => {
+  return api
+    .put(`/tasks/${taskData.id}`, taskData)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const createNewProgramme = (taskData) => {
+  return api
+    .post("/programmes", taskData)
     .then((response) => {
       return response.data;
     })
