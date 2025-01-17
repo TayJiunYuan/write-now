@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Avatar,
   Modal,
   ModalContent,
   ModalHeader,
@@ -23,7 +24,8 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
   const [location, setLocation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [groupData, setGroupData] = useState(null);
+  const [groupData, setGroupData] = useState([]);
+  const [groupName, setGroupName] = useState([]);
 
   const handleSubmit = () => {
     const { year, month, day, hour, minute, second, millisecond, offset } =
@@ -34,11 +36,22 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
     const adjustedDate = new Date(date.getTime() - offset);
     const isoDate = adjustedDate.toISOString();
 
+    let combinedData = {};
+
+    groupData.forEach((item) => {
+      Object.keys(item).forEach((key) => {
+        if (!combinedData[key]) {
+          combinedData[key] = [];
+        }
+        combinedData[key] = combinedData[key].concat(item[key]);
+      });
+    });
+
     const programmeData = {
       name: name,
       description: description,
       type: selectedCategory,
-      groups: groupData,
+      groups: combinedData,
       datetime: isoDate,
       location: location,
     };
@@ -54,14 +67,20 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
   };
 
   const handleGroupDataSubmit = (data) => {
-    setGroupData(data);
-
     const attendees = data.attendees;
+    const name = data.name;
+
     const result = {
-      [data.name]: attendees,
+      [name]: attendees,
     };
 
-    setGroupData(result);
+    console.log(data.name);
+    setGroupName((prevGroupNames) => [...prevGroupNames, name]);
+    if (groupData.length === 0) {
+      setGroupData(result);
+    } else {
+      setGroupData([groupData, result]);
+    }
   };
 
   const handleShow = () => setShowForm(true);
@@ -127,7 +146,16 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
                   </div>
                   <div className="flex flex-col">
                     <label htmlFor="group">Group</label>
-                    <Button className=" max-w-28" onPress={handleShow}>
+                    {groupName.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-4">
+                        {groupName.map((name, index) => (
+                          <div key={index}>
+                            <Avatar name={name} size="md" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <Button className=" max-w-28 mt-5" onPress={handleShow}>
                       Add new group
                     </Button>
                   </div>
