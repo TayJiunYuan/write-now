@@ -27,6 +27,7 @@ const AuthLogin = () => {
     if (userId) {
       localStorage.setItem("userId", userId);
       navigate("/dashboard");
+      window.location.reload();
     }
   }, []);
 

@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { LayoutDashboardIcon, MailIcon, BookIcon } from "lucide-react";
 import { getUserByIdWithoutCredentials } from "../services/api";
 
-export const StyledNavbar = ({ onLogOut }) => {
+export const StyledNavbar = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -39,6 +39,13 @@ export const StyledNavbar = ({ onLogOut }) => {
       fetchUserData();
     }
   }, [userId]);
+
+  const handleLogOut = () => {
+    localStorage.clear();
+    setUser(null);
+    navigate("/");
+    window.location.reload();
+  };
 
   return (
     <Navbar isBordered className="fixed">
@@ -104,10 +111,7 @@ export const StyledNavbar = ({ onLogOut }) => {
             <DropdownItem
               key="logout"
               color="danger"
-              onPress={() => {
-                onLogOut();
-                navigate("/");
-              }}
+              onPress={handleLogOut}
               className="text-danger"
             >
               Log Out
