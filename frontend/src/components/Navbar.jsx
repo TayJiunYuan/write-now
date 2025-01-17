@@ -65,6 +65,7 @@ export const StyledNavbar = () => {
         </NavbarItem>
         <NavbarItem isActive>
           <Link
+            color="foreground"
             aria-current="page"
             href="/dashboard"
             className="flex flex-col items-center"
