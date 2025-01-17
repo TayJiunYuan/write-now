@@ -73,7 +73,7 @@ export const CalendarContent = ({ selectedDates }) => {
         <Spinner />
       ) : error ? (
         <p className="text-red-500">{error}</p>
-      ) : events ? (
+      ) : events && events.length > 0 ? (
         <div className="w-full max-w-lg p-4 border rounded-lg bg-white shadow-md">
           <h2 className="mb-4">
             Events from {startDateTime} to {endDateTime}
