@@ -131,7 +131,7 @@ export const Email = () => {
         {selectedEmail && !isEmailThreadLoading ? (
           <div>
             <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Email Thread
+              Long Summary
             </h3>
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
               <p className="text-lg text-gray-800">
@@ -183,7 +183,7 @@ export const Email = () => {
           </div>
         ) : (
           <p className="text-gray-500">
-            Select an email to view the full thread.
+            Select an email to view the long summary.
           </p>
         )}
       </div>
