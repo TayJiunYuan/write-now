@@ -72,11 +72,7 @@ export const CalendarContent = ({ selectedDates }) => {
         <p>Loading events...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
-      ) : events.length === 0 ? (
-        <p className="text-sm/6 text-gray-600">
-          No events for the selected date range.
-        </p>
-      ) : (
+      ) : events ? (
         <div className="w-full max-w-lg p-4 border rounded-lg bg-white shadow-md">
           <h2 className="mb-4">
             Events from {startDateTime} to {endDateTime}
@@ -93,6 +89,10 @@ export const CalendarContent = ({ selectedDates }) => {
             ))}
           </ul>
         </div>
+      ) : (
+        <p className="text-sm/6 text-gray-600">
+          No events for the selected date range.
+        </p>
       )}
     </div>
   );
