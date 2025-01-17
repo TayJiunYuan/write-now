@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from models.user import User
 from service.auth_service import AuthService
+import os
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -34,7 +35,7 @@ async def auth_callback(code: str, state: str):
         # Get or create user
         user = await AuthService.get_or_create_user(user_info, credentials_json)
 
-        redirect_url = f"http://localhost:3000?user_id={user.id}"
+        redirect_url = f"{os.getenv('FRONTEND_URL')}/?user_id={user.id}"
         
         return RedirectResponse(url=redirect_url)
     except Exception as e:
