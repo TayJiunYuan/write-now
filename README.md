@@ -121,7 +121,7 @@ Google services that are used in the application.
 
 ReadAI is a service that uses Large Language Models to transcribe google meet recordings. It sends the transcription to the backend via Webhook, where is it further processed.
 
-## 📖 How to run developement locally
+## 📖 How to run development locally
 
 ### Frontend
 
