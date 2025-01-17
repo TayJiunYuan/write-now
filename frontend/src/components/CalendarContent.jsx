@@ -3,7 +3,7 @@ import { Spinner } from "@heroui/react";
 import { getCalendarEvents } from "../services/api";
 
 export const CalendarContent = ({ selectedDates }) => {
-  const [events, setEvents] = useState(null);
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -67,6 +67,13 @@ export const CalendarContent = ({ selectedDates }) => {
     fetchEvents();
   }, [startDateTime, endDateTime, userId]);
 
+  function formatEventTime(dateTimeString) {
+    const date = new Date(dateTimeString);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `<span class="math-inline">\{hours\}\:</span>{minutes}`;
+  }
+
   return (
     <div className="flex flex-col h-full justify-center items-center">
       {loading ? (
@@ -78,17 +85,9 @@ export const CalendarContent = ({ selectedDates }) => {
           <h2 className="mb-4">
             Events from {startDateTime} to {endDateTime}
           </h2>
-          <ul className="space-y-3">
-            {events.map((event, index) => (
-              <li
-                key={index}
-                className="p-4 border rounded-lg shadow-sm bg-gray-50"
-              >
-                <p className="font-medium">{event.time}</p>
-                <p className="text-gray-600">{event.title}</p>
-              </li>
-            ))}
-          </ul>
+          <p className="text-sm/6 text-gray-600">
+            You have {events.length} events today.
+          </p>
         </div>
       ) : (
         <p className="text-sm/6 text-gray-600">

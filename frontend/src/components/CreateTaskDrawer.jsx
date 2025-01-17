@@ -13,7 +13,7 @@ import {
   Spinner,
 } from "@heroui/react";
 import { useState, useEffect } from "react";
-import { createNewTask, getUsers, getAllProgrammes } from "../services/api";
+import { createNewTask, getUsersWithoutCredentials, getAllProgrammes } from "../services/api";
 import { Toast } from "./Toast";
 
 const CreateTaskDrawer = ({
@@ -44,7 +44,7 @@ const CreateTaskDrawer = ({
       try {
         setIsLoading(true);
         if (assignees.length === 0) {
-          const users = await getUsers();
+          const users = await getUsersWithoutCredentials();
           setAvailableAssignees(users);
         }
         if (programmes.length === 0) {
