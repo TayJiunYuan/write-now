@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getCalendarEvents } from "../services/api"; // Import the API call function
 
-export const CalendarContent = ({ selectedDates, userCalendarEvents }) => {
+export const CalendarContent = ({ selectedDates }) => {
   const [events, setEvents] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
