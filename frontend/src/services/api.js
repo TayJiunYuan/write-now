@@ -176,5 +176,3 @@ export const createNewProgramme = (taskData) => {
       throw error;
     });
 };
-
-\

@@ -9,7 +9,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import { useLocation } from "react-router-dom";
-import { sendTaskAI } from "../services/api";
+import { getTaskDetailsWithAI } from "../services/api";
 
 const MeetingInfo = () => {
   const location = useLocation();
@@ -26,7 +26,7 @@ const MeetingInfo = () => {
   };
 
   const handlePress = () => {
-    const response = sendTaskAI(meeting.action_items);
+    const response = getTaskDetailsWithAI(meeting.action_items);
     console.log(response);
   };
 
