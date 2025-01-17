@@ -25,6 +25,15 @@ async def create_task(task: TaskRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/{task_id}/get_ai_workflow")
+async def get_ai_workflow(task_id: str):
+    """Get the AI-generated workflow for a task"""
+    try:
+        return await TaskService.get_task_workflow_ai(task_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/{task_id}/file_name", response_model=str | None)
 async def get_task_file_name(task_id: str):
     """Get the file name of a task"""

@@ -73,22 +73,6 @@ export const getMeetings = (programmeID) => {
     });
 };
 
-export const getTasksByProgrammeId = (programmeID) => {
-  return api
-    .get("/tasks", {
-      params: {
-        programme_id: programmeID,
-      },
-    })
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-      throw error;
-    });
-};
-
 export const createNewMeeting = (meetingData) => {
   return api
     .post("/meetings/create", meetingData)
@@ -101,9 +85,45 @@ export const createNewMeeting = (meetingData) => {
     });
 };
 
-export const getTasks = () => {
+export const getTasksByProgrammeId = (programmeID) => {
+  const queryParams = {
+    programme_id: programmeID,
+  };
+
   return api
-    .get("/tasks")
+    .get("/tasks", { params: queryParams })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const getTasksByAssigner = (assignerId) => {
+  const queryParams = {
+    assigner_id: assignerId,
+  };
+
+  return api
+    .get("/tasks", { params: queryParams })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const getTasksByAssignee = (assigneeId) => {
+  const queryParams = {
+    assignee_id: assigneeId,
+  };
+
+  return api
+    .get("/tasks", { params: queryParams })
     .then((response) => {
       return response.data;
     })
