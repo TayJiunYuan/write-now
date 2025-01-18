@@ -76,24 +76,45 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
 ## 📖 Usage
 
 - **Dashboard**
-  Displays 3 main components - Tasks, Email Summaries, and Calendar.
-  
-  ![image](https://github.com/user-attachments/assets/e25e90c6-3668-4453-a8c0-22b7bf49553f)
-  
-- **Email**
-  Contains and inbox and message preview section. THe inbox shows short summaries of your message.
-  
-  ![image](https://github.com/user-attachments/assets/2bb44c47-8b0a-475c-a688-1981948fa9a9)
-  
-  Upon clicking on the email, a longer summary of all emails within that selected email will then be shown (along with the number of emails in the thread).
-  _All summaries written by AI._
+  The dashboard provides a centralised view of the following main components:
+  1. **Tasks**: Displays a list of tasks assigned to or created by you.
+  2. **Email Summaries**: Shows AI-generated short summaries of your emails for quick review.
+  3. **Calendar**: Highlights your upcoming events and schedules.
 
-  User will also have the option to choose to view the email on Gmail where they can send replies on, or create a task related to that email (with/without AI).
+  ![Dashboard Preview](https://github.com/user-attachments/assets/e25e90c6-3668-4453-a8c0-22b7bf49553f)
 
-  ![image](https://github.com/user-attachments/assets/9f8da557-a1bd-4427-b9a8-36c5eedd79bd)
+---
 
-  Selecting on 'Create Task with AI' will bring you to a 'Create Task' drawer, where you are given a few options to fill out before generating the new task.
-  _You may choose to assign the task to either yourself or someone else._
+- **Email Management**
+  The email page is designed to streamline your workflow by summarising and organizing your emails effectively:
+
+  - **Inbox**
+    Displays a list of your recent emails, each accompanied by a short AI-generated summary.
+    Clicking on an email opens a longer summary of the selected email's entire thread.
+
+  - **Email Thread View**
+    - Shows a longer AI-generated summary for all emails within the same thread.
+    - Provides the total count of emails within the thread.
+    - Includes actionable options:
+      - **View on Gmail**: Opens the selected email thread directly in Gmail for further actions like replying.
+      - **Create Task**: Lets you create a task related to the email.
+
+    ![Email Thread View](https://github.com/user-attachments/assets/9f8da557-a1bd-4427-b9a8-36c5eedd79bd)
+
+---
+
+- **Task Creation with AI**
+  Apart from the basic _Create Task_ option, WriteNow also provides an alternative solution to streamline task management with _Create Task with AI_.
+  When selecting either _Create Task_ or _Create Task with AI_, a **Create Task Drawer** will appear, allowing you to:  
+  - Assign the task to yourself or a team member.
+  - Customise the task details, such as title, description, deadline, and assignee.
+  When **creating a task with AI**,
+  - AI will auto-generate task content based on the email context.
+  - The task name and description will be auto-generated according to the summarised email thread's content.
+
+  ![Task Creation Drawer](https://github.com/user-attachments/assets/9f8da557-a1bd-4427-b9a8-36c5eedd79bd)
+
+  This feature ensures seamless integration between your email and task management workflows, saving time and reducing manual effort.
 
 - **Programmes**
 
