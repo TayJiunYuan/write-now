@@ -100,7 +100,7 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
       - **View on Gmail**: Opens the selected email thread directly in Gmail for further actions like replying.
       - **Create Task**: Lets you create a task related to the email.
 
-![Email Thread View](https://github.com/user-attachments/assets/9f8da557-a1bd-4427-b9a8-36c5eedd79bd)
+![Email View](https://github.com/user-attachments/assets/f3cafae9-324d-4d73-8707-3ada3b1a79ad)
 
 
 - **Task Creation with AI**
