@@ -76,6 +76,7 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
 ## 📖 Usage
 
 - **Dashboard**
+
   The dashboard provides a centralised view of the following main components:
   1. **Tasks**: Displays a list of tasks assigned to or created by you.
   2. **Email Summaries**: Shows AI-generated short summaries of your emails for quick review.
@@ -84,6 +85,7 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
 ![Dashboard Preview](https://github.com/user-attachments/assets/e25e90c6-3668-4453-a8c0-22b7bf49553f)
 
 - **Email Management**
+
   The email page is designed to streamline your workflow by summarising and organizing your emails effectively:
 
   - **Inbox**
@@ -100,6 +102,7 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
 ![Email Thread View](https://github.com/user-attachments/assets/9f8da557-a1bd-4427-b9a8-36c5eedd79bd)
 
 - **Task Creation with AI**
+
   Apart from the basic _Create Task_ option, WriteNow also provides an alternative solution to streamline task management with _Create Task with AI_.
 
   When selecting either _Create Task_ or _Create Task with AI_, a **Create Task Drawer** will appear, allowing you to:  
