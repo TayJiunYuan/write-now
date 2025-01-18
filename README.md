@@ -122,6 +122,17 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
 
 - **Programmes**
 
+  The Programmes page provides an organized display of various programmes available for users to explore and participate in.
+  These include events, workshops, festivals, and other activities related to writing, publishing, storytelling, and more. Key features include:
+
+  1. **Upcoming Events Section**: Lists all scheduled programmes with details like event name, date, time, location, and description.
+  2. **Filter by Date and Category**: Users can filter programmes by specific dates or categories to quickly find relevant events.
+  3. **Programme Details**: Each event includes a "View Details" button, allowing users to access more information about the event.
+  4. **Create Programme Button**: Admins or authorized users can add new programmes by clicking the "Create Programme" button.
+
+![Programmes Preview](https://github.com/user-attachments/assets/e08a06ec-121b-419c-addf-036866b89ec5)
+
+![Create Programme](https://github.com/user-attachments/assets/f31a283c-6447-41bf-bee7-5cc1833c2d77)
 
 - **Meetings**
 
