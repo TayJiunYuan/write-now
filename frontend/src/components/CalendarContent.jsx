@@ -5,7 +5,6 @@ import { getCalendarEvents } from "../services/api";
 export const CalendarContent = ({ selectedDates }) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const userId = localStorage.getItem("userId");
 
@@ -48,7 +47,6 @@ export const CalendarContent = ({ selectedDates }) => {
       if (!startDateTime || !endDateTime) return;
 
       setLoading(true);
-      setError(null);
       try {
         const data = await getCalendarEvents(
           userId,
@@ -58,7 +56,6 @@ export const CalendarContent = ({ selectedDates }) => {
         setEvents(data);
       } catch (err) {
         console.error("Error fetching calendar events:", err);
-        setError("Failed to fetch events.");
       } finally {
         setLoading(false);
       }
@@ -67,27 +64,44 @@ export const CalendarContent = ({ selectedDates }) => {
     fetchEvents();
   }, [startDateTime, endDateTime, userId]);
 
-  function formatEventTime(dateTimeString) {
-    const date = new Date(dateTimeString);
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `<span class="math-inline">\{hours\}\:</span>{minutes}`;
-  }
-
   return (
     <div className="flex flex-col h-full justify-center items-center">
       {loading ? (
         <Spinner />
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
       ) : events && events.length > 0 ? (
         <div className="w-full max-w-lg p-4 border rounded-lg bg-white shadow-md">
-          <h2 className="mb-4">
-            Events from {startDateTime} to {endDateTime}
-          </h2>
-          <p className="text-sm/6 text-gray-600">
-            You have {events.length} events today.
+          <p className="text-sm/6 text-gray-600 mb-4">
+            You have {events.length} {events.length === 1 ? "event" : "events"}{" "}
+            today.
           </p>
+          <ul className="space-y-3">
+            {events.map((event, index) => (
+              <li
+                key={event.id || index} // Use event ID if available, otherwise index as a fallback
+                className="p-4 border rounded-lg shadow-sm bg-gray-50"
+              >
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {event.summary || "No Title"}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Start:</span>
+                  {new Date(event.start_time).toLocaleString()}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">End:</span>
+                  {new Date(event.end_time).toLocaleString()}
+                </p>
+                <a
+                  href={event.html_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline text-sm"
+                >
+                  View on Calendar
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       ) : (
         <p className="text-sm/6 text-gray-600">
