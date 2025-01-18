@@ -54,7 +54,7 @@ export const TaskList = ({ tasks, fetchTask }) => {
                           variant="bordered"
                           className="w-96 bg-gray-300 border-2 border-black"
                         >
-                          {task.description}
+                          {task.name}
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu aria-label="Edit Status">
