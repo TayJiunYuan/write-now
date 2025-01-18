@@ -13,7 +13,11 @@ import {
   Spinner,
 } from "@heroui/react";
 import { useState, useEffect } from "react";
-import { createNewTask, getUsersWithoutCredentials, getAllProgrammes } from "../services/api";
+import {
+  createNewTask,
+  getUsersWithoutCredentials,
+  getAllProgrammes,
+} from "../services/api";
 import { Toast } from "./Toast";
 
 const CreateTaskDrawer = ({
@@ -21,23 +25,27 @@ const CreateTaskDrawer = ({
   onOpenChange,
   assignees = [],
   programmes = [],
-  withAIData = null,
+  withAIData,
 }) => {
   const [isForOthers, setIsForOthers] = useState(false);
-
   const [assigneeId, setAssigneeId] = useState("");
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [programmeId, setProgrammeId] = useState("");
   const [taskDeadline, setTaskDeadline] = useState("");
-
-  // to be used for selection mapping
   const [availableAssignees, setAvailableAssignees] = useState(assignees || []);
   const [availableProgrammes, setAvailableProgrammes] = useState(
     programmes || []
   );
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+
+  useEffect(() => {
+    if (withAIData) {
+      setTaskName(withAIData.name || "");
+      setTaskDescription(withAIData.description || "");
+    }
+  }, [withAIData]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,7 +115,11 @@ const CreateTaskDrawer = ({
       {toastMessage && (
         <Toast message={toastMessage} onClose={() => setToastMessage("")} />
       )}
-      <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Drawer
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        onClose={handleDrawerClose}
+      >
         <DrawerContent>
           <DrawerHeader className="flex flex-col gap-1">
             Create a new task
@@ -161,7 +173,7 @@ const CreateTaskDrawer = ({
                   label="Task Name"
                   placeholder="Enter task name"
                   variant="bordered"
-                  value={withAIData?.name || taskName}
+                  value={taskName}
                   onChange={(e) => setTaskName(e.target.value)}
                 />
                 <Textarea
@@ -169,7 +181,7 @@ const CreateTaskDrawer = ({
                   label="Task Description"
                   placeholder="Enter task description"
                   variant="bordered"
-                  value={withAIData?.description || taskDescription}
+                  value={taskDescription}
                   onChange={(e) => setTaskDescription(e.target.value)}
                 />
                 <Select
