@@ -123,18 +123,77 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
 - **Programmes**
 
   The Programmes page provides an organized display of various programmes available for users to explore and participate in.
-  These include events, workshops, festivals, and other activities related to writing, publishing, storytelling, and more. Key features include:
+  These include events, workshops, festivals, and other activities related to writing, publishing, storytelling, and more.
 
-  1. **Upcoming Events Section**: Lists all scheduled programmes with details like event name, date, time, location, and description.
-  2. **Filter by Date and Category**: Users can filter programmes by specific dates or categories to quickly find relevant events.
-  3. **Programme Details**: Each event includes a "View Details" button, allowing users to access more information about the event.
-  4. **Create Programme Button**: Admins or authorized users can add new programmes by clicking the "Create Programme" button.
+  Key features include:
+
+  -  **Upcoming Events Section**
+     -  Lists all scheduled programmes with details like event name, date, time, location, and description.
+
+  -  **Filter by Date and Category**
+     -  Users can filter programmes by specific dates or categories to quickly find relevant events.
+  -  **Programme Details**
+     -  Each event includes a "View Details" button, allowing users to access more information about the event.
+  -  **Create Programme Button**
+     -  Admins or authorized users can add new programmes by clicking the "Create Programme" button.
 
 ![Programmes Preview](https://github.com/user-attachments/assets/e08a06ec-121b-419c-addf-036866b89ec5)
 
 ![Create Programme](https://github.com/user-attachments/assets/f31a283c-6447-41bf-bee7-5cc1833c2d77)
 
+- **Programme**
+
+  The Programme Details page provides an in-depth view of a selected programme, including essential information and tools to manage the event.
+  This page is structured to cater to participants, organizers, and collaborators.
+
+  Key features include:
+
+  - **Programme Overview**
+    -  Displays the programme's title and a detailed description to give users a clear understanding of the event's purpose and agenda.
+      
+  - **People Section**
+    -  Lists the individuals associated with the programme, such as featured speakers (e.g., poets) and organizers, along with their roles.
+  - **Meetings Section**
+    -  Allows users to view or schedule meetings relevant to the programme. A "Create Meetings" button facilitates the addition of new meetings.
+  - **Important Files Section**
+    -  Provides a space to upload and access critical documents related to the programme, ensuring easy collaboration and information sharing.
+  - **Tasklist Section**
+    -  Offers a simple way to track tasks and ensure all necessary preparations and follow-ups for the programme are managed effectively.
+
+![Programme Preview](https://github.com/user-attachments/assets/ef3d56aa-db8a-46ba-9dd5-75f38fc12e8c)
+
 - **Meetings**
+
+  The Programme Meeting Details page provides a centralized view for managing and participating in meetings related to a specific programme.
+  This page ensures effective communication and organization among participants.
+
+  Key features include:
+
+  - **Meeting Overview**
+    -  Displays the title and description of the meeting, including the agenda and focus of the discussion.
+  
+  - **Participants Section**
+    -  Lists the attendees of the meeting, allowing organizers to keep track of who is involved.
+  - **Meeting Link**
+    -  Provides a clickable link for participants to join the meeting, ensuring easy access to virtual sessions.
+
+![Meeting Preview](https://github.com/user-attachments/assets/bcd61394-eb5b-4fdf-940a-12f57e0f352b)
+
+- **Automation**
+
+  Upon joining the meeting link in Google Meet, readAI will be invited to assist in taking down the transcript of the meeting. After the meeting is over, readAI will create the meeting minutes from the transcript and draft possible tasks that admins can create.
+
+  - **Meeting Minutes Section**
+    -  Offers a space to document and review the minutes of the meeting. If no minutes are available, this section indicates their absence.
+
+  - **Tasks Section**
+    -  Allows users to view or assign tasks related to the meeting. It supports effective follow-ups and accountability.
+  
+![readAI Preview](https://github.com/user-attachments/assets/f9d44b47-f29e-4218-8c95-586d41b5de60)
+
+
+
+
 
 
 ## 🔒 Security
