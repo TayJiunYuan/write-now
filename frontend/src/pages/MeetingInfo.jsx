@@ -49,9 +49,9 @@ const MeetingInfo = () => {
           </CardHeader>
           <CardBody>
             <Divider className="mb-2" />
-            <p>{meeting.description}</p>
-            <Divider className="my-2" />
             <p>{summaryTitle}</p>
+            <Divider className="my-2" />
+            <p>{meeting.description}</p>
           </CardBody>
         </Card>
         <Card className="bg-white shadow-md rounded p-4">
