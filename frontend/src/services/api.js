@@ -4,7 +4,7 @@ const api = axios.create({
   baseURL: "http://127.0.0.1:8000",
 });
 
-// GET all hardcoded maps
+// programmes
 export const getAllProgrammes = () => {
   return api
     .get("/programmes")
@@ -17,9 +17,9 @@ export const getAllProgrammes = () => {
     });
 };
 
-export const getUsers = () => {
+export const createNewProgramme = (taskData) => {
   return api
-    .get("/users")
+    .post("/programmes", taskData)
     .then((response) => {
       return response.data;
     })
@@ -29,25 +29,10 @@ export const getUsers = () => {
     });
 };
 
+// users
 export const getUsersWithoutCredentials = () => {
   return api
     .get("/users/without-credentials")
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-      throw error;
-    });
-};
-
-export const getUserById = (userId) => {
-  const queryParams = {
-    user_id: userId,
-  };
-
-  return api
-    .get("/users", { params: queryParams })
     .then((response) => {
       return response.data;
     })
@@ -69,6 +54,7 @@ export const getUserByIdWithoutCredentials = (userId) => {
     });
 };
 
+// meetings
 export const getMeetings = (programmeID) => {
   return api
     .get("/meetings", {
@@ -97,6 +83,7 @@ export const createNewMeeting = (meetingData) => {
     });
 };
 
+// tasks
 export const getTasksByProgrammeId = (programmeID) => {
   const queryParams = {
     programme_id: programmeID,
@@ -148,30 +135,6 @@ export const getTasksByAssignee = (assigneeId) => {
 export const createNewTask = (taskData) => {
   return api
     .post("/tasks", taskData)
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-      throw error;
-    });
-};
-
-export const getEmailsShortSum = (userId) => {
-  return api
-    .get(`/emails/with_short_summary/${userId}`)
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-      throw error;
-    });
-};
-
-export const getEmailsLongSum = (userId, emailId) => {
-  return api
-    .get(`/emails/${userId}/${emailId}/long_summary`)
     .then((response) => {
       return response.data;
     })
@@ -237,9 +200,10 @@ export const getTaskFileName = (taskId) => {
     });
 };
 
-export const createNewProgramme = (taskData) => {
+// emails
+export const getEmailsShortSum = (userId) => {
   return api
-    .post("/programmes", taskData)
+    .get(`/emails/with_short_summary/${userId}`)
     .then((response) => {
       return response.data;
     })
@@ -249,6 +213,19 @@ export const createNewProgramme = (taskData) => {
     });
 };
 
+export const getEmailsLongSum = (userId, emailId) => {
+  return api
+    .get(`/emails/${userId}/${emailId}/long_summary`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+// calendar
 export const getCalendarEvents = (userId, startTime, endTime) => {
   const queryParams = {
     user_id: userId,

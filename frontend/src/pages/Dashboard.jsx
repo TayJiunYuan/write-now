@@ -54,10 +54,8 @@ const Dashboard = () => {
     }
 
     const { start, end } = selectedDates;
-
     const startDateString = `${start.month}/${start.day}/${start.year}`;
     const endDateString = `${end.month}/${end.day}/${end.year}`;
-
     return `${startDateString} - ${endDateString}`;
   };
 
