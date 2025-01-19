@@ -6,7 +6,7 @@ export const columns = [
   { name: "TASK TYPE", uid: "task_type" },
   { name: "STATUS", uid: "status" },
   { name: "DEADLINE", uid: "deadline" },
-  // { name: "ACTIONS", uid: "actions" },
+  { name: "ACTIONS", uid: "actions" },
 ];
 
 export const statusColors = {
@@ -14,3 +14,5 @@ export const statusColors = {
   IN_PROGRESS: "warning",
   COMPLETED: "success",
 };
+
+export const taskTypes = ["BASIC", "BUDGET", "REPORT", "FORM"];
