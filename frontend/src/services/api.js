@@ -84,9 +84,22 @@ export const createNewMeeting = (meetingData) => {
 };
 
 // tasks
-export const getTasksByProgrammeId = (programmeID) => {
+export const getTasksByTaskId = (taskId) => {
+
+  return api
+    .get(`/tasks/${taskId}`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const getTasksByProgrammeId = (programmeId) => {
   const queryParams = {
-    programme_id: programmeID,
+    programme_id: programmeId,
   };
 
   return api
@@ -119,6 +132,23 @@ export const getTasksByAssigner = (assignerId) => {
 export const getTasksByAssignee = (assigneeId) => {
   const queryParams = {
     assignee_id: assigneeId,
+  };
+
+  return api
+    .get("/tasks", { params: queryParams })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      throw error;
+    });
+};
+
+export const getTasksByUserId = (userId) => {
+  const queryParams = {
+    assigner_id: userId,
+    // assignee_id: userId,
   };
 
   return api
@@ -173,12 +203,8 @@ export const updateTask = (taskData) => {
 };
 
 export const deleteTask = (taskId) => {
-  const queryParams = {
-    task_id: taskId,
-  };
-
   return api
-    .get(`/tasks/`, { params: queryParams })
+    .delete(`/tasks/${taskId}`)
     .then((response) => {
       return response.data;
     })
