@@ -174,6 +174,7 @@ const CreateTaskDrawer = ({
                   label="Create task for"
                   placeholder="Select an option"
                   variant="bordered"
+                  selectedKeys={new Set([isForOthers ? "others" : "self"])} // need to pass as a set
                   onChange={(e) =>
                     setIsForOthers(e.target.value === "others")
                   }
@@ -187,6 +188,7 @@ const CreateTaskDrawer = ({
                     label="Assignee"
                     placeholder="Select an assignee"
                     variant="bordered"
+                    selectedKeys={new Set([assigneeId])}
                     onChange={(e) => setAssigneeId(e.target.value)}
                   >
                     {availableAssignees.length > 0 ? (
@@ -223,6 +225,7 @@ const CreateTaskDrawer = ({
                   label="Programme"
                   placeholder="Select programme"
                   variant="underlined"
+                  selectedKeys={new Set([programmeId])}
                   onChange={(e) => setProgrammeId(e.target.value)}
                 >
                   {availableProgrammes.length > 0 ? (
@@ -242,6 +245,7 @@ const CreateTaskDrawer = ({
                   label="Task Type"
                   placeholder="Select task type"
                   variant="underlined"
+                  selectedKeys={new Set([taskType])}
                   onChange={(e) => setTaskType(e.target.value)}
                 >
                   {taskTypes.map((taskType) => (
