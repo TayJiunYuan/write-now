@@ -7,7 +7,7 @@
   <a href="#-security">Security</a> &nbsp;&bull;&nbsp;
   <a href="#-tech-stack">Tech Stack</a> &nbsp;&bull;&nbsp;
   <a href="#-solution-architecture">Solution Architecture</a> &nbsp;&bull;&nbsp;
-  <a href="#-how-to-run-developement-locally">How to run development locally</a>
+  <a href="#-how-to-run-developement-locally">How to Run Development Locally</a>
 </p>
 
 ## 💡 About
@@ -87,7 +87,7 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
 
 - **Email Management**
 
-  The email page is designed to streamline your workflow by summarising and organizing your emails effectively:
+  The email page is designed to streamline your workflow by summarising and organising your emails effectively.
 
   - **Inbox**
     - Displays a list of your recent emails, each accompanied by a short AI-generated summary.
@@ -99,17 +99,18 @@ Powered by **Large Language Model (LLM) technology**, WriteNow! automates key wo
     - Includes actionable options:
       - **View on Gmail**: Opens the selected email thread directly in Gmail for further actions like replying.
       - **Create Task**: Lets you create a task related to the email.
+      - **Task Creation with AI**: Lets AI help you create a task related to the email thread.
+     
+      - When selecting either _**Create Task**_ or _**Create Task with AI**_, a _Create Task Drawer_ will appear, allowing you to:  
+        - Assign the task to yourself or a team member.
+        - Customise the task details, such as title, description, deadline, and assignee.
 
-![Email View](https://github.com/user-attachments/assets/f3cafae9-324d-4d73-8707-3ada3b1a79ad)
+![Email View](https://github.com/user-attachments/assets/35ef6868-3416-4d16-8bbb-6796252de1c4)
 
 
 - **Task Creation with AI**
 
   Apart from the basic _Create Task_ option, WriteNow also provides an alternative solution to streamline task management with _Create Task with AI_.
-
-  When selecting either _Create Task_ or _Create Task with AI_, a **Create Task Drawer** will appear, allowing you to:  
-  - Assign the task to yourself or a team member.
-  - Customise the task details, such as title, description, deadline, and assignee.
   
   When **creating a task with AI**,
   - AI will auto-generate task content based on the email context.
