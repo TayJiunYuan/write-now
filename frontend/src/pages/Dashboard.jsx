@@ -6,11 +6,13 @@ import {
   Button,
   RangeCalendar,
   Spinner,
+  useDisclosure,
 } from "@heroui/react";
 import { CalendarSearch } from "lucide-react";
 import { TaskTable } from "../components/TaskTable";
 import { EmailSummary } from "../components/EmailSummary";
 import { CalendarContent } from "../components/CalendarContent";
+import CreateTaskDrawer from "../components/CreateTaskDrawer";
 import { getUserByIdWithoutCredentials } from "../services/api";
 
 const Dashboard = () => {
@@ -18,6 +20,7 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDates, setSelectedDates] = useState(null);
 
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -54,10 +57,8 @@ const Dashboard = () => {
     }
 
     const { start, end } = selectedDates;
-
     const startDateString = `${start.month}/${start.day}/${start.year}`;
     const endDateString = `${end.month}/${end.day}/${end.year}`;
-
     return `${startDateString} - ${endDateString}`;
   };
 
@@ -77,10 +78,13 @@ const Dashboard = () => {
             {/* top left */}
             <div className="relative lg:col-span-2 lg:row-start-1 bg-white rounded-lg h-[40vh] shadow-md">
               <div className="flex h-full flex-col">
-                <div className="px-6 pt-6">
+                <div className="flex justify-between px-6 pt-6">
                   <p className="text-lg font-medium tracking-tight text-gray-950">
                     Tasks
                   </p>
+                  <Button color="primary" onPress={onOpen}>
+                    Create Task
+                  </Button>
                 </div>
                 <div className="overflow-auto w-full [container-type:inline-size] p-4">
                   <TaskTable />
@@ -145,6 +149,7 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+      <CreateTaskDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
     </>
   );
 };

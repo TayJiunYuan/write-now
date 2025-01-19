@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Spinner, Badge, Link, useDisclosure } from "@heroui/react";
 import {
   getEmailsShortSum,
@@ -11,7 +11,6 @@ export const Email = () => {
   const [emails, setEmails] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [emailThread, setEmailThread] = useState(null);
-  const [relatedEmails, setRelatedEmails] = useState([]);
   const [isInboxLoading, setIsInboxLoading] = useState(false);
   const [isEmailThreadLoading, setIsEmailThreadLoading] = useState(false);
 
@@ -21,14 +20,14 @@ export const Email = () => {
 
   const userId = String(localStorage.getItem("userId"));
 
-  const fetchEmails = async () => {
+  const fetchEmails = useCallback(async () => {
     try {
       const response = await getEmailsShortSum(userId);
       return response;
     } catch (error) {
       console.error("Error fetching short summaries:", error);
     }
-  };
+  }, [userId]);
 
   const fetchEmailThread = async (userId, emailId) => {
     try {
@@ -51,7 +50,7 @@ export const Email = () => {
       .finally(() => {
         setIsInboxLoading(false);
       });
-  }, []);
+  }, [fetchEmails, userId]);
 
   const handleEmailClick = async (emailId) => {
     setSelectedEmail(emailId);

@@ -2,7 +2,7 @@ import React from 'react'
 
 const TaskInfo = () => {
   return (
-    <div>TaskInfo</div>
+    <div className='container mx-auto pt-[65px]'>TaskInfo</div>
   )
 }
 

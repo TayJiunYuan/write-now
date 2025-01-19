@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Drawer,
   DrawerContent,
@@ -12,13 +13,14 @@ import {
   Textarea,
   Spinner,
 } from "@heroui/react";
-import { useState, useEffect } from "react";
 import {
   createNewTask,
+  updateTask,
   getUsersWithoutCredentials,
   getAllProgrammes,
 } from "../services/api";
 import { Toast } from "./Toast";
+import { taskTypes } from "../constants/TableElements";
 
 const CreateTaskDrawer = ({
   isOpen,
@@ -26,13 +28,17 @@ const CreateTaskDrawer = ({
   assignees = [],
   programmes = [],
   withAIData,
+  taskDetails,
+  updateTaskInTable,
 }) => {
   const [isForOthers, setIsForOthers] = useState(false);
   const [assigneeId, setAssigneeId] = useState("");
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [programmeId, setProgrammeId] = useState("");
+  const [taskType, setTaskType] = useState("");
   const [taskDeadline, setTaskDeadline] = useState("");
+
   const [availableAssignees, setAvailableAssignees] = useState(assignees || []);
   const [availableProgrammes, setAvailableProgrammes] = useState(
     programmes || []
@@ -40,12 +46,24 @@ const CreateTaskDrawer = ({
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
+  // populate task form if preset data is present
   useEffect(() => {
     if (withAIData) {
       setTaskName(withAIData.name || "");
       setTaskDescription(withAIData.description || "");
     }
-  }, [withAIData]);
+    if (taskDetails) {
+      console.log(taskDetails)
+      console.log("assigned_to_self:", taskDetails.assigned_to_self);
+      setIsForOthers(!taskDetails.assigned_to_self);
+      setAssigneeId(taskDetails.assignee_id || "");
+      setTaskName(taskDetails.name || "");
+      setTaskDescription(taskDetails.description || "");
+      setProgrammeId(taskDetails.programme_id || "");
+      setTaskType(taskDetails.task_type || "");
+      setTaskDeadline(taskDetails.deadline || "");
+    }
+  }, [withAIData, taskDetails]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,7 +85,7 @@ const CreateTaskDrawer = ({
     };
 
     fetchData();
-  }, []);
+  }, [assignees.length, programmes.length]);
 
   const handleClearForm = () => {
     setIsForOthers(false);
@@ -83,6 +101,7 @@ const CreateTaskDrawer = ({
 
     const assignerId = String(localStorage.getItem("userId"));
     const taskData = {
+      assigned_to_self: !isForOthers,
       assignee_id: isForOthers ? assigneeId : assignerId,
       assigner_id: assignerId,
       name: taskName,
@@ -90,19 +109,35 @@ const CreateTaskDrawer = ({
       deadline: taskDeadline,
       status: "NOT_STARTED",
       programme_id: programmeId,
+      task_type: taskType,
     };
 
-    createNewTask(taskData)
-      .then(() => {
-        setToastMessage("Task created successfully! 🎉");
-        onOpenChange(false);
-      })
-      .catch((err) => {
-        console.error("Error creating task:", err);
-      })
-      .finally(() => {
-        handleClearForm();
-      });
+    if (taskDetails) {
+      updateTask(taskData)
+        .then((updatedTask) => {
+          setToastMessage("Task updated successfully! 🎉");
+          updateTaskInTable(updatedTask);
+          onOpenChange(false);
+        })
+        .catch((err) => {
+          console.error("Error creating task:", err);
+        })
+        .finally(() => {
+          handleClearForm();
+        });
+    } else {
+      createNewTask(taskData)
+        .then(() => {
+          setToastMessage("Task created successfully! 🎉");
+          onOpenChange(false);
+        })
+        .catch((err) => {
+          console.error("Error creating task:", err);
+        })
+        .finally(() => {
+          handleClearForm();
+        });
+    }
   };
 
   const handleDrawerClose = () => {
@@ -122,7 +157,7 @@ const CreateTaskDrawer = ({
       >
         <DrawerContent>
           <DrawerHeader className="flex flex-col gap-1">
-            Create a new task
+            {taskDetails ? "Update current task" : "Create a new task"}
           </DrawerHeader>
           <DrawerBody>
             {isLoading ? (
@@ -139,8 +174,9 @@ const CreateTaskDrawer = ({
                   label="Create task for"
                   placeholder="Select an option"
                   variant="bordered"
+                  selectedKeys={new Set([isForOthers ? "others" : "self"])} // need to pass as a set
                   onChange={(e) =>
-                    setIsForOthers(e.target.value === "others" ? true : false)
+                    setIsForOthers(e.target.value === "others")
                   }
                 >
                   <SelectItem key="self">Self</SelectItem>
@@ -152,7 +188,7 @@ const CreateTaskDrawer = ({
                     label="Assignee"
                     placeholder="Select an assignee"
                     variant="bordered"
-                    value={assigneeId}
+                    selectedKeys={new Set([assigneeId])}
                     onChange={(e) => setAssigneeId(e.target.value)}
                   >
                     {availableAssignees.length > 0 ? (
@@ -189,7 +225,7 @@ const CreateTaskDrawer = ({
                   label="Programme"
                   placeholder="Select programme"
                   variant="underlined"
-                  value={programmeId}
+                  selectedKeys={new Set([programmeId])}
                   onChange={(e) => setProgrammeId(e.target.value)}
                 >
                   {availableProgrammes.length > 0 ? (
@@ -203,6 +239,20 @@ const CreateTaskDrawer = ({
                       No programmes available
                     </SelectItem>
                   )}
+                </Select>
+                <Select
+                  isRequired
+                  label="Task Type"
+                  placeholder="Select task type"
+                  variant="underlined"
+                  selectedKeys={new Set([taskType])}
+                  onChange={(e) => setTaskType(e.target.value)}
+                >
+                  {taskTypes.map((taskType) => (
+                    <SelectItem key={taskType} value={taskType}>
+                      {taskType}
+                    </SelectItem>
+                  ))}
                 </Select>
                 <Input
                   isRequired
@@ -221,7 +271,7 @@ const CreateTaskDrawer = ({
               Close
             </Button>
             <Button color="primary" type="submit" form="create-task-form">
-              Create Task
+              {taskDetails ? "Update Task" : "Create Task"}
             </Button>
           </DrawerFooter>
         </DrawerContent>
