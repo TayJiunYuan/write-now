@@ -7,7 +7,7 @@
   <a href="#-security">Security</a> &nbsp;&bull;&nbsp;
   <a href="#-tech-stack">Tech Stack</a> &nbsp;&bull;&nbsp;
   <a href="#-solution-architecture">Solution Architecture</a> &nbsp;&bull;&nbsp;
-  <a href="#-how-to-run-developement-locally">How to Run Development Locally</a>
+  <a href="#-how-to-run-development-locally">How to Run Development Locally</a>
 </p>
 
 ## 💡 About
@@ -243,7 +243,7 @@ Google services that are used in the application.
 
 ReadAI is a service that uses Large Language Models to transcribe google meet recordings. It sends the transcription to the backend via Webhook, where is it further processed.
 
-## 📖 How to run development locally
+## 📖 How to Run Development Locally
 
 ### Frontend
 
