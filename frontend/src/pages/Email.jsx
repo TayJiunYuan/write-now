@@ -177,7 +177,7 @@ export const Email = () => {
             </div>
           </div>
         ) : isEmailThreadLoading ? (
-          <div className="flex justify-center items-center h-32">
+          <div className="flex justify-center items-center h-full">
             <Spinner />
           </div>
         ) : (
