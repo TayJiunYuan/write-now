@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Spinner } from "@heroui/react";
+
 import { getCalendarEvents } from "../services/api";
+import { formatToISODateTime } from "../utils/DateFormatters";
 
 export const CalendarContent = ({ selectedDates }) => {
   const [events, setEvents] = useState([]);
@@ -8,39 +10,18 @@ export const CalendarContent = ({ selectedDates }) => {
 
   const userId = localStorage.getItem("userId");
 
-  const formatToISODateTime = (day, month, year, time) => {
-    if (!day || !month || !year) return null;
-
-    const paddedDay = String(day).padStart(2, "0");
-    const paddedMonth = String(month).padStart(2, "0");
-
-    const dateString = `${year}-${paddedMonth}-${paddedDay}T${time}`;
-    const date = new Date(dateString);
-
-    if (isNaN(date.getTime())) {
-      console.error("Invalid date:", dateString);
-      return null;
-    }
-    return date.toISOString();
-  };
-
   const startDateTime = formatToISODateTime(
     selectedDates?.start?.day,
     selectedDates?.start?.month,
     selectedDates?.start?.year,
     "00:00:00"
   );
-
   const endDateTime = formatToISODateTime(
     selectedDates?.end?.day,
     selectedDates?.end?.month,
     selectedDates?.end?.year,
     "23:59:59"
   );
-
-  useEffect(() => {
-    console.log(startDateTime, endDateTime);
-  }, [startDateTime, endDateTime]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -77,7 +58,7 @@ export const CalendarContent = ({ selectedDates }) => {
           <ul className="space-y-3">
             {events.map((event, index) => (
               <li
-                key={event.id || index} // Use event ID if available, otherwise index as a fallback
+                key={event.id || index}
                 className="p-4 border rounded-lg shadow-sm bg-gray-50"
               >
                 <h3 className="text-lg font-semibold text-gray-800">

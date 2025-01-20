@@ -1,72 +1,73 @@
 import React, { useEffect, useState } from "react";
-import { categories } from "../constants/ProgrammesElements";
 import { Link } from "react-router-dom";
+import {
+  Button,
+  Skeleton,
+  DateRangePicker,
+  Select,
+  SelectItem,
+  useDisclosure,
+} from "@heroui/react";
+import { format } from "date-fns";
+
 import { getAllProgrammes } from "../services/api";
-import { Button, Skeleton } from "@heroui/react";
+import { convertDatePickerToDateOnly } from "../utils/DateFormatters";
+import { programmeTypes } from "../constants/ProgrammesElements";
 import { CreateProgrammeModal } from "../components/CreateProgrammeModal";
 
 const Programmes = () => {
-  const [loading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [programmes, setProgrammes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedDates, setSelectedDates] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Programmes");
   const [filteredEvents, setFilteredEvents] = useState([]);
-  const [fetch, setFetch] = useState(false);
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleOpen = () => setIsOpen(true);
-  const handleClose = () => {
-    setIsOpen(false);
-    setFetch(true);
-  };
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await getAllProgrammes();
-      setProgrammes(response);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDateChange = (event) => {
-    setSelectedDate(event.target.value);
-  };
-
-  const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
-  };
-
-  const filterEventsByDate = (selectedDate) => {
-    if (!selectedDate) return programmes;
-
-    return programmes.filter((event) => {
-      const programmeDate = event.datetime;
-      const eventDateString = programmeDate.split("T")[0];
-      return eventDateString === selectedDate;
-    });
-  };
-
-  const filterEventsByCategory = (selectedCategory) => {
-    if (selectedCategory === "All Programmes") return programmes;
-
-    return programmes.filter((programme) => {
-      return programme.type === selectedCategory;
-    });
-  };
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
-    setFilteredEvents(filterEventsByDate(selectedDate));
-  }, [selectedDate]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllProgrammes();
+        setProgrammes(response);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    setFilteredEvents(filterEventsByCategory(selectedCategory));
-  }, [selectedCategory]);
+    const filteredEvents = programmes.filter((event) => {
+      let isWithinDateRange;
 
+      if (selectedDates?.start && selectedDates?.end) {
+        const eventDateString = format(new Date(event.datetime), "yyyy-MM-dd");
+        const formattedStartDate = convertDatePickerToDateOnly(
+          selectedDates.start
+        );
+        const formattedEndDate = convertDatePickerToDateOnly(selectedDates.end);
+
+        isWithinDateRange =
+          eventDateString >= formattedStartDate &&
+          eventDateString <= formattedEndDate;
+      } else {
+        isWithinDateRange = true;
+      }
+
+      const isInCategory =
+        selectedCategory === "All Programmes" ||
+        event.type === selectedCategory;
+
+      return isWithinDateRange && isInCategory;
+    });
+
+    setFilteredEvents(filteredEvents);
+  }, [selectedDates, selectedCategory, programmes]);
+
+  // default sorting by datetime
   useEffect(() => {
     const sortedEvents = programmes.sort((a, b) => {
       const dateA = new Date(a.datetime);
@@ -77,16 +78,19 @@ const Programmes = () => {
     setFilteredEvents(sortedEvents);
   }, [programmes]);
 
-  useEffect(() => {
-    fetchData();
-    setFetch(false);
-  }, [fetch]);
+  const handleProgTypeChange = (e) => {
+    if (!e.target.value) {
+      return;
+    } else {
+      setSelectedCategory(e.target.value);
+    }
+  };
 
   return (
     <div className="min-h-screen container mx-auto pt-[65px]">
-      <div className="text-left mb-8 pt-8">
+      <div className="text-justify my-8 space-y-4">
         <h2 className="text-2xl font-bold">Upcoming Events</h2>
-        <p className="mt-2 text-black">
+        <p className="text-black">
           The Book Council organises festivals, workshops and events related to
           writing, publishing, storytelling, reading and many more. To stay
           updated, join us on our various platforms. The Singapore Book Council
@@ -94,59 +98,44 @@ const Programmes = () => {
           <a
             href="https://www.bookcouncil.sg/sbc-academy"
             className="text-blue-500 underline hover:text-blue-600"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             comprehensive website
           </a>{" "}
           for the workshops.
         </p>
-        <button className="mt-4 px-4 py-2 border border-red-500 text-black hover:bg-red-500 hover:text-white transition">
-          Past Events
-        </button>
+        <div className="flex justify-between items-center">
+          <Button>Past Events</Button>
+          <Button size="lg" color="primary" onPress={onOpen}>
+            Create Programme
+          </Button>
+        </div>
       </div>
 
-      <div className="bg-rose-300 rounded-md p-6 flex flex-wrap gap-4 items-center">
+      <div className="bg-primary rounded-md p-6 flex flex-wrap gap-4 items-center">
         <div className="flex-1">
-          <label className="block text-sm font-medium text-black">Date</label>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={handleDateChange}
-            className="pl-2 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-rose-500 focus:ring-rose-500"
+          <DateRangePicker
+            label="Date range"
+            value={selectedDates}
+            onChange={setSelectedDates}
           />
         </div>
         <div className="flex-1">
-          <label className="block text-sm font-medium text-black">
-            Category
-          </label>
-          <select
-            id="category-select"
-            className="pl-2 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-rose-500 focus:ring-rose-500"
-            value={selectedCategory}
-            onChange={handleCategoryChange}
+          <Select
+            label="Programme Type"
+            selectedKeys={[selectedCategory]}
+            onChange={handleProgTypeChange}
+            placeholder="Select a programme type"
           >
-            {categories.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
-              </option>
+            {programmeTypes.map((type) => (
+              <SelectItem key={type}>{type}</SelectItem>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 
-      <div className="mt-8 items-center justify-end flex flex-row">
-        <Button
-          className="text-right text-base px-4 py-1 border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56"
-          onPress={handleOpen}
-        >
-          Create Programme
-        </Button>
-      </div>
-
-      {loading ? (
-        <Skeleton className="rounded-lg mt-8">
-          <div className="h-24 rounded-lg bg-default-300" />
-        </Skeleton>
-      ) : (
+      <Skeleton isLoaded={!loading} className="rounded-lg mt-8">
         <div className="mt-8 space-y-6 pb-8">
           {filteredEvents.map((event, index) => {
             const date = new Date(event.datetime);
@@ -165,43 +154,35 @@ const Programmes = () => {
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow-xl p-6 flex items-center justify-between"
+                className="bg-white rounded-xl shadow-xl p-6 flex items-center justify-between gap-4"
               >
-                <div className="flex items-center">
-                  <div className="bg-gray-200 rounded-md p-4 text-center w-16 border-2 border-black">
-                    <p className="text-xl font-bold">{day}</p>
-                    <p className="text-sm font-bold">{month}</p>
-                    <p className="text-sm font-bold">{year}</p>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-bold">{event.name}</h3>
-                    <p className="mt-1 text-sm text-gray-600">
-                      {formattedTime}
-                    </p>
-                    <p className="mt-1 text-sm text-gray-600">
-                      {event.location}
-                    </p>
-                    <p className="mt-1 text-sm text-gray-600">{event.type}</p>
-                    <p className="mt-2 text-gray-700 max-w-6xl">
-                      {event.description}
-                    </p>
-                  </div>
+                <div className="bg-default rounded-lg p-4 flex flex-col justify-center items-center border-2 border-black">
+                  <p className="text-xl font-bold">{day}</p>
+                  <p className="text-sm font-bold">{month}</p>
+                  <p className="text-sm font-bold">{year}</p>
+                </div>
+                <div className="w-full space-y-1">
+                  <h1 className="text-xl font-bold">{event.name}</h1>
+                  <p className="mt-1 text-sm font-light">{formattedTime}</p>
+                  <p className="text-sm font-light">{event.location}</p>
+                  <p className="text-sm font-light">{event.type}</p>
+                  <p className="text-medium font-normal text-justify">
+                    {event.description}
+                  </p>
                 </div>
                 <Link
                   key={index}
                   to={`/programmes/${event.id}`}
                   state={{ event }}
                 >
-                  <button className="px-4 py-2 border border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56">
-                    VIEW DETAILS
-                  </button>
+                  <Button>VIEW DETAILS</Button>
                 </Link>
               </div>
             );
           })}
         </div>
-      )}
-      <CreateProgrammeModal isOpen={isOpen} onClose={handleClose} />
+      </Skeleton>
+      <CreateProgrammeModal isOpen={isOpen} onOpenChange={onOpenChange} />
     </div>
   );
 };

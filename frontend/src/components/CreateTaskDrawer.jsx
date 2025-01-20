@@ -53,8 +53,6 @@ const CreateTaskDrawer = ({
       setTaskDescription(withAIData.description || "");
     }
     if (taskDetails) {
-      console.log(taskDetails)
-      console.log("assigned_to_self:", taskDetails.assigned_to_self);
       setIsForOthers(!taskDetails.assigned_to_self);
       setAssigneeId(taskDetails.assignee_id || "");
       setTaskName(taskDetails.name || "");
@@ -175,9 +173,7 @@ const CreateTaskDrawer = ({
                   placeholder="Select an option"
                   variant="bordered"
                   selectedKeys={new Set([isForOthers ? "others" : "self"])} // need to pass as a set
-                  onChange={(e) =>
-                    setIsForOthers(e.target.value === "others")
-                  }
+                  onChange={(e) => setIsForOthers(e.target.value === "others")}
                 >
                   <SelectItem key="self">Self</SelectItem>
                   <SelectItem key="others">Others</SelectItem>

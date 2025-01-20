@@ -32,7 +32,7 @@ export const events = [
   },
 ];
 
-export const categories = [
+export const programmeTypes = [
   "All Programmes",
   "General",
   "Sing Lit: Read Our World Featured",
@@ -42,18 +42,4 @@ export const categories = [
   "The Writers Series",
   "SBC Academy",
   "Outreach",
-];
-
-export const categoriess = [
-  { key: "General", label: "General" },
-  {
-    key: "Sing Lit: Read Our World Featured",
-    label: "Sing Lit: Read Our World Featured",
-  },
-  { key: "Book Launch", label: "Book Launch" },
-  { key: "Symposium", label: "Symposium" },
-  { key: "Singapore Writers Festival", label: "Singapore Writers Festival" },
-  { key: "The Writers Series", label: "The Writers Series" },
-  { key: "SBC Academy", label: "SBC Academy" },
-  { key: "Outreach", label: "Outreach" },
 ];
