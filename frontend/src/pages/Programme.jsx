@@ -4,7 +4,6 @@ import {
   CardHeader,
   Divider,
   CardBody,
-  Checkbox,
   Avatar,
   Button,
 } from "@heroui/react";

@@ -23,19 +23,19 @@ const Programmes = () => {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await getAllProgrammes();
-        setProgrammes(response);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await getAllProgrammes();
+      setProgrammes(response);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -86,6 +86,11 @@ const Programmes = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(programmes);
+    console.log(filteredEvents);
+  }, [programmes, filteredEvents]);
+
   return (
     <div className="min-h-screen container mx-auto pt-[65px]">
       <div className="text-justify my-8 space-y-4">
@@ -113,7 +118,7 @@ const Programmes = () => {
         </div>
       </div>
 
-      <div className="bg-primary rounded-md p-6 flex flex-wrap gap-4 items-center">
+      <div className="bg-white rounded-xl p-6 border-2 flex flex-wrap gap-4 items-center">
         <div className="flex-1">
           <DateRangePicker
             label="Date range"
@@ -170,19 +175,24 @@ const Programmes = () => {
                     {event.description}
                   </p>
                 </div>
-                <Link
-                  key={index}
+                <Button
+                  as={Link}
                   to={`/programmes/${event.id}`}
                   state={{ event }}
+                  color="primary"
                 >
-                  <Button>VIEW DETAILS</Button>
-                </Link>
+                  VIEW DETAILS
+                </Button>
               </div>
             );
           })}
         </div>
       </Skeleton>
-      <CreateProgrammeModal isOpen={isOpen} onOpenChange={onOpenChange} />
+      <CreateProgrammeModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        fetchData={fetchData}
+      />
     </div>
   );
 };
