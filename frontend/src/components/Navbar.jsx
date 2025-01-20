@@ -63,10 +63,9 @@ export const StyledNavbar = () => {
             Email
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
+        <NavbarItem>
           <Link
             color="foreground"
-            aria-current="page"
             href="/dashboard"
             className="flex flex-col items-center"
           >
