@@ -13,6 +13,7 @@ import {
   Select,
   SelectItem,
   Divider,
+  Form,
 } from "@heroui/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import { createNewProgramme } from "../services/api";
@@ -44,6 +45,7 @@ export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
     setDescription("");
     setLocation("");
     setSelectedProgType("");
+    setGroups([]);
   };
 
   const handleSubmit = () => {
@@ -102,80 +104,93 @@ export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
             <>
               <ModalHeader>Create Programme</ModalHeader>
               <ModalBody>
-                <Input
-                  isRequired
-                  label="Programme Name"
-                  labelPlacement="outside"
-                  placeholder="Enter programme name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <Textarea
-                  isRequired
-                  label="Programme Description"
-                  labelPlacement="outside"
-                  placeholder="Enter programme description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-                <Textarea
-                  isRequired
-                  label="Location"
-                  labelPlacement="outside"
-                  placeholder="Enter the location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                />
-                <Select
-                  isRequired
-                  label="Programme Type"
-                  labelPlacement="outside"
-                  placeholder="Select a programme type"
-                  selectedKeys={[selectedProgType]}
-                  onChange={handleProgTypeChange}
+                <Form
+                  id="create-task-form"
+                  validationBehavior="native"
+                  onSubmit={handleSubmit}
                 >
-                  {programmeTypes
-                    .filter((type) => type !== "All Programmes")
-                    .map((type) => (
-                      <SelectItem key={type}>{type}</SelectItem>
-                    ))}
-                </Select>
-                <DatePicker
-                  isRequired
-                  hideTimeZone
-                  showMonthAndYearPickers
-                  showTimeSelect
-                  defaultValue={now(getLocalTimeZone())}
-                  label="Event Date"
-                  labelPlacement="outside"
-                  selected={startTime}
-                  onChange={(date) => setStartTime(date)}
-                />
-                <Divider className="my-2" />
-                <div className="flex flex-col gap-4">
-                  <label htmlFor="group">Groups</label>
-                  {groups.length > 0 && (
-                    <div className="flex flex-wrap gap-4">
-                      {groups.map((group, index) => (
-                        <div key={index} className="flex flex-col items-center">
-                          <Avatar name={group.name} size="md" />
-                          <span className="text-sm text-center mt-2">
-                            {group.name}
-                          </span>
-                        </div>
+                  <Input
+                    isRequired
+                    label="Programme Name"
+                    labelPlacement="outside"
+                    placeholder="Enter programme name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <Textarea
+                    isRequired
+                    label="Programme Description"
+                    labelPlacement="outside"
+                    placeholder="Enter programme description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                  <Textarea
+                    isRequired
+                    label="Location"
+                    labelPlacement="outside"
+                    placeholder="Enter the location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+                  <Select
+                    isRequired
+                    label="Programme Type"
+                    labelPlacement="outside"
+                    placeholder="Select a programme type"
+                    selectedKeys={[selectedProgType]}
+                    onChange={handleProgTypeChange}
+                  >
+                    {programmeTypes
+                      .filter((type) => type !== "All Programmes")
+                      .map((type) => (
+                        <SelectItem key={type}>{type}</SelectItem>
                       ))}
-                    </div>
-                  )}
-                  <Button className="w-1/3" onPress={handleGroupModal}>
-                    Add new group
-                  </Button>
-                </div>
+                  </Select>
+                  <DatePicker
+                    isRequired
+                    hideTimeZone
+                    showMonthAndYearPickers
+                    showTimeSelect
+                    defaultValue={now(getLocalTimeZone())}
+                    label="Event Date"
+                    labelPlacement="outside"
+                    selected={startTime}
+                    onChange={(date) => setStartTime(date)}
+                  />
+                  <Divider className="my-2" />
+                  <div className="flex flex-col gap-4">
+                    <label htmlFor="group">Groups</label>
+                    {groups.length > 0 && (
+                      <div className="flex flex-wrap gap-4">
+                        {groups.map((group, index) => (
+                          <div
+                            key={index}
+                            className="flex flex-col items-center"
+                          >
+                            <Avatar name={group.name} size="md" />
+                            <span className="text-sm text-center mt-2">
+                              {group.name}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <Button onPress={handleGroupModal}>Add New Group</Button>
+                  </div>
+                </Form>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" onPress={onClose}>
+                <Button
+                  color="danger"
+                  onPress={() => {
+                    onClose();
+                    handleClearForm();
+                  }}
+                >
                   Close
                 </Button>
-                <Button color="primary" onPress={handleSubmit}>
+                <Button color="primary" type="submit" form="create-task-form">
                   Create Programme
                 </Button>
               </ModalFooter>
