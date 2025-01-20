@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Avatar,
   Modal,
@@ -8,24 +8,43 @@ import {
   ModalFooter,
   Button,
   DatePicker,
+  Input,
   Textarea,
   Select,
   SelectItem,
+  Divider,
 } from "@heroui/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import { createNewProgramme } from "../services/api";
-import { categoriess } from "../constants/ProgrammesElements";
+import { programmeTypes } from "../constants/ProgrammesElements";
 import { CreateGroupModal } from "./CreateGroupModal";
 
-export const CreateProgrammeModal = ({ isOpen, onClose }) => {
+export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
   const [startTime, setStartTime] = useState(new Date());
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [groupData, setGroupData] = useState([]);
-  const [groupName, setGroupName] = useState([]);
+  const [selectedProgType, setSelectedProgType] = useState("");
+
+  const [showGroupModal, setShowGroupModal] = useState(false);
+  const [groups, setGroups] = useState([]);
+
+  const handleProgTypeChange = (e) => {
+    if (!e.target.value) {
+      // if user clicks on the same option
+      return;
+    } else {
+      setSelectedProgType(e.target.value);
+    }
+  };
+
+  const handleClearForm = () => {
+    setStartTime(new Date());
+    setName("");
+    setDescription("");
+    setLocation("");
+    setSelectedProgType("");
+  };
 
   const handleSubmit = () => {
     const { year, month, day, hour, minute, second, millisecond, offset } =
@@ -37,150 +56,127 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
     const isoDate = adjustedDate.toISOString();
 
     let combinedData = {};
-
-    groupData.forEach((item) => {
-      Object.keys(item).forEach((key) => {
-        if (!combinedData[key]) {
-          combinedData[key] = [];
-        }
-        combinedData[key] = combinedData[key].concat(item[key]);
-      });
+    groups.forEach((group) => {
+      const { name, attendees } = group;
+      if (!combinedData[name]) {
+        combinedData[name] = [];
+      }
+      combinedData[name] = combinedData[name].concat(attendees); // Add attendees
     });
 
     const programmeData = {
       name: name,
       description: description,
-      type: selectedCategory,
+      type: selectedProgType,
       groups: combinedData,
       datetime: isoDate,
       location: location,
     };
 
-    console.log(programmeData);
-
-    createNewProgramme(programmeData);
-    onClose();
-  };
-
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-  };
-
-  const handleGroupDataSubmit = (data) => {
-    const attendees = data.attendees;
-    const name = data.name;
-
-    const result = {
-      [name]: attendees,
-    };
-
-    console.log(data.name);
-    setGroupName((prevGroupNames) => [...prevGroupNames, name]);
-    if (groupData.length === 0) {
-      setGroupData(result);
-    } else {
-      setGroupData([groupData, result]);
+    try {
+      createNewProgramme(programmeData);
+    } catch (error) {
+      console.error("Error creating new programme:", error);
+    } finally {
+      handleClearForm();
+      onOpenChange(false);
+      fetchData();
     }
   };
 
-  const handleShow = () => setShowForm(true);
-  const handleClose = () => setShowForm(false);
+  // for group modal
+  const handleGroupModal = () => setShowGroupModal(true);
+  const handleGroupModalClose = () => setShowGroupModal(false);
+
+  const handleGroupDataSubmit = (data) => {
+    const { attendees, name } = data;
+    const newGroup = { name, attendees };
+    setGroups((prevGroups) => [...prevGroups, newGroup]);
+  };
 
   return (
     <>
-      <Modal isOpen={isOpen} size={"md"} onClose={onClose}>
+      <Modal isOpen={isOpen} size={"md"} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                Create Programme
-              </ModalHeader>
+              <ModalHeader>Create Programme</ModalHeader>
               <ModalBody>
+                <Input
+                  isRequired
+                  label="Programme Name"
+                  labelPlacement="outside"
+                  placeholder="Enter programme name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <Textarea
+                  isRequired
+                  label="Programme Description"
+                  labelPlacement="outside"
+                  placeholder="Enter programme description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <Textarea
+                  isRequired
+                  label="Location"
+                  labelPlacement="outside"
+                  placeholder="Enter the location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+                <Select
+                  isRequired
+                  label="Programme Type"
+                  labelPlacement="outside"
+                  placeholder="Select a programme type"
+                  selectedKeys={[selectedProgType]}
+                  onChange={handleProgTypeChange}
+                >
+                  {programmeTypes
+                    .filter((type) => type !== "All Programmes")
+                    .map((type) => (
+                      <SelectItem key={type}>{type}</SelectItem>
+                    ))}
+                </Select>
+                <DatePicker
+                  isRequired
+                  hideTimeZone
+                  showMonthAndYearPickers
+                  showTimeSelect
+                  defaultValue={now(getLocalTimeZone())}
+                  label="Event Date"
+                  labelPlacement="outside"
+                  selected={startTime}
+                  onChange={(date) => setStartTime(date)}
+                />
+                <Divider className="my-2" />
                 <div className="flex flex-col gap-4">
-                  <div>
-                    <Textarea
-                      isRequired
-                      value={name}
-                      label="Name"
-                      labelPlacement="outside"
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter programme name"
-                    />
-                  </div>
-                  <div>
-                    <Textarea
-                      isRequired
-                      label="Description"
-                      labelPlacement="outside"
-                      placeholder="Enter your description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Textarea
-                      isRequired
-                      value={location}
-                      label="Location"
-                      labelPlacement="outside"
-                      onChange={(e) => setLocation(e.target.value)}
-                      placeholder="Enter the location"
-                      rows={4}
-                    />
-                  </div>
-                  <div>
-                    <Select
-                      isRequired
-                      label="Category"
-                      labelPlacement="outside"
-                      placeholder="Select a category"
-                      value={selectedCategory}
-                      onChange={handleCategoryChange}
-                    >
-                      {categoriess.map((category) => (
-                        <SelectItem key={category.key}>
-                          {category.label}
-                        </SelectItem>
+                  <label htmlFor="group">Groups</label>
+                  {groups.length > 0 && (
+                    <div className="flex flex-wrap gap-4">
+                      {groups.map((group, index) => (
+                        <div key={index} className="flex flex-col items-center">
+                          <Avatar name={group.name} size="md" />
+                          <span className="text-sm text-center mt-2">
+                            {group.name}
+                          </span>
+                        </div>
                       ))}
-                    </Select>
-                  </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="group">Group</label>
-                    {groupName.length > 0 && (
-                      <div className="mt-4 flex flex-wrap gap-4">
-                        {groupName.map((name, index) => (
-                          <div key={index}>
-                            <Avatar name={name} size="md" />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <Button className=" max-w-28 mt-5" onPress={handleShow}>
-                      Add new group
-                    </Button>
-                  </div>
-                  <div>
-                    <DatePicker
-                      isRequired
-                      hideTimeZone
-                      showMonthAndYearPickers
-                      defaultValue={now(getLocalTimeZone())}
-                      label="Event Date"
-                      labelPlacement="outside"
-                      selected={startTime}
-                      onChange={(date) => setStartTime(date)}
-                      showTimeSelect
-                      className="heroui-input"
-                    />
-                  </div>
+                    </div>
+                  )}
+                  <Button className="w-1/3" onPress={handleGroupModal}>
+                    Add new group
+                  </Button>
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button auto flat color="error" onPress={onClose}>
+                <Button color="danger" onPress={onClose}>
                   Close
                 </Button>
-                <Button auto onPress={handleSubmit}>
-                  Create Meeting
+                <Button color="primary" onPress={handleSubmit}>
+                  Create Programme
                 </Button>
               </ModalFooter>
             </>
@@ -188,8 +184,8 @@ export const CreateProgrammeModal = ({ isOpen, onClose }) => {
         </ModalContent>
       </Modal>
       <CreateGroupModal
-        isOpen={showForm}
-        onClose={handleClose}
+        isOpen={showGroupModal}
+        onClose={handleGroupModalClose}
         onSubmit={handleGroupDataSubmit}
       />
     </>

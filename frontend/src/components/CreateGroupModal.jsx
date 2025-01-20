@@ -6,99 +6,100 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Textarea,
+  Input,
   Select,
   SelectItem,
+  Spinner,
 } from "@heroui/react";
 import { getUsersWithoutCredentials } from "../services/api";
 
 export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {
   const [loading, setLoading] = useState(false);
-  const [name, setName] = useState("");
   const [users, setUsers] = useState([]);
-  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [name, setName] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState(new Set([]));
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await getUsersWithoutCredentials();
+        setUsers(response);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        alert("Failed to fetch users. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchData();
+    }
+  }, [isOpen]);
 
   const handleSubmit = () => {
-    const array = Array.from(selectedUsers);
     const groupData = {
-      name: name,
-      attendees: array,
+      name: name.trim(),
+      attendees: Array.from(selectedUsers),
     };
 
     onSubmit(groupData);
+    handleClose();
+  };
 
+  const handleClose = () => {
+    setName("");
+    setSelectedUsers(new Set([]));
     onClose();
   };
 
-  const handleSelectionChange = (selectedKeys) => {
-    setSelectedUsers(selectedKeys);
-  };
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await getUsersWithoutCredentials();
-      setUsers(response);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [isOpen]);
-
   return (
-    <Modal isOpen={isOpen} size={"md"} onClose={onClose}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Create Group
-            </ModalHeader>
-            <ModalBody>
-              <div className="flex flex-col gap-4">
-                <div>
-                  <label htmlFor="name">Name</label>
-                  <Textarea
-                    id="name"
+    <>
+      {loading ? (
+        <Spinner className="flex justify-center items-center" />
+      ) : (
+        <Modal isOpen={isOpen} size="md" onClose={handleClose}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader>Create Group</ModalHeader>
+                <ModalBody>
+                  <Input
+                    isRequired
+                    label="Name"
+                    labelPlacement="outside"
+                    placeholder="Enter a group name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter group name"
-                    rows={4}
                   />
-                </div>
-                <div>
-                  <label htmlFor="attendees">Select attendees</label>
                   <Select
-                    className="max-w-xs"
-                    placeholder="Select attendee/s"
+                    isRequired
+                    label="Attendee(s)"
+                    labelPlacement="outside"
+                    placeholder="Select attendee(s)"
                     selectionMode="multiple"
                     selectedKeys={selectedUsers}
-                    onSelectionChange={handleSelectionChange}
+                    onSelectionChange={setSelectedUsers}
                   >
                     {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        {user.name}
-                      </SelectItem>
+                      <SelectItem key={user.id}>{user.name}</SelectItem>
                     ))}
                   </Select>
-                </div>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button auto flat color="error" onPress={onClose}>
-                Close
-              </Button>
-              <Button auto type="submit" onPress={handleSubmit}>
-                Create Group
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" onPress={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button color="primary" onPress={handleSubmit}>
+                    Create Group
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      )}
+    </>
   );
 };
