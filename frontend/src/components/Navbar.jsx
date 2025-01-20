@@ -11,7 +11,7 @@ import {
   Avatar,
 } from "@heroui/react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { LayoutDashboardIcon, MailIcon, BookIcon } from "lucide-react";
 import { getUserByIdWithoutCredentials } from "../services/api";
 
@@ -19,8 +19,10 @@ export const StyledNavbar = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const userId = localStorage.getItem("userId");
+  const isActivePath = (path) => location.pathname === path;
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -47,13 +49,38 @@ export const StyledNavbar = () => {
   };
 
   return (
-    <Navbar isBordered className="fixed">
+    <Navbar
+      isBordered
+      className="fixed"
+      classNames={{
+        item: [
+          "flex",
+          "relative",
+          "h-full",
+          "items-center",
+          "after:content-['']",
+          "after:absolute",
+          "after:bottom-0",
+          "after:left-0",
+          "after:right-0",
+          "after:h-[2px]",
+          "after:rounded-[2px]",
+          "after:bg-primary",
+          "after:transition-all",
+          "after:duration-300",
+          "after:ease-in-out",
+          "after:scale-x-0",
+          "hover:after:scale-x-100",
+          "data-[active=true]:after:scale-x-100",
+        ],
+      }}
+    >
       <NavbarBrand>
         <p className="font-bold text-inherit">SBC</p>
       </NavbarBrand>
 
       <NavbarContent className="gap-16" justify="center">
-        <NavbarItem>
+        <NavbarItem isActive={isActivePath("/email")}>
           <Link
             color="foreground"
             href="/email"
@@ -63,10 +90,9 @@ export const StyledNavbar = () => {
             Email
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
+        <NavbarItem isActive={isActivePath("/dashboard")}>
           <Link
             color="foreground"
-            aria-current="page"
             href="/dashboard"
             className="flex flex-col items-center"
           >
@@ -74,7 +100,7 @@ export const StyledNavbar = () => {
             Dashboard
           </Link>
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem isActive={isActivePath("/programmes")}>
           <Link
             color="foreground"
             href="/programmes"
