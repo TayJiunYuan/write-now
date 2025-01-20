@@ -71,7 +71,7 @@ const Dashboard = () => {
       ) : (
         <div className="container mx-auto p-4 pt-[65px]">
           <h2 className="p-4 text-3xl font-bold text-primary">
-            Welcome back, {user.name}.
+            Welcome back, {user? user.name : "User"}.
           </h2>
 
           <div className="grid lg:grid-rows-2 lg:grid-cols-3 h-full gap-4 p-4">
