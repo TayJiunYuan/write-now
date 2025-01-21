@@ -15,7 +15,6 @@ import {
   useDraggable,
 } from "@heroui/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
-
 import { createNewMeeting } from "../services/api";
 
 export const CreateMeetingModal = ({

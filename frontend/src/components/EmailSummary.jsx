@@ -5,7 +5,7 @@ import { getEmailsShortSum } from "../services/api";
 export const EmailSummary = () => {
   const [emails, setEmails] = useState([]);
   const [isInboxLoading, setIsInboxLoading] = useState(true);
-  
+
   const userId = localStorage.getItem("userId");
 
   const fetchEmails = async () => {
@@ -42,11 +42,11 @@ export const EmailSummary = () => {
       ) : emails.length === 0 ? (
         <p className="text-gray-500">Inbox is empty.</p>
       ) : (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full mt-2">
           {Object.values(emails).map((email) => (
             <Badge
               color="primary"
-              shape="circle"
+              shape="rectangle"
               size="lg"
               content="Unread"
               placement="top-right"

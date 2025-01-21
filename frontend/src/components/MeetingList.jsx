@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Button } from "@heroui/react";
+import { convertISOToPresentableLongDateTime } from "../utils/DateFormatters";
 
 export const MeetingList = ({ meetings, title }) => {
-  const sortedEvents = meetings.sort((a, b) => {
+  const sortedMeetings = meetings.sort((a, b) => {
     const dateA = new Date(a.start);
     const dateB = new Date(b.start);
 
@@ -11,32 +13,29 @@ export const MeetingList = ({ meetings, title }) => {
 
   return (
     <div>
-      {sortedEvents.map((meeting, index) => {
-        const startDate = new Date(meeting.start);
+      <ol className="space-y-2">
+        {sortedMeetings.map((meeting, index) => {
+          const formattedDate = convertISOToPresentableLongDateTime(
+            meeting.start
+          );
 
-        const formattedDate = startDate.toLocaleDateString("en-GB", {
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        });
-
-        return (
-          <div key={index}>
-            <p>
-              {formattedDate} -{" "}
-              <Link to={`/meetings/${meeting.id}`} state={{ meeting, title }}>
-                <button className="text-blue-500 underline">
-                  View Details
-                </button>
-              </Link>
-            </p>
-          </div>
-        );
-      })}
+          return (
+            <li className="flex justify-between items-center">
+              <p className="flex-1">{`${index + 1}. ${formattedDate}`}</p>
+              <Button
+                as={Link}
+                to={`/meetings/${meeting.id}`}
+                state={{ meeting, title }}
+                variant="light"
+                color="primary"
+                size="sm"
+              >
+                View Details
+              </Button>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 };

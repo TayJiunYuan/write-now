@@ -9,14 +9,13 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { format } from "date-fns";
-
 import { getAllProgrammes } from "../services/api";
 import { convertDatePickerToDateOnly } from "../utils/DateFormatters";
 import { programmeTypes } from "../constants/ProgrammesElements";
 import { CreateProgrammeModal } from "../components/CreateProgrammeModal";
 
 const Programmes = () => {
-  const [programmes, setProgrammes] = useState([]);
+  const [programmesList, setProgrammesList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedDates, setSelectedDates] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Programmes");
@@ -27,7 +26,7 @@ const Programmes = () => {
     try {
       setLoading(true);
       const response = await getAllProgrammes();
-      setProgrammes(response);
+      setProgrammesList(response);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -40,11 +39,12 @@ const Programmes = () => {
   }, []);
 
   useEffect(() => {
-    const filteredEvents = programmes.filter((event) => {
+    const filteredEvents = programmesList.filter((event) => {
       let isWithinDateRange;
 
       if (selectedDates?.start && selectedDates?.end) {
         const eventDateString = format(new Date(event.datetime), "yyyy-MM-dd");
+        console.log(eventDateString);
         const formattedStartDate = convertDatePickerToDateOnly(
           selectedDates.start
         );
@@ -65,18 +65,18 @@ const Programmes = () => {
     });
 
     setFilteredEvents(filteredEvents);
-  }, [selectedDates, selectedCategory, programmes]);
+  }, [selectedDates, selectedCategory, programmesList]);
 
   // default sorting by datetime
   useEffect(() => {
-    const sortedEvents = programmes.sort((a, b) => {
+    const sortedEvents = programmesList.sort((a, b) => {
       const dateA = new Date(a.datetime);
       const dateB = new Date(b.datetime);
 
       return dateA - dateB;
     });
     setFilteredEvents(sortedEvents);
-  }, [programmes]);
+  }, [programmesList]);
 
   const handleProgTypeChange = (e) => {
     if (!e.target.value) {
@@ -85,11 +85,6 @@ const Programmes = () => {
       setSelectedCategory(e.target.value);
     }
   };
-
-  useEffect(() => {
-    console.log(programmes);
-    console.log(filteredEvents);
-  }, [programmes, filteredEvents]);
 
   return (
     <div className="min-h-screen container mx-auto pt-[65px]">
@@ -144,6 +139,7 @@ const Programmes = () => {
         <div className="mt-8 space-y-6 pb-8">
           {filteredEvents.map((event, index) => {
             const date = new Date(event.datetime);
+
             const day = date.getDate();
             const month = date.toLocaleDateString("default", {
               month: "short",
@@ -154,8 +150,8 @@ const Programmes = () => {
               hour: "2-digit",
               minute: "2-digit",
             });
-
             const formattedTime = time.split(",")[1];
+
             return (
               <div
                 key={index}

@@ -13,6 +13,7 @@ import {
   Textarea,
   Spinner,
 } from "@heroui/react";
+
 import {
   createNewTask,
   updateTask,
@@ -27,15 +28,16 @@ const CreateTaskDrawer = ({
   onOpenChange,
   assignees = [],
   programmes = [],
-  withAIData,
-  taskDetails,
-  updateTaskInTable,
+  withAIData, // create task with passed in AI data
+  taskDetails, // task details to be updated
+  updateTaskInTable, // to update task in the table
+  definedProgrammeId, // pass prog id if available
 }) => {
   const [isForOthers, setIsForOthers] = useState(false);
   const [assigneeId, setAssigneeId] = useState("");
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
-  const [programmeId, setProgrammeId] = useState("");
+  const [programmeId, setProgrammeId] = useState(definedProgrammeId || "");
   const [taskType, setTaskType] = useState("");
   const [taskDeadline, setTaskDeadline] = useState("");
 
@@ -99,6 +101,7 @@ const CreateTaskDrawer = ({
 
     const assignerId = String(localStorage.getItem("userId"));
     const taskData = {
+      ...taskDetails,
       assigned_to_self: !isForOthers,
       assignee_id: isForOthers ? assigneeId : assignerId,
       assigner_id: assignerId,
@@ -115,25 +118,25 @@ const CreateTaskDrawer = ({
         .then((updatedTask) => {
           setToastMessage("Task updated successfully! 🎉");
           updateTaskInTable(updatedTask);
-          onOpenChange(false);
         })
         .catch((err) => {
           console.error("Error creating task:", err);
         })
         .finally(() => {
           handleClearForm();
+          onOpenChange(false);
         });
     } else {
       createNewTask(taskData)
         .then(() => {
           setToastMessage("Task created successfully! 🎉");
-          onOpenChange(false);
         })
         .catch((err) => {
           console.error("Error creating task:", err);
         })
         .finally(() => {
           handleClearForm();
+          onOpenChange(false);
         });
     }
   };
