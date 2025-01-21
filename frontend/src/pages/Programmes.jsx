@@ -140,7 +140,7 @@ const Programmes = () => {
         </div>
       </div>
 
-      <Skeleton isLoaded={!loading} className="rounded-lg mt-8">
+      <Skeleton isLoaded={!loading} className="rounded-xl mt-8">
         <div className="mt-8 space-y-6 pb-8">
           {filteredEvents.map((event, index) => {
             const date = new Date(event.datetime);
@@ -161,7 +161,7 @@ const Programmes = () => {
                 key={index}
                 className="bg-white rounded-xl shadow-xl p-6 flex items-center justify-between gap-4"
               >
-                <div className="bg-default rounded-lg p-4 flex flex-col justify-center items-center border-2 border-black">
+                <div className="bg-default rounded-xl p-4 flex flex-col justify-center items-center border-2 border-black">
                   <p className="text-xl font-bold">{day}</p>
                   <p className="text-sm font-bold">{month}</p>
                   <p className="text-sm font-bold">{year}</p>
@@ -180,6 +180,7 @@ const Programmes = () => {
                   to={`/programmes/${event.id}`}
                   state={{ event }}
                   color="primary"
+                  variant="flat"
                 >
                   VIEW DETAILS
                 </Button>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -6,18 +7,19 @@ import {
   CardBody,
   Avatar,
   Button,
+  Tooltip,
+  Link,
 } from "@heroui/react";
-import { useLocation } from "react-router-dom";
-import { CreateMeetingModal } from "../components/CreateMeetingModal";
+
 import {
   getMeetings,
   getUsersWithoutCredentials,
   getTasksByProgrammeId,
   getTaskFileName,
 } from "../services/api";
+import { CreateMeetingModal } from "../components/CreateMeetingModal";
 import { MeetingList } from "../components/MeetingList";
 import { TaskList } from "../components/TaskList";
-import { useNavigate } from "react-router-dom";
 
 const Programme = () => {
   const location = useLocation();
@@ -114,86 +116,92 @@ const Programme = () => {
 
   return (
     <div className="container mx-auto min-h-screen pt-[65px]">
-      <Button
-        onClick={() => navigation(-1)} // Go back to the previous page
-        className="text-base border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition mt-4"
-      >
-        Back
-      </Button>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-        <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">
-            Programme Details
-          </CardHeader>
-          <CardBody>
-            <Divider />
-            <h2 className="font-semibold pt-2 pb-2">{event.name}</h2>
-            <Divider />
-            <p className="pt-4">{event.description}</p>
-          </CardBody>
-        </Card>
+      <div className="my-4 space-y-4">
+        <Button onPress={() => navigation(-1)} color="danger" variant="flat">
+          Back
+        </Button>
 
-        <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">
-            <div className="flex justify-between items-center w-full">
-              <p>Meetings</p>
-              <Button
-                className="text-right text-base px-4 py-1 border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56"
-                onPress={handleOpen}
-              >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="bg-white shadow-md rounded-xl p-4">
+            <CardHeader className="text-lg font-bold">
+              Programme Details
+            </CardHeader>
+            <div className="px-3 pb-1">
+              <Divider />
+            </div>
+            <CardBody className="gap-1">
+              <h2 className="font-medium">{event.name}</h2>
+              <Divider />
+              <p className="font-light">{event.description}</p>
+            </CardBody>
+          </Card>
+
+          <Card className="bg-white shadow-md rounded-xl p-4">
+            <CardHeader className="text-lg font-bold justify-between">
+              Meetings
+              <Button color="primary" size="sm" onPress={handleOpen}>
                 Create Meetings
               </Button>
+            </CardHeader>
+            <div className="px-3 pb-1">
+              <Divider />
             </div>
-          </CardHeader>
-          <Divider />
-          <CardBody>
-            <MeetingList meetings={meetings} title={title} />
-          </CardBody>
-        </Card>
+            <CardBody className="gap-1">
+              <MeetingList meetings={meetings} title={title} />
+            </CardBody>
+          </Card>
 
-        <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">People</CardHeader>
-          <Divider />
-          <div>
-            {Object.entries(event.groups).map(([group, ids]) => (
-              <div className="grid grid-cols-2" key={group}>
-                <CardBody className="font-semibold">
-                  {group}
-                  <div className="flex gap-3 items-center pt-2">
+          <Card className="bg-white shadow-md rounded-xl p-4">
+            <CardHeader className="text-lg font-bold">People</CardHeader>
+            <div className="px-3 pb-1">
+              <Divider />
+            </div>
+            <CardBody className="gap-3">
+              {Object.entries(event.groups).map(([group, ids]) => (
+                <div className="flex flex-col gap-1" key={group}>
+                  <p className="font-medium">{group}</p>
+                  <div>
                     {ids.map((id) => {
                       const name = userLookup[id];
                       return name ? (
-                        <Avatar key={id} name={name} />
+                        <Tooltip content={name} showArrow={true}>
+                          <Avatar key={id} name={name} />
+                        </Tooltip>
                       ) : (
-                        <Avatar key={id} name={id} />
+                        <Tooltip content="No User" showArrow={true}>
+                          <Avatar key={id} name={id} />
+                        </Tooltip>
                       );
                     })}
                   </div>
-                </CardBody>
-              </div>
-            ))}
-          </div>
-        </Card>
+                </div>
+              ))}
+            </CardBody>
+          </Card>
 
-        <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">
-            Important Files
-          </CardHeader>
-          <Divider />
-          <CardBody>
-            <div className="flex flex-col">
+          <Card className="bg-white shadow-md rounded-xl p-4">
+            <CardHeader className="text-lg font-bold">
+              Important Files
+            </CardHeader>
+            <div className="px-3 pb-1">
+              <Divider />
+            </div>
+            <CardBody className="gap-1 overflow-auto">
               {combinedFile.map((task) => (
-                <button
+                <Link
+                  isExternal
+                  showAnchorIcon
                   key={task.id}
-                  className="text-blue-500 underline text-left"
-                  onClick={() => (window.location.href = task.task_link)} // Navigate to the link
+                  color="primary"
+                  underline="always"
+                  href={task.task_link}
                 >
                   {task.name}
-                </button>
+                </Link>
               ))}
-            </div>
-          </CardBody>
-        </Card>
+            </CardBody>
+          </Card>
+        </div>
         <TaskList tasks={tasks} fetchTask={fetchTask} />
       </div>
       <CreateMeetingModal
