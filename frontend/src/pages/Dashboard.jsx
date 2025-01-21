@@ -82,7 +82,7 @@ const Dashboard = () => {
                   <p className="text-lg font-medium tracking-tight text-gray-950">
                     Tasks
                   </p>
-                  <Button color="primary" onPress={onOpen}>
+                  <Button color="primary" size="sm" onPress={onOpen}>
                     Create Task
                   </Button>
                 </div>
