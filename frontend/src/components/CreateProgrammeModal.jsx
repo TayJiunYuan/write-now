@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Avatar,
   Modal,
@@ -14,19 +14,26 @@ import {
   SelectItem,
   Divider,
   Form,
+  useDraggable,
 } from "@heroui/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
+
 import { createNewProgramme } from "../services/api";
 import { programmeTypes } from "../constants/ProgrammesElements";
 import { CreateGroupModal } from "./CreateGroupModal";
 
 export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
-  const [startTime, setStartTime] = useState(new Date());
+  const [startTime, setStartTime] = useState(now(getLocalTimeZone()));
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [selectedProgType, setSelectedProgType] = useState("");
 
+  // draggable modal
+  const targetRef = useRef(null);
+  const { moveProps } = useDraggable({ targetRef, isDisabled: !isOpen });
+
+  // create group modal
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [groups, setGroups] = useState([]);
 
@@ -48,7 +55,9 @@ export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
     setGroups([]);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     const { year, month, day, hour, minute, second, millisecond, offset } =
       startTime;
     const date = new Date(
@@ -76,7 +85,7 @@ export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
     };
 
     try {
-      createNewProgramme(programmeData);
+      await createNewProgramme(programmeData);
     } catch (error) {
       console.error("Error creating new programme:", error);
     } finally {
@@ -98,11 +107,16 @@ export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
 
   return (
     <>
-      <Modal isOpen={isOpen} size={"md"} onOpenChange={onOpenChange}>
+      <Modal
+        ref={targetRef}
+        isOpen={isOpen}
+        size="md"
+        onOpenChange={onOpenChange}
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>Create Programme</ModalHeader>
+              <ModalHeader {...moveProps}>Create Programme</ModalHeader>
               <ModalBody>
                 <Form
                   id="create-task-form"
@@ -153,10 +167,10 @@ export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
                     showMonthAndYearPickers
                     showTimeSelect
                     defaultValue={now(getLocalTimeZone())}
-                    label="Event Date"
+                    label="Event Date & Time"
                     labelPlacement="outside"
                     selected={startTime}
-                    onChange={(date) => setStartTime(date)}
+                    onChange={(dateTime) => setStartTime(dateTime)}
                   />
                   <Divider className="my-2" />
                   <div className="flex flex-col gap-4">

@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -10,9 +12,8 @@ import {
   DropdownItem,
   Button,
 } from "@heroui/react";
-import { useEffect, useState } from "react";
+
 import { updateTask } from "../services/api";
-import { useNavigate } from "react-router-dom";
 
 export const TaskList = ({ tasks, fetchTask }) => {
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -37,7 +38,7 @@ export const TaskList = ({ tasks, fetchTask }) => {
   };
 
   return (
-    <Card className="bg-white shadow-md rounded p-4 md:col-span-2">
+    <Card className="bg-white shadow-md rounded-xl p-4 md:col-span-2">
       <CardHeader className="text-lg font-bold mb-2">Tasklist</CardHeader>
       <Divider />
       <CardBody>

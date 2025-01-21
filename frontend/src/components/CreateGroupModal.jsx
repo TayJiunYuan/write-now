@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Modal,
   ModalContent,
@@ -10,6 +10,7 @@ import {
   Select,
   SelectItem,
   Spinner,
+  useDraggable,
 } from "@heroui/react";
 import { getUsersWithoutCredentials } from "../services/api";
 
@@ -18,6 +19,10 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {
   const [users, setUsers] = useState([]);
   const [name, setName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState(new Set([]));
+
+  // draggable modal
+  const targetRef = useRef(null);
+  const { moveProps } = useDraggable({ targetRef, isDisabled: !isOpen });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,11 +64,11 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {
       {loading ? (
         <Spinner className="flex justify-center items-center" />
       ) : (
-        <Modal isOpen={isOpen} size="md" onClose={handleClose}>
+        <Modal ref={targetRef} isOpen={isOpen} size="md" onClose={handleClose}>
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader>Create Group</ModalHeader>
+                <ModalHeader {...moveProps}>Create Group</ModalHeader>
                 <ModalBody>
                   <Input
                     isRequired
@@ -89,7 +94,7 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }) => {
                 </ModalBody>
                 <ModalFooter>
                   <Button color="danger" onPress={handleClose}>
-                    Cancel
+                    Close
                   </Button>
                   <Button color="primary" onPress={handleSubmit}>
                     Create Group
