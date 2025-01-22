@@ -9,7 +9,7 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { format } from "date-fns";
-import { getAllProgrammes } from "../services/api";
+import { createNewProgramme, getAllProgrammes } from "../services/api";
 import { convertDatePickerToDateOnly } from "../utils/DateFormatters";
 import { programmeTypes } from "../constants/ProgrammesElements";
 import { CreateProgrammeModal } from "../components/CreateProgrammeModal";
@@ -22,19 +22,19 @@ const Programmes = () => {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await getAllProgrammes();
-      setProgrammesList(response);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllProgrammes();
+        setProgrammesList(response);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
   }, []);
 
@@ -83,6 +83,16 @@ const Programmes = () => {
       return;
     } else {
       setSelectedCategory(e.target.value);
+    }
+  };
+
+  const handleCreateProgramme = async (programmeData) => {
+    try {
+      const createdProgramme = await createNewProgramme(programmeData);
+      setProgrammesList((prevProgs) => [...prevProgs, createdProgramme]);
+    } catch (error) {
+      console.error("Error creating programme:", error);
+      throw error;
     }
   };
 
@@ -188,7 +198,7 @@ const Programmes = () => {
       <CreateProgrammeModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        fetchData={fetchData}
+        handleCreateProgramme={handleCreateProgramme}
       />
     </div>
   );

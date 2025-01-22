@@ -13,24 +13,19 @@ import {
   Textarea,
   Spinner,
 } from "@heroui/react";
-
-import {
-  createNewTask,
-  updateTask,
-  getUsersWithoutCredentials,
-  getAllProgrammes,
-} from "../services/api";
+import { getUsersWithoutCredentials, getAllProgrammes } from "../services/api";
 import { Toast } from "./Toast";
 import { taskTypes } from "../constants/TableElements";
 
 const CreateTaskDrawer = ({
   isOpen,
   onOpenChange,
-  assignees = [],
-  programmes = [],
-  withAIData, // create task with passed in AI data
-  taskDetails, // task details to be updated
-  updateTaskInTable, // to update task in the table
+  assignees = [], // pass assignees if parents container has
+  programmes = [], // pass progs if parent container has
+  withAIData, // create task with AI data if available
+  taskDetails, // update task if existing task details are available
+  handleCreateTask,
+  handleUpdateTask,
   definedProgrammeId, // pass prog id if available
 }) => {
   const [isForOthers, setIsForOthers] = useState(false);
@@ -71,6 +66,7 @@ const CreateTaskDrawer = ({
         setIsLoading(true);
         if (assignees.length === 0) {
           const users = await getUsersWithoutCredentials();
+          console.log(users);
           setAvailableAssignees(users);
         }
         if (programmes.length === 0) {
@@ -87,16 +83,24 @@ const CreateTaskDrawer = ({
     fetchData();
   }, [assignees.length, programmes.length]);
 
+  // clear assignee field whenever toggling between self and others
+  useEffect(() => {
+    if (!isForOthers) {
+      setAssigneeId("");
+    }
+  }, [isForOthers]);
+
   const handleClearForm = () => {
     setIsForOthers(false);
     setAssigneeId("");
     setTaskName("");
     setTaskDescription("");
     setProgrammeId("");
+    setTaskType("");
     setTaskDeadline("");
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     const assignerId = String(localStorage.getItem("userId"));
@@ -113,31 +117,24 @@ const CreateTaskDrawer = ({
       task_type: taskType,
     };
 
-    if (taskDetails) {
-      updateTask(taskData)
-        .then((updatedTask) => {
-          setToastMessage("Task updated successfully! 🎉");
-          updateTaskInTable(updatedTask);
-        })
-        .catch((err) => {
-          console.error("Error creating task:", err);
-        })
-        .finally(() => {
-          handleClearForm();
-          onOpenChange(false);
-        });
-    } else {
-      createNewTask(taskData)
-        .then(() => {
-          setToastMessage("Task created successfully! 🎉");
-        })
-        .catch((err) => {
-          console.error("Error creating task:", err);
-        })
-        .finally(() => {
-          handleClearForm();
-          onOpenChange(false);
-        });
+    try {
+      if (taskDetails) {
+        await handleUpdateTask(taskData);
+        setToastMessage("Task updated successfully! 🎉");
+      } else {
+        await handleCreateTask(taskData);
+        setToastMessage("Task created successfully! 🎉");
+      }
+    } catch (err) {
+      console.error("Error processing task:", err);
+      setToastMessage(
+        taskDetails
+          ? "Failed to update task. Please try again."
+          : "Failed to create task. Please try again."
+      );
+    } finally {
+      handleClearForm();
+      onOpenChange(false);
     }
   };
 

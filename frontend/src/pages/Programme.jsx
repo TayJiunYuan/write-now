@@ -18,6 +18,7 @@ import {
   getTasksByProgrammeId,
   getTaskFileName,
   updateTask,
+  createNewMeeting,
 } from "../services/api";
 import { CreateMeetingModal } from "../components/CreateMeetingModal";
 import CreateTaskDrawer from "../components/CreateTaskDrawer";
@@ -136,6 +137,16 @@ const Programme = () => {
       );
     }
   };
+
+  const handleCreateMeeting = async (meetingData) => {
+      try {
+        const createdMeeting = await createNewMeeting(meetingData);
+        setMeetings((prevMtgs) => [...prevMtgs, createdMeeting]);
+      } catch (error) {
+        console.error("Error creating meeting:", error);
+        throw error;
+      }
+    };
 
   return (
     <div className="container mx-auto min-h-screen pt-[65px]">
@@ -261,6 +272,7 @@ const Programme = () => {
         id={programmeID}
         attendees={event.groups}
         users={users}
+        handleCreateMeeting={handleCreateMeeting}
       />
       <CreateTaskDrawer
         isOpen={isTaskDrawerOpen}

@@ -17,17 +17,21 @@ import {
   useDraggable,
 } from "@heroui/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
-
-import { createNewProgramme } from "../services/api";
 import { programmeTypes } from "../constants/ProgrammesElements";
 import { CreateGroupModal } from "./CreateGroupModal";
+import { Toast } from "./Toast";
 
-export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
+export const CreateProgrammeModal = ({
+  isOpen,
+  onOpenChange,
+  handleCreateProgramme,
+}) => {
   const [startTime, setStartTime] = useState(now(getLocalTimeZone()));
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [selectedProgType, setSelectedProgType] = useState("");
+  const [toastMessage, setToastMessage] = useState("");
 
   // draggable modal
   const targetRef = useRef(null);
@@ -85,13 +89,14 @@ export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
     };
 
     try {
-      await createNewProgramme(programmeData);
+      await handleCreateProgramme(programmeData);
+      setToastMessage("Programme created successfully! 🎉");
     } catch (error) {
       console.error("Error creating new programme:", error);
+      setToastMessage("Failed to create programme. Please try again.");
     } finally {
       handleClearForm();
       onOpenChange(false);
-      fetchData();
     }
   };
 
@@ -107,6 +112,9 @@ export const CreateProgrammeModal = ({ isOpen, onOpenChange, fetchData }) => {
 
   return (
     <>
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage("")} />
+      )}
       <Modal
         ref={targetRef}
         isOpen={isOpen}

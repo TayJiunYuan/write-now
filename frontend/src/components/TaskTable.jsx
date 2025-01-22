@@ -18,17 +18,21 @@ import {
   getAllProgrammes,
   getTasksByTaskId,
   deleteTask,
+  updateTask,
+  createNewTask,
 } from "../services/api";
 import { columns, statusColors } from "../constants/TableElements";
 import { EyeIcon, EditIcon, DeleteIcon } from "../constants/Icons";
 import CreateTaskDrawer from "./CreateTaskDrawer";
+import { Toast } from "./Toast";
 
-export const TaskTable = () => {
+export const TaskTable = ({ isOpenCreateTask, onOpenChangeCreateTask }) => {
   const [allUserTasks, setAllUserTasks] = useState([]);
   const [currentTask, setCurrentTask] = useState(null);
   const [users, setUsers] = useState([]);
   const [programmes, setProgrammes] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -76,6 +80,16 @@ export const TaskTable = () => {
     [programmes]
   );
 
+  const handleCreateTask = async (taskData) => {
+    try {
+      const createdTask = await createNewTask(taskData);
+      setAllUserTasks((prevTasks) => [...prevTasks, createdTask]);
+    } catch (error) {
+      console.error("Error creating task:", error);
+      throw error;
+    }
+  };
+
   const handleViewTask = useCallback(
     (taskId) => {
       navigate(`/tasks/${taskId}`);
@@ -83,7 +97,7 @@ export const TaskTable = () => {
     [navigate]
   );
 
-  const handleUpdateTask = useCallback(
+  const handleOnUpdateTaskOpen = useCallback(
     async (taskId) => {
       try {
         const taskDetails = await getTasksByTaskId(taskId);
@@ -96,27 +110,34 @@ export const TaskTable = () => {
     [onOpen]
   );
 
-  // passed to drawer for state mgmt
-  const updateTaskInTable = (updatedTask) => {
-    setAllUserTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === updatedTask.id ? { ...task, ...updatedTask } : task
-      )
-    );
+  // handle updated task data passed from drawer
+  const handleUpdateTask = async (taskData) => {
+    try {
+      const updatedTask = await updateTask(taskData);
+      setAllUserTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === updatedTask.id ? { ...task, ...updatedTask } : task
+        )
+      );
+    } catch (error) {
+      console.error("Error updating task:", error);
+      throw error;
+    }
   };
 
   const handleDeleteTask = useCallback(
     async (taskId) => {
       const previousTasks = [...allUserTasks];
+      setAllUserTasks((prevTasks) =>
+        prevTasks.filter((task) => task.id !== taskId)
+      );
       try {
         await deleteTask(taskId);
+        setToastMessage("Task deleted successfully! 🎉");
       } catch (error) {
         console.error("Error deleting task:", error);
         setAllUserTasks(previousTasks);
-      } finally {
-        setAllUserTasks((prevTasks) =>
-          prevTasks.filter((task) => task.id !== taskId)
-        );
+        setToastMessage("Failed to delete task. Please try again.");
       }
     },
     [allUserTasks]
@@ -181,7 +202,7 @@ export const TaskTable = () => {
               <Tooltip content="Update Task">
                 <span
                   className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                  onClick={() => handleUpdateTask(task.id)}
+                  onClick={() => handleOnUpdateTaskOpen(task.id)}
                 >
                   <EditIcon />
                 </span>
@@ -204,13 +225,16 @@ export const TaskTable = () => {
       findProgramById,
       findUserById,
       handleDeleteTask,
-      handleUpdateTask,
+      handleOnUpdateTaskOpen,
       handleViewTask,
     ]
   );
 
   return (
     <>
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage("")} />
+      )}
       <Table aria-label="Task Table" isHeaderSticky removeWrapper>
         <TableHeader columns={columns}>
           {(column) => (
@@ -238,10 +262,11 @@ export const TaskTable = () => {
         </TableBody>
       </Table>
       <CreateTaskDrawer
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
+        isOpen={isOpenCreateTask || isOpen}
+        onOpenChange={onOpenChangeCreateTask || onOpenChange}
         taskDetails={currentTask}
-        updateTaskInTable={updateTaskInTable}
+        handleCreateTask={handleCreateTask}
+        handleUpdateTask={handleUpdateTask}
       />
     </>
   );
