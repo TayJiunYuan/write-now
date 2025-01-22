@@ -66,7 +66,6 @@ const CreateTaskDrawer = ({
         setIsLoading(true);
         if (assignees.length === 0) {
           const users = await getUsersWithoutCredentials();
-          console.log(users);
           setAvailableAssignees(users);
         }
         if (programmes.length === 0) {
