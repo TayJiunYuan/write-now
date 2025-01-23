@@ -13,29 +13,27 @@ import {
   Textarea,
   Spinner,
 } from "@heroui/react";
-import {
-  createNewTask,
-  updateTask,
-  getUsersWithoutCredentials,
-  getAllProgrammes,
-} from "../services/api";
+import { getUsersWithoutCredentials, getAllProgrammes } from "../services/api";
 import { Toast } from "./Toast";
 import { taskTypes } from "../constants/TableElements";
 
 const CreateTaskDrawer = ({
   isOpen,
   onOpenChange,
-  assignees = [],
-  programmes = [],
-  withAIData,
-  taskDetails,
-  updateTaskInTable,
+  assignees = [], // pass assignees if parents container has
+  programmes = [], // pass progs if parent container has
+  withAIData, // create task with AI data if available
+  taskDetails, // update task if existing task details are available
+  setDrawerMode,
+  handleCreateTask,
+  handleUpdateTask,
+  definedProgrammeId, // pass prog id if available
 }) => {
   const [isForOthers, setIsForOthers] = useState(false);
   const [assigneeId, setAssigneeId] = useState("");
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
-  const [programmeId, setProgrammeId] = useState("");
+  const [programmeId, setProgrammeId] = useState(definedProgrammeId || "");
   const [taskType, setTaskType] = useState("");
   const [taskDeadline, setTaskDeadline] = useState("");
 
@@ -85,20 +83,37 @@ const CreateTaskDrawer = ({
     fetchData();
   }, [assignees.length, programmes.length]);
 
+  // clear assignee field whenever toggling between self and others
+  useEffect(() => {
+    if (!isForOthers) {
+      setAssigneeId("");
+    }
+  }, [isForOthers]);
+
   const handleClearForm = () => {
     setIsForOthers(false);
     setAssigneeId("");
     setTaskName("");
     setTaskDescription("");
     setProgrammeId("");
+    setTaskType("");
     setTaskDeadline("");
   };
 
-  const handleFormSubmit = (e) => {
+  const handleDrawerClose = () => {
+    onOpenChange(false);
+    handleClearForm();
+    if (taskDetails) {
+      setDrawerMode("create");
+    }
+  };
+
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     const assignerId = String(localStorage.getItem("userId"));
     const taskData = {
+      ...taskDetails,
       assigned_to_self: !isForOthers,
       assignee_id: isForOthers ? assigneeId : assignerId,
       assigner_id: assignerId,
@@ -110,37 +125,24 @@ const CreateTaskDrawer = ({
       task_type: taskType,
     };
 
-    if (taskDetails) {
-      updateTask(taskData)
-        .then((updatedTask) => {
-          setToastMessage("Task updated successfully! 🎉");
-          updateTaskInTable(updatedTask);
-          onOpenChange(false);
-        })
-        .catch((err) => {
-          console.error("Error creating task:", err);
-        })
-        .finally(() => {
-          handleClearForm();
-        });
-    } else {
-      createNewTask(taskData)
-        .then(() => {
-          setToastMessage("Task created successfully! 🎉");
-          onOpenChange(false);
-        })
-        .catch((err) => {
-          console.error("Error creating task:", err);
-        })
-        .finally(() => {
-          handleClearForm();
-        });
+    try {
+      if (taskDetails) {
+        await handleUpdateTask(taskData);
+        setToastMessage("Task updated successfully! 🎉");
+      } else {
+        await handleCreateTask(taskData);
+        setToastMessage("Task created successfully! 🎉");
+      }
+    } catch (err) {
+      console.error("Error processing task:", err);
+      setToastMessage(
+        taskDetails
+          ? "Failed to update task. Please try again."
+          : "Failed to create task. Please try again."
+      );
+    } finally {
+      handleDrawerClose();
     }
-  };
-
-  const handleDrawerClose = () => {
-    handleClearForm();
-    onOpenChange(false);
   };
 
   return (

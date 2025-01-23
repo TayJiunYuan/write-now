@@ -9,38 +9,37 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { format } from "date-fns";
-
-import { getAllProgrammes } from "../services/api";
+import { createNewProgramme, getAllProgrammes } from "../services/api";
 import { convertDatePickerToDateOnly } from "../utils/DateFormatters";
 import { programmeTypes } from "../constants/ProgrammesElements";
 import { CreateProgrammeModal } from "../components/CreateProgrammeModal";
 
 const Programmes = () => {
-  const [programmes, setProgrammes] = useState([]);
+  const [programmesList, setProgrammesList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedDates, setSelectedDates] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Programmes");
   const [filteredEvents, setFilteredEvents] = useState([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await getAllProgrammes();
-      setProgrammes(response);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllProgrammes();
+        setProgrammesList(response);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
   }, []);
 
   useEffect(() => {
-    const filteredEvents = programmes.filter((event) => {
+    const filteredEvents = programmesList.filter((event) => {
       let isWithinDateRange;
 
       if (selectedDates?.start && selectedDates?.end) {
@@ -65,18 +64,18 @@ const Programmes = () => {
     });
 
     setFilteredEvents(filteredEvents);
-  }, [selectedDates, selectedCategory, programmes]);
+  }, [selectedDates, selectedCategory, programmesList]);
 
   // default sorting by datetime
   useEffect(() => {
-    const sortedEvents = programmes.sort((a, b) => {
+    const sortedEvents = programmesList.sort((a, b) => {
       const dateA = new Date(a.datetime);
       const dateB = new Date(b.datetime);
 
       return dateA - dateB;
     });
     setFilteredEvents(sortedEvents);
-  }, [programmes]);
+  }, [programmesList]);
 
   const handleProgTypeChange = (e) => {
     if (!e.target.value) {
@@ -86,10 +85,15 @@ const Programmes = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(programmes);
-    console.log(filteredEvents);
-  }, [programmes, filteredEvents]);
+  const handleCreateProgramme = async (programmeData) => {
+    try {
+      const createdProgramme = await createNewProgramme(programmeData);
+      setProgrammesList((prevProgs) => [...prevProgs, createdProgramme]);
+    } catch (error) {
+      console.error("Error creating programme:", error);
+      throw error;
+    }
+  };
 
   return (
     <div className="min-h-screen container mx-auto pt-[65px]">
@@ -140,10 +144,11 @@ const Programmes = () => {
         </div>
       </div>
 
-      <Skeleton isLoaded={!loading} className="rounded-lg mt-8">
+      <Skeleton isLoaded={!loading} className="rounded-xl mt-8">
         <div className="mt-8 space-y-6 pb-8">
           {filteredEvents.map((event, index) => {
             const date = new Date(event.datetime);
+
             const day = date.getDate();
             const month = date.toLocaleDateString("default", {
               month: "short",
@@ -154,14 +159,14 @@ const Programmes = () => {
               hour: "2-digit",
               minute: "2-digit",
             });
-
             const formattedTime = time.split(",")[1];
+
             return (
               <div
                 key={index}
                 className="bg-white rounded-xl shadow-xl p-6 flex items-center justify-between gap-4"
               >
-                <div className="bg-default rounded-lg p-4 flex flex-col justify-center items-center border-2 border-black">
+                <div className="bg-default rounded-xl p-4 flex flex-col justify-center items-center border-2 border-black">
                   <p className="text-xl font-bold">{day}</p>
                   <p className="text-sm font-bold">{month}</p>
                   <p className="text-sm font-bold">{year}</p>
@@ -180,6 +185,7 @@ const Programmes = () => {
                   to={`/programmes/${event.id}`}
                   state={{ event }}
                   color="primary"
+                  variant="flat"
                 >
                   VIEW DETAILS
                 </Button>
@@ -191,7 +197,7 @@ const Programmes = () => {
       <CreateProgrammeModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        fetchData={fetchData}
+        handleCreateProgramme={handleCreateProgramme}
       />
     </div>
   );

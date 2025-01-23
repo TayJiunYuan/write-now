@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Modal,
   ModalContent,
@@ -11,26 +11,48 @@ import {
   Input,
   Select,
   SelectItem,
+  Form,
+  useDraggable,
 } from "@heroui/react";
 import { now, getLocalTimeZone } from "@internationalized/date";
-import { createNewMeeting, getUsersWithoutCredentials } from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { Toast } from "./Toast";
 
-export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
-  const [startTime, setStartTime] = useState(new Date());
+export const CreateMeetingModal = ({
+  isOpen,
+  onOpenChange,
+  id,
+  attendees,
+  users,
+  handleCreateMeeting,
+}) => {
+  const [startTime, setStartTime] = useState(now(getLocalTimeZone()));
   const [durationHours, setDurationHours] = useState("");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [toastMessage, setToastMessage] = useState("");
 
-  const allIds = Object.values(attendees).flat();
+  const allAttendeeIds = Object.values(attendees).flat();
 
-  const filteredUsers = users.filter((user) => allIds.includes(user.id));
+  // draggable modal
+  const targetRef = useRef(null);
+  const { moveProps } = useDraggable({ targetRef, isDisabled: !isOpen });
 
-  const handleSubmit = () => {
+  const filteredUsers = users.filter((user) =>
+    allAttendeeIds.includes(user.id)
+  );
+
+  const handleClearForm = () => {
+    setStartTime(new Date());
+    setDurationHours("");
+    setSummary("");
+    setDescription("");
+    setSelectedUsers("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     const { year, month, day, hour, minute, second, millisecond, offset } =
       startTime;
     const date = new Date(
@@ -50,118 +72,109 @@ export const CreateMeetingModal = ({ isOpen, onClose, id, attendees }) => {
       summary: summary,
       description: description,
     };
-    console.log(meetingData);
-    createNewMeeting(meetingData);
-    navigate(0);
-    onClose();
-  };
-  const handleSelectionChange = (selectedKeys) => {
-    setSelectedUsers(selectedKeys);
-  };
-  const fetchData = async () => {
+
     try {
-      setLoading(true);
-      const response = await getUsersWithoutCredentials();
-      setUsers(response);
+      await handleCreateMeeting(meetingData);
+      setToastMessage("Meeting created successfully! 🎉");
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error creating new meeting:", error);
+      setToastMessage("Failed to create meeting. Please try again.");
     } finally {
-      setLoading(false);
+      handleClearForm();
+      onOpenChange(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   return (
-    <Modal isOpen={isOpen} size={"md"} onClose={onClose}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Create Meeting
-            </ModalHeader>
-            <ModalBody>
-              <div className="flex flex-col gap-4">
-                <div>
-                  <Textarea
-                    isRequired
-                    label="Title"
-                    labelPlacement="outside"
-                    value={summary}
-                    onChange={(e) => setSummary(e.target.value)}
-                    placeholder="Enter meeting summary"
-                  />
-                </div>
-                <div>
-                  <Textarea
-                    isRequired
-                    label="Description"
-                    labelPlacement="outside"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Enter meeting description"
-                    rows={4}
-                  />
-                </div>
-                <div>
-                  <DatePicker
-                    isRequired
-                    label="Start Time"
-                    labelPlacement="outside"
-                    hideTimeZone
-                    showMonthAndYearPickers
-                    defaultValue={now(getLocalTimeZone())}
-                    aria-label="Event Date"
-                    selected={startTime}
-                    onChange={(date) => setStartTime(date)}
-                    showTimeSelect
-                    dateFormat="Pp"
-                    className="heroui-input"
-                  />
-                </div>
-                <div>
+    <>
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage("")} />
+      )}
+      <Modal
+        ref={targetRef}
+        isOpen={isOpen}
+        size="md"
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader {...moveProps}>Create Meeting</ModalHeader>
+              <ModalBody>
+                <Form
+                  id="create-task-form"
+                  validationBehavior="native"
+                  onSubmit={handleSubmit}
+                >
                   <Input
                     isRequired
-                    label="Duration (hours)"
+                    label="Meeting Title"
+                    labelPlacement="outside"
+                    placeholder="Enter summary of meeting"
+                    value={summary}
+                    onChange={(e) => setSummary(e.target.value)}
+                  />
+                  <Textarea
+                    isRequired
+                    label="Meeting Description"
+                    labelPlacement="outside"
+                    placeholder="Enter meeting description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                  <DatePicker
+                    isRequired
+                    hideTimeZone
+                    showMonthAndYearPickers
+                    showTimeSelect
+                    defaultValue={now(getLocalTimeZone())}
+                    label="Start Date & Time"
+                    labelPlacement="outside"
+                    selected={startTime}
+                    onChange={(dateTime) => setStartTime(dateTime)}
+                  />
+                  <Input
+                    isRequired
+                    label="Duration (in Hours)"
                     labelPlacement="outside"
                     type="number"
                     value={durationHours}
                     onChange={(e) => setDurationHours(e.target.value)}
                     placeholder="Enter duration in hours"
                   />
-                </div>
-                <div>
                   <Select
                     isRequired
-                    label="Select attendees"
+                    label="Attendee(s)"
                     labelPlacement="outside"
-                    placeholder="Select attendee/s"
+                    placeholder="Select attendee(s)"
                     selectionMode="multiple"
                     selectedKeys={selectedUsers}
-                    onSelectionChange={handleSelectionChange}
+                    onSelectionChange={setSelectedUsers}
                   >
                     {filteredUsers.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        {user.name}
-                      </SelectItem>
+                      <SelectItem key={user.id}>{user.name}</SelectItem>
                     ))}
                   </Select>
-                </div>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button auto flat color="error" onPress={onClose}>
-                Close
-              </Button>
-              <Button auto onPress={handleSubmit}>
-                Create Meeting
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+                </Form>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  onPress={() => {
+                    onClose();
+                    handleClearForm();
+                  }}
+                >
+                  Close
+                </Button>
+                <Button color="primary" type="submit" form="create-task-form">
+                  Create Meeting
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 };

@@ -9,11 +9,10 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { CalendarSearch } from "lucide-react";
+import { getUserByIdWithoutCredentials } from "../services/api";
 import { TaskTable } from "../components/TaskTable";
 import { EmailSummary } from "../components/EmailSummary";
 import { CalendarContent } from "../components/CalendarContent";
-import CreateTaskDrawer from "../components/CreateTaskDrawer";
-import { getUserByIdWithoutCredentials } from "../services/api";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -71,7 +70,7 @@ const Dashboard = () => {
       ) : (
         <div className="container mx-auto p-4 pt-[65px]">
           <h2 className="p-4 text-3xl font-bold text-primary">
-            Welcome back, {user? user.name : "User"}.
+            Welcome back, {user ? user.name : "User"}.
           </h2>
 
           <div className="grid lg:grid-rows-2 lg:grid-cols-3 h-full gap-4 p-4">
@@ -87,7 +86,10 @@ const Dashboard = () => {
                   </Button>
                 </div>
                 <div className="overflow-auto w-full [container-type:inline-size] p-4">
-                  <TaskTable />
+                  <TaskTable
+                    isCreateTaskOpen={isOpen}
+                    onCreateTaskOpenChange={onOpenChange}
+                  />
                 </div>
               </div>
             </div>
@@ -149,7 +151,6 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-      <CreateTaskDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
     </>
   );
 };

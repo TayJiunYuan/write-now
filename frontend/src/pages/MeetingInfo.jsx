@@ -1,139 +1,196 @@
-import React, { act, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
   CardHeader,
-  Divider,
   CardBody,
-  Checkbox,
-  Avatar,
+  Divider,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
   Button,
+  Tooltip,
+  Badge,
+  Avatar,
+  Link,
+  useDisclosure,
 } from "@heroui/react";
-import { useLocation } from "react-router-dom";
 import { getTaskDetailsWithAI } from "../services/api";
-import { useNavigate } from "react-router-dom";
+import CreateTaskDrawer from "../components/CreateTaskDrawer";
 
 const MeetingInfo = () => {
   const location = useLocation();
   const { meeting, title } = location.state || {};
+  const navigate = useNavigate();
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [withAIData, setWithAIData] = useState(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+
   const summaryTitle = meeting.summary.split("-")[0];
-  const [openTaskDrawer, setOpenTaskDrawer] = useState(false);
-  const navigation = useNavigate();
 
-  const handleJoinMeeting = () => {
-    window.location.href = meeting.meet_link;
-  };
+  const onOpenChangeWithAI = async (summary) => {
+    try {
+      setIsLoadingAI(true);
+      const data = await getTaskDetailsWithAI(summary);
+      setWithAIData(data);
+    } catch (error) {
+      console.error("Error fetching AI data:", error);
+      setWithAIData(null);
+    } finally {
+      setIsLoadingAI(false);
+    }
 
-  const handleCreateTask = () => {
-    setOpenTaskDrawer(true);
-  };
-
-  const handlePress = (action) => {
-    console.log(action);
-    console.log("type of action:", typeof action);
-    const response = getTaskDetailsWithAI(action);
-    console.log(response);
+    onOpen();
   };
 
   return (
-    <div className="container mx-auto pt-[65px]">
-      <Button
-        onClick={() => navigation(-1)} // Go back to the previous page
-        className="text-base border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition mt-4"
-      >
-        Back
-      </Button>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-        <Card className="bg-white shadow-md rounded p-4 col-span-2">
-          <CardHeader className="text-lg font-bold mb-2">
-            Programme Meeting Info for {title}
-          </CardHeader>
-          <CardBody>
-            <Divider className="mb-2" />
-            <p>{summaryTitle}</p>
-            <Divider className="my-2" />
-            <p>{meeting.description}</p>
-          </CardBody>
-        </Card>
-        <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">
-            <div className="flex justify-between items-center w-full">
-              <p>Participants</p>
-            </div>
-          </CardHeader>
-          <Divider />
-          <CardBody>
-            <div className="flex gap-3 items-center pt-2">
-              {meeting.attendees.map((name) => (
-                <Avatar key={name} name={name} />
-              ))}
-            </div>
-          </CardBody>
-        </Card>
+    <div className="container mx-auto min-h-screen pt-[65px]">
+      <div className="my-4 space-y-4">
+        <Button onPress={() => navigate(-1)} color="danger" variant="flat">
+          Back
+        </Button>
 
-        <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">
-            Meeting Link
-          </CardHeader>
-          <Divider />
-          <CardBody>
-            <div className="flex flex-col">
-              <button
-                className="text-blue-500 underline text-left"
-                onClick={handleJoinMeeting}
-              >
-                Click here to join the meeting
-              </button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="bg-white shadow-md rounded-xl p-4 col-span-2">
+            <CardHeader className="text-lg font-bold">
+              Meeting Information for [{title}]
+            </CardHeader>
+            <div className="px-3">
+              <Divider />
             </div>
-          </CardBody>
-        </Card>
+            <CardBody className="gap-1">
+              <h2 className="font-medium">{summaryTitle}</h2>
+              <Divider />
+              <p className="font-light text-gray-500 py-2">
+                {meeting.description}
+              </p>
+            </CardBody>
+          </Card>
 
-        <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">
-            Meeting Minutes
-          </CardHeader>
-          <CardBody>
-            <Divider className="mb-2" />
-            <ul>
-              {meeting.meeting_minutes && meeting.meeting_minutes.length > 0 ? (
-                meeting.meeting_minutes.map((minute, index) => (
-                  <li key={index}>• {minute}</li>
-                ))
-              ) : (
-                <p> No meeting minutes available </p>
-              )}
-            </ul>
-          </CardBody>
-        </Card>
-
-        <Card className="bg-white shadow-md rounded p-4">
-          <CardHeader className="text-lg font-bold mb-2">Tasks</CardHeader>
-          <Divider />
-          <CardBody>
-            <ul>
-              {meeting.action_items && meeting.action_items.length > 0 ? (
-                meeting.action_items.map((action, index) => (
-                  <li
-                    key={index}
-                    className="flex justify-between items-center mb-2 pr-2"
+          <Card className="bg-white shadow-md rounded-xl p-4">
+            <CardHeader className="text-lg font-bold">Participants</CardHeader>
+            <div className="px-3">
+              <Divider />
+            </div>
+            <CardBody className="flex flex-row gap-3">
+              {meeting.attendees.map((email) => (
+                <Tooltip key={email} content={email} showArrow={true}>
+                  <Badge
+                    color="primary"
+                    content={"Org"}
+                    isInvisible={meeting.organizer !== email}
+                    shape="rectangle"
+                    size="sm"
                   >
-                    <span>• {action}</span>
+                    <Avatar key={email} name={email} />
+                  </Badge>
+                </Tooltip>
+              ))}
+            </CardBody>
+          </Card>
 
-                    <Button
-                      className="text-right text-base px-4 py-1 border bg-white border-red-500 text-black hover:bg-red-500 hover:text-white transition max-w-56"
-                      onClick={() => handlePress(action)}
+          <Card className="bg-white shadow-md rounded-xl p-4">
+            <CardHeader className="text-lg font-bold">Meeting Link</CardHeader>
+            <div className="px-3">
+              <Divider />
+            </div>
+            <CardBody>
+              <Link
+                isExternal
+                showAnchorIcon
+                color="primary"
+                underline="always"
+                href={meeting.meet_link}
+              >
+                Click Here To Join The Meeting
+              </Link>
+            </CardBody>
+          </Card>
+
+          <Card className="bg-white shadow-md rounded-xl p-4">
+            <CardHeader className="text-lg font-bold justify-between">
+              Meeting Minutes
+              <Popover placement="bottom" showArrow={true}>
+                <PopoverTrigger>
+                  <Button color="primary" variant="light">View Transcript</Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="px-1 py-2">
+                    <div className="text-small font-medium">Transcript</div>
+                    <div className="text-gray-500 text-tiny py-2">
+                      {meeting.transcript
+                        ? meeting.transcript
+                        : "No meeting transcript available"}
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </CardHeader>
+            <div className="px-3">
+              <Divider />
+            </div>
+            <CardBody>
+              <ul>
+                {meeting.meeting_minutes &&
+                meeting.meeting_minutes.length > 0 ? (
+                  meeting.meeting_minutes.map((minute, index) => (
+                    <li key={index}>• {minute}</li>
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm">
+                    No meeting minutes available
+                  </p>
+                )}
+              </ul>
+            </CardBody>
+          </Card>
+
+          <Card className="bg-white shadow-md rounded-xl p-4">
+            <CardHeader className="text-lg font-bold justify-between">
+              Suggested Tasks from AI
+              <Button color="primary" onPress={onOpen}>
+                Create Task
+              </Button>
+            </CardHeader>
+            <div className="px-3">
+              <Divider />
+            </div>
+            <CardBody>
+              <ul>
+                {meeting.action_items && meeting.action_items.length > 0 ? (
+                  meeting.action_items.map((action, index) => (
+                    <li
+                      key={index}
+                      className="flex justify-between items-center mb-2 pr-2"
                     >
-                      Create Task
-                    </Button>
-                  </li>
-                ))
-              ) : (
-                <p> No meeting minutes available </p>
-              )}
-            </ul>
-          </CardBody>
-        </Card>
+                      <span>• {action}</span>
+                      <Button
+                        isLoading={isLoadingAI}
+                        color="secondary"
+                        radius="full"
+                        onPress={() => onOpenChangeWithAI(action)}
+                      >
+                        Create Task with AI
+                      </Button>
+                    </li>
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm">
+                    No tasks available
+                  </p>
+                )}
+              </ul>
+            </CardBody>
+          </Card>
+        </div>
       </div>
-      {/* <CreateTaskDrawer /> */}
+      <CreateTaskDrawer
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        withAIData={withAIData}
+        definedProgrammeId={meeting.programme_id}
+      />
     </div>
   );
 };

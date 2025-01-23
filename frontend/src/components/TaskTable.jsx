@@ -10,27 +10,29 @@ import {
   Chip,
   Tooltip,
   Spinner,
-  useDisclosure,
 } from "@heroui/react";
 import {
   getTasksByUserId,
   getUsersWithoutCredentials,
   getAllProgrammes,
-  getTasksByTaskId,
   deleteTask,
+  updateTask,
+  createNewTask,
 } from "../services/api";
 import { columns, statusColors } from "../constants/TableElements";
 import { EyeIcon, EditIcon, DeleteIcon } from "../constants/Icons";
 import CreateTaskDrawer from "./CreateTaskDrawer";
+import { Toast } from "./Toast";
 
-export const TaskTable = () => {
+export const TaskTable = ({ isCreateTaskOpen, onCreateTaskOpenChange }) => {
   const [allUserTasks, setAllUserTasks] = useState([]);
   const [currentTask, setCurrentTask] = useState(null);
   const [users, setUsers] = useState([]);
   const [programmes, setProgrammes] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [toastMessage, setToastMessage] = useState("");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [drawerMode, setDrawerMode] = useState("create");
 
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
@@ -76,51 +78,57 @@ export const TaskTable = () => {
     [programmes]
   );
 
-  const handleViewTask = useCallback(
+  const handleOpenUpdateTask = useCallback(
     (taskId) => {
-      navigate(`/tasks/${taskId}`);
-    },
-    [navigate]
-  );
+      const taskDetails = allUserTasks.find((task) => task.id === taskId);
 
-  const handleUpdateTask = useCallback(
-    async (taskId) => {
-      try {
-        const taskDetails = await getTasksByTaskId(taskId);
+      if (taskDetails) {
+        setDrawerMode("update");
         setCurrentTask(taskDetails);
-        onOpen();
-      } catch (error) {
-        console.error("Error fetching task details:", error);
-      }
-    },
-    [onOpen]
-  );
-
-  // passed to drawer for state mgmt
-  const updateTaskInTable = (updatedTask) => {
-    setAllUserTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === updatedTask.id ? { ...task, ...updatedTask } : task
-      )
-    );
-  };
-
-  const handleDeleteTask = useCallback(
-    async (taskId) => {
-      const previousTasks = [...allUserTasks];
-      try {
-        await deleteTask(taskId);
-      } catch (error) {
-        console.error("Error deleting task:", error);
-        setAllUserTasks(previousTasks);
-      } finally {
-        setAllUserTasks((prevTasks) =>
-          prevTasks.filter((task) => task.id !== taskId)
-        );
+        setIsDrawerOpen(true);
       }
     },
     [allUserTasks]
   );
+
+  const handleCreateTask = async (taskData) => {
+    try {
+      const createdTask = await createNewTask(taskData);
+      setAllUserTasks((prevTasks) => [...prevTasks, createdTask]);
+    } catch (error) {
+      console.error("Error creating task:", error);
+      throw error;
+    }
+  };
+
+  const handleUpdateTask = async (taskData) => {
+    try {
+      const updatedTask = await updateTask(taskData);
+      setAllUserTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === updatedTask.id ? { ...task, ...updatedTask } : task
+        )
+      );
+    } catch (error) {
+      console.error("Error updating task:", error);
+      throw error;
+    }
+  };
+
+  const handleDeleteTask = useCallback(async (taskId) => {
+    try {
+      const res = await deleteTask(taskId);
+      if (res) {
+        setAllUserTasks((prevTasks) =>
+          prevTasks.filter((task) => task.id !== taskId)
+        );
+      }
+      setToastMessage("Task deleted successfully! 🎉");
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      setToastMessage("Failed to delete task. Please try again.");
+    }
+  }, []);
 
   const renderCell = useCallback(
     (task, columnKey) => {
@@ -173,7 +181,7 @@ export const TaskTable = () => {
               <Tooltip content="View Task">
                 <span
                   className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                  onClick={() => handleViewTask(task.id)}
+                  onClick={() => navigate(`/tasks/${task.id}`)}
                 >
                   <EyeIcon />
                 </span>
@@ -181,7 +189,7 @@ export const TaskTable = () => {
               <Tooltip content="Update Task">
                 <span
                   className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                  onClick={() => handleUpdateTask(task.id)}
+                  onClick={() => handleOpenUpdateTask(task.id)}
                 >
                   <EditIcon />
                 </span>
@@ -204,13 +212,16 @@ export const TaskTable = () => {
       findProgramById,
       findUserById,
       handleDeleteTask,
-      handleUpdateTask,
-      handleViewTask,
+      handleOpenUpdateTask,
+      navigate,
     ]
   );
 
   return (
     <>
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage("")} />
+      )}
       <Table aria-label="Task Table" isHeaderSticky removeWrapper>
         <TableHeader columns={columns}>
           {(column) => (
@@ -226,7 +237,7 @@ export const TaskTable = () => {
           items={allUserTasks}
           isLoading={loading}
           loadingContent={<Spinner color="primary" />}
-          emptyContent="No tasks to show"
+          emptyContent="Great! You have completed all your tasks."
         >
           {(item) => (
             <TableRow key={item.id}>
@@ -238,10 +249,14 @@ export const TaskTable = () => {
         </TableBody>
       </Table>
       <CreateTaskDrawer
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        taskDetails={currentTask}
-        updateTaskInTable={updateTaskInTable}
+        isOpen={drawerMode === "update" ? isDrawerOpen : isCreateTaskOpen}
+        onOpenChange={
+          drawerMode === "update" ? setIsDrawerOpen : onCreateTaskOpenChange
+        }
+        taskDetails={drawerMode === "update" ? currentTask : null}
+        setDrawerMode={setDrawerMode}
+        handleCreateTask={handleCreateTask}
+        handleUpdateTask={handleUpdateTask}
       />
     </>
   );

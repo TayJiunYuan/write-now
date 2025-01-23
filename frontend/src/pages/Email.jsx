@@ -78,7 +78,7 @@ export const Email = () => {
       setIsLoadingAI(false);
     }
 
-    onOpen(); // Open the drawer
+    onOpen();
   };
 
   return (
@@ -99,7 +99,7 @@ export const Email = () => {
             {Object.values(emails).map((email) => (
               <Badge
                 color="primary"
-                shape="circle"
+                shape="rectangle"
                 size="lg"
                 content="Unread"
                 placement="top-right"
