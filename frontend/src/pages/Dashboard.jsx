@@ -87,8 +87,8 @@ const Dashboard = () => {
                 </div>
                 <div className="overflow-auto w-full [container-type:inline-size] p-4">
                   <TaskTable
-                    isOpenCreateTask={isOpen}
-                    onOpenChangeCreateTask={onOpenChange}
+                    isCreateTaskOpen={isOpen}
+                    onCreateTaskOpenChange={onOpenChange}
                   />
                 </div>
               </div>

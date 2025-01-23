@@ -10,13 +10,11 @@ import {
   Chip,
   Tooltip,
   Spinner,
-  useDisclosure,
 } from "@heroui/react";
 import {
   getTasksByUserId,
   getUsersWithoutCredentials,
   getAllProgrammes,
-  getTasksByTaskId,
   deleteTask,
   updateTask,
   createNewTask,
@@ -26,15 +24,15 @@ import { EyeIcon, EditIcon, DeleteIcon } from "../constants/Icons";
 import CreateTaskDrawer from "./CreateTaskDrawer";
 import { Toast } from "./Toast";
 
-export const TaskTable = ({ isOpenCreateTask, onOpenChangeCreateTask }) => {
+export const TaskTable = ({ isCreateTaskOpen, onCreateTaskOpenChange }) => {
   const [allUserTasks, setAllUserTasks] = useState([]);
   const [currentTask, setCurrentTask] = useState(null);
   const [users, setUsers] = useState([]);
   const [programmes, setProgrammes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [drawerMode, setDrawerMode] = useState("create");
 
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
@@ -80,6 +78,20 @@ export const TaskTable = ({ isOpenCreateTask, onOpenChangeCreateTask }) => {
     [programmes]
   );
 
+  const handleOpenUpdateTask = useCallback(
+    (taskId) => {
+      const taskDetails = allUserTasks.find((task) => task.id === taskId);
+      console.log(taskDetails);
+
+      if (taskDetails) {
+        setDrawerMode("update");
+        setCurrentTask(taskDetails);
+        setIsDrawerOpen(true);
+      }
+    },
+    [allUserTasks]
+  );
+
   const handleCreateTask = async (taskData) => {
     try {
       const createdTask = await createNewTask(taskData);
@@ -90,27 +102,6 @@ export const TaskTable = ({ isOpenCreateTask, onOpenChangeCreateTask }) => {
     }
   };
 
-  const handleViewTask = useCallback(
-    (taskId) => {
-      navigate(`/tasks/${taskId}`);
-    },
-    [navigate]
-  );
-
-  const handleOnUpdateTaskOpen = useCallback(
-    async (taskId) => {
-      try {
-        const taskDetails = await getTasksByTaskId(taskId);
-        setCurrentTask(taskDetails);
-        onOpen();
-      } catch (error) {
-        console.error("Error fetching task details:", error);
-      }
-    },
-    [onOpen]
-  );
-
-  // handle updated task data passed from drawer
   const handleUpdateTask = async (taskData) => {
     try {
       const updatedTask = await updateTask(taskData);
@@ -125,23 +116,20 @@ export const TaskTable = ({ isOpenCreateTask, onOpenChangeCreateTask }) => {
     }
   };
 
-  const handleDeleteTask = useCallback(
-    async (taskId) => {
-      const previousTasks = [...allUserTasks];
-      setAllUserTasks((prevTasks) =>
-        prevTasks.filter((task) => task.id !== taskId)
-      );
-      try {
-        await deleteTask(taskId);
-        setToastMessage("Task deleted successfully! 🎉");
-      } catch (error) {
-        console.error("Error deleting task:", error);
-        setAllUserTasks(previousTasks);
-        setToastMessage("Failed to delete task. Please try again.");
+  const handleDeleteTask = useCallback(async (taskId) => {
+    try {
+      const res = await deleteTask(taskId);
+      if (res) {
+        setAllUserTasks((prevTasks) =>
+          prevTasks.filter((task) => task.id !== taskId)
+        );
       }
-    },
-    [allUserTasks]
-  );
+      setToastMessage("Task deleted successfully! 🎉");
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      setToastMessage("Failed to delete task. Please try again.");
+    }
+  }, []);
 
   const renderCell = useCallback(
     (task, columnKey) => {
@@ -194,7 +182,7 @@ export const TaskTable = ({ isOpenCreateTask, onOpenChangeCreateTask }) => {
               <Tooltip content="View Task">
                 <span
                   className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                  onClick={() => handleViewTask(task.id)}
+                  onClick={() => navigate(`/tasks/${task.id}`)}
                 >
                   <EyeIcon />
                 </span>
@@ -202,7 +190,7 @@ export const TaskTable = ({ isOpenCreateTask, onOpenChangeCreateTask }) => {
               <Tooltip content="Update Task">
                 <span
                   className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                  onClick={() => handleOnUpdateTaskOpen(task.id)}
+                  onClick={() => handleOpenUpdateTask(task.id)}
                 >
                   <EditIcon />
                 </span>
@@ -225,8 +213,8 @@ export const TaskTable = ({ isOpenCreateTask, onOpenChangeCreateTask }) => {
       findProgramById,
       findUserById,
       handleDeleteTask,
-      handleOnUpdateTaskOpen,
-      handleViewTask,
+      handleOpenUpdateTask,
+      navigate,
     ]
   );
 
@@ -250,7 +238,7 @@ export const TaskTable = ({ isOpenCreateTask, onOpenChangeCreateTask }) => {
           items={allUserTasks}
           isLoading={loading}
           loadingContent={<Spinner color="primary" />}
-          emptyContent="No tasks to show"
+          emptyContent="Great! You have completed all your tasks."
         >
           {(item) => (
             <TableRow key={item.id}>
@@ -262,9 +250,12 @@ export const TaskTable = ({ isOpenCreateTask, onOpenChangeCreateTask }) => {
         </TableBody>
       </Table>
       <CreateTaskDrawer
-        isOpen={isOpenCreateTask || isOpen}
-        onOpenChange={onOpenChangeCreateTask || onOpenChange}
-        taskDetails={currentTask}
+        isOpen={drawerMode === "update" ? isDrawerOpen : isCreateTaskOpen}
+        onOpenChange={
+          drawerMode === "update" ? setIsDrawerOpen : onCreateTaskOpenChange
+        }
+        taskDetails={drawerMode === "update" ? currentTask : null}
+        setDrawerMode={setDrawerMode}
         handleCreateTask={handleCreateTask}
         handleUpdateTask={handleUpdateTask}
       />

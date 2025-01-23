@@ -24,6 +24,7 @@ const CreateTaskDrawer = ({
   programmes = [], // pass progs if parent container has
   withAIData, // create task with AI data if available
   taskDetails, // update task if existing task details are available
+  setDrawerMode,
   handleCreateTask,
   handleUpdateTask,
   definedProgrammeId, // pass prog id if available
@@ -99,6 +100,15 @@ const CreateTaskDrawer = ({
     setTaskDeadline("");
   };
 
+  const handleDrawerClose = () => {
+    console.log("closing drawer")
+    onOpenChange(false);
+    handleClearForm();
+    if (taskDetails) {
+      setDrawerMode("create");
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -132,14 +142,8 @@ const CreateTaskDrawer = ({
           : "Failed to create task. Please try again."
       );
     } finally {
-      handleClearForm();
-      onOpenChange(false);
+      handleDrawerClose();
     }
-  };
-
-  const handleDrawerClose = () => {
-    handleClearForm();
-    onOpenChange(false);
   };
 
   return (
