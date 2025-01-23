@@ -81,7 +81,6 @@ export const TaskTable = ({ isCreateTaskOpen, onCreateTaskOpenChange }) => {
   const handleOpenUpdateTask = useCallback(
     (taskId) => {
       const taskDetails = allUserTasks.find((task) => task.id === taskId);
-      console.log(taskDetails);
 
       if (taskDetails) {
         setDrawerMode("update");

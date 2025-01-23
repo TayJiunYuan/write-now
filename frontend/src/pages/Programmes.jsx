@@ -44,7 +44,6 @@ const Programmes = () => {
 
       if (selectedDates?.start && selectedDates?.end) {
         const eventDateString = format(new Date(event.datetime), "yyyy-MM-dd");
-        console.log(eventDateString);
         const formattedStartDate = convertDatePickerToDateOnly(
           selectedDates.start
         );

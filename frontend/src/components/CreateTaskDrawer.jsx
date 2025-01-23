@@ -101,7 +101,6 @@ const CreateTaskDrawer = ({
   };
 
   const handleDrawerClose = () => {
-    console.log("closing drawer")
     onOpenChange(false);
     handleClearForm();
     if (taskDetails) {

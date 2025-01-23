@@ -23,10 +23,6 @@ const MeetingInfo = () => {
   const { meeting, title } = location.state || {};
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log(meeting);
-  }, [meeting]);
-
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [withAIData, setWithAIData] = useState(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
