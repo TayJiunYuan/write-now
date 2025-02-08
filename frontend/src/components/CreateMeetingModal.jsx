@@ -93,7 +93,6 @@ export const CreateMeetingModal = ({
       <Modal
         ref={targetRef}
         isOpen={isOpen}
-        size="md"
         onOpenChange={onOpenChange}
       >
         <ModalContent>

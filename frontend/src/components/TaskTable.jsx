@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableHeader,
@@ -10,6 +9,7 @@ import {
   Chip,
   Tooltip,
   Spinner,
+  useDisclosure,
 } from "@heroui/react";
 import {
   getTasksByUserId,
@@ -22,6 +22,7 @@ import {
 import { columns, statusColors } from "../constants/TableElements";
 import { EyeIcon, EditIcon, DeleteIcon } from "../constants/Icons";
 import CreateTaskDrawer from "./CreateTaskDrawer";
+import TaskInfoModal from "./TaskInfoModal";
 import { Toast } from "./Toast";
 
 export const TaskTable = ({ isCreateTaskOpen, onCreateTaskOpenChange }) => {
@@ -33,10 +34,13 @@ export const TaskTable = ({ isCreateTaskOpen, onCreateTaskOpenChange }) => {
   const [toastMessage, setToastMessage] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [drawerMode, setDrawerMode] = useState("create");
+  // task info modal
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [selectedTask, setSelectedTask] = React.useState(null);
 
-  const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
 
+  // fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -130,6 +134,14 @@ export const TaskTable = ({ isCreateTaskOpen, onCreateTaskOpenChange }) => {
     }
   }, []);
 
+  const handleOpenTaskInfoModal = useCallback(
+    (task) => {
+      setSelectedTask(task);
+      onOpen();
+    },
+    [onOpen]
+  );
+
   const renderCell = useCallback(
     (task, columnKey) => {
       const cellValue = task[columnKey] ? task[columnKey] : "--";
@@ -181,7 +193,7 @@ export const TaskTable = ({ isCreateTaskOpen, onCreateTaskOpenChange }) => {
               <Tooltip content="View Task">
                 <span
                   className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                  onClick={() => navigate(`/tasks/${task.id}`)}
+                  onClick={() => handleOpenTaskInfoModal(task)}
                 >
                   <EyeIcon />
                 </span>
@@ -213,7 +225,7 @@ export const TaskTable = ({ isCreateTaskOpen, onCreateTaskOpenChange }) => {
       findUserById,
       handleDeleteTask,
       handleOpenUpdateTask,
-      navigate,
+      handleOpenTaskInfoModal,
     ]
   );
 
@@ -257,6 +269,13 @@ export const TaskTable = ({ isCreateTaskOpen, onCreateTaskOpenChange }) => {
         setDrawerMode={setDrawerMode}
         handleCreateTask={handleCreateTask}
         handleUpdateTask={handleUpdateTask}
+      />
+      <TaskInfoModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        task={selectedTask}
+        findProgramById={findProgramById}
+        findUserById={findUserById}
       />
     </>
   );

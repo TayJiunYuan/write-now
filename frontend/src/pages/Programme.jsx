@@ -139,14 +139,14 @@ const Programme = () => {
   };
 
   const handleCreateMeeting = async (meetingData) => {
-      try {
-        const createdMeeting = await createNewMeeting(meetingData);
-        setMeetings((prevMtgs) => [...prevMtgs, createdMeeting]);
-      } catch (error) {
-        console.error("Error creating meeting:", error);
-        throw error;
-      }
-    };
+    try {
+      const createdMeeting = await createNewMeeting(meetingData);
+      setMeetings((prevMtgs) => [...prevMtgs, createdMeeting]);
+    } catch (error) {
+      console.error("Error creating meeting:", error);
+      throw error;
+    }
+  };
 
   return (
     <div className="container mx-auto min-h-screen pt-[65px]">

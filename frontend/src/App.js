@@ -10,7 +10,6 @@ import Email from "./pages/Email";
 import Programmes from "./pages/Programmes";
 import Programme from "./pages/Programme";
 import MeetingInfo from "./pages/MeetingInfo";
-import TaskInfo from "./pages/TaskInfo";
 
 const App = () => {
   const userId = localStorage.getItem("userId");
@@ -27,7 +26,6 @@ const App = () => {
             <Route path="/programmes" element={<Programmes />} />
             <Route path="/programmes/:programme_id" element={<Programme />} />
             <Route path="/meetings/:meeting_id" element={<MeetingInfo />} />
-            <Route path="/tasks/:task_id" element={<TaskInfo />} />
           </Route>
         </Routes>
       </div>

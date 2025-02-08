@@ -124,6 +124,7 @@ const CreateTaskDrawer = ({
       programme_id: programmeId,
       task_type: taskType,
     };
+    console.log(taskData)
 
     try {
       if (taskDetails) {

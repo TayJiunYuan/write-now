@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -113,7 +113,9 @@ const MeetingInfo = () => {
               Meeting Minutes
               <Popover placement="bottom" showArrow={true}>
                 <PopoverTrigger>
-                  <Button color="primary" variant="light">View Transcript</Button>
+                  <Button color="primary" variant="light">
+                    View Transcript
+                  </Button>
                 </PopoverTrigger>
                 <PopoverContent>
                   <div className="px-1 py-2">
@@ -176,9 +178,7 @@ const MeetingInfo = () => {
                     </li>
                   ))
                 ) : (
-                  <p className="text-gray-500 text-sm">
-                    No tasks available
-                  </p>
+                  <p className="text-gray-500 text-sm">No tasks available</p>
                 )}
               </ul>
             </CardBody>
