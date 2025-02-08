@@ -16,6 +16,7 @@ import {
 import { getUsersWithoutCredentials, getAllProgrammes } from "../services/api";
 import { Toast } from "./Toast";
 import { taskTypes } from "../constants/TableElements";
+import { taskStatuses } from "../constants/TableElements";
 
 const CreateTaskDrawer = ({
   isOpen,
@@ -36,6 +37,7 @@ const CreateTaskDrawer = ({
   const [programmeId, setProgrammeId] = useState(definedProgrammeId || "");
   const [taskType, setTaskType] = useState("");
   const [taskDeadline, setTaskDeadline] = useState("");
+  const [taskStatus, setTaskStatus] = useState("");
 
   const [availableAssignees, setAvailableAssignees] = useState(assignees || []);
   const [availableProgrammes, setAvailableProgrammes] = useState(
@@ -58,6 +60,7 @@ const CreateTaskDrawer = ({
       setProgrammeId(taskDetails.programme_id || "");
       setTaskType(taskDetails.task_type || "");
       setTaskDeadline(taskDetails.deadline || "");
+      setTaskStatus(taskDetails.status || "");
     }
   }, [withAIData, taskDetails]);
 
@@ -98,6 +101,7 @@ const CreateTaskDrawer = ({
     setProgrammeId("");
     setTaskType("");
     setTaskDeadline("");
+    setTaskStatus("");
   };
 
   const handleDrawerClose = () => {
@@ -120,11 +124,10 @@ const CreateTaskDrawer = ({
       name: taskName,
       description: taskDescription,
       deadline: taskDeadline,
-      status: "NOT_STARTED",
+      status: taskStatus,
       programme_id: programmeId,
       task_type: taskType,
     };
-    console.log(taskData)
 
     try {
       if (taskDetails) {
@@ -250,6 +253,20 @@ const CreateTaskDrawer = ({
                   {taskTypes.map((taskType) => (
                     <SelectItem key={taskType} value={taskType}>
                       {taskType}
+                    </SelectItem>
+                  ))}
+                </Select>
+                <Select
+                  isRequired
+                  label="Task Status"
+                  placeholder="Select task status"
+                  variant="underlined"
+                  selectedKeys={new Set([taskStatus])}
+                  onChange={(e) => setTaskStatus(e.target.value)}
+                >
+                  {taskStatuses.map((taskStatus) => (
+                    <SelectItem key={taskStatus} value={taskStatus}>
+                      {taskStatus.replace(/_/g, " ")}
                     </SelectItem>
                   ))}
                 </Select>

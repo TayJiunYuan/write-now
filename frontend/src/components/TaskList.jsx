@@ -8,11 +8,12 @@ import {
 } from "@heroui/react";
 
 import { statusColors } from "../constants/TableElements";
+import { taskStatuses } from "../constants/TableElements";
 
 export const TaskList = ({ tasks, handleStatusSelect }) => {
-  const statusOrder = ["NOT_STARTED", "IN_PROGRESS", "COMPLETED"];
+  const statusOrder = taskStatuses
 
-  const groupTasksByStatus = (tasks, handleStatusSelect) => {
+  const groupTasksByStatus = (tasks) => {
     const grouped = tasks.reduce((acc, task) => {
       if (!acc[task.status]) {
         acc[task.status] = [];

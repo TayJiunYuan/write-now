@@ -16,3 +16,5 @@ export const statusColors = {
 };
 
 export const taskTypes = ["BASIC", "BUDGET", "REPORT", "FORM"];
+
+export const taskStatuses = ["NOT_STARTED", "IN_PROGRESS", "COMPLETED"];
