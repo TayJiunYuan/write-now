@@ -84,7 +84,7 @@ export const Email = () => {
   return (
     <div className="flex flex-col sm:flex-row h-screen bg-gray-50 pt-[65px]">
       {/* Left Section: Inbox */}
-      <div className="sm:w-1/3 bg-white shadow-lg rounded-lg p-6 overflow-y-auto">
+      <div className="sm:w-1/3 bg-white shadow-lg rounded-lg p-6 overflow-y-auto m-4">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">Inbox</h2>
         {isInboxLoading ? (
           <div className="flex justify-center items-center h-32">
@@ -126,7 +126,7 @@ export const Email = () => {
       </div>
 
       {/* Right Section: Email Preview */}
-      <div className="sm:w-2/3 bg-white shadow-lg rounded-lg p-6 overflow-y-auto relative">
+      <div className="sm:w-2/3 bg-white shadow-lg rounded-lg p-6 overflow-y-auto relative mr-4 my-4">
         {selectedEmail && !isEmailThreadLoading ? (
           <div>
             <h3 className="text-2xl font-semibold text-gray-800 mb-4">
